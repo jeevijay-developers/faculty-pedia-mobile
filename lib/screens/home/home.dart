@@ -3,6 +3,7 @@ import 'package:facultypedia/components/exam_button.dart';
 import 'package:facultypedia/components/feature_button.dart';
 import 'package:facultypedia/components/mytext.dart';
 import 'package:facultypedia/screens/exams/cbse/cbse_home.dart';
+import 'package:facultypedia/screens/exams/iit/iit_home.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -17,8 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
@@ -38,85 +38,140 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: true,
       ),
       drawer: CustomDrawer(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MyText(text: "Exam"),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ExamButton(width: width, text: "IIT-JEE", onTap: () {}),
-              ExamButton(width: width, text: "NEET", onTap: () {}),
-              ExamButton(
-                width: width,
-                text: "CBSE",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CBSEHome()),
-                  );
-                },
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MyText(text: "Exam"),
+            SizedBox(height: 10),
+            SizedBox(
+              height: 220, // Height of the card section
+              child: ListView(
+                scrollDirection: Axis.horizontal, // Horizontal scrolling
+                children: [
+                  ExamCard(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TopEducatorsCarousel(),
+                        ),
+                      );
+                    },
+                    backgroundImage: 'assets/images/iit-bg.png',
+                    icon: "assets/images/iit-logo.png",
+                    title: "IIT JEE",
+                    subtitle: 'Indian Institute of Technology',
+                  ),
+                  const SizedBox(width: 10),
+                  ExamCard(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CBSEHome(),
+                        ),
+                      );
+                    },
+                    backgroundImage: 'assets/images/neet-bg.png',
+                    icon: "assets/images/neet-logo.png",
+                    title: "NEET",
+                    subtitle: 'National Eligibility cum Entrance Exam',
+                  ),
+                  const SizedBox(width: 10),
+                  ExamCard(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CBSEHome(),
+                        ),
+                      );
+                    },
+                    backgroundImage: 'assets/images/cbse-bg.png',
+                    icon: "assets/images/cbse-logo.png",
+                    title: "CBSE",
+                    subtitle: 'Central Board of Secondary Education',
+                  ),
+                ],
               ),
-            ],
-          ),
-          SizedBox(height: 20),
-          MyText(text: "Features"),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FeatureButton(
-                icon: FontAwesomeIcons.computer,
-                width: width / 2.3,
-                text: "Online Courses",
-                onTap: () {},
-                height: height,
+            ),
+            SizedBox(height: 20),
+            Center(
+              child: Text(
+                "Why choose Faculty Pedia",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                textAlign: TextAlign.center,
               ),
-              FeatureButton(
-                icon: FontAwesomeIcons.person,
-                width: width / 2.3,
-                text: "1v1 Live Classes",
-                onTap: () {},
-                height: height,
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Explore our comprehensive learning features designed to help you excel in your academic journey",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15),
               ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FeatureButton(
-                icon: FontAwesomeIcons.computer,
-                width: width / 2.3,
-                text: "Webinars",
-                onTap: () {},
-                height: height,
-              ),
-              FeatureButton(
-                icon: FontAwesomeIcons.person,
-                width: width / 2.3,
-                text: "Study Materials",
-                onTap: () {},
-                height: height,
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FeatureButton(
-                icon: FontAwesomeIcons.person,
-                width: width / 1.12,
-                text: "Online Tests",
-                onTap: () {},
-                height: height,
-              ),
-            ],
-          ),
-        ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FeatureCard(
+                  icon: FontAwesomeIcons.computer,
+
+                  onTap: () {},
+                  title: 'Online Classes',
+                  subtitle: 'Attend interactive classes from anywhere, anytime',
+                ),
+                SizedBox(width: 10),
+                FeatureCard(
+                  icon: FontAwesomeIcons.computer,
+
+                  onTap: () {},
+                  title: '1 on 1 Live classes',
+                  subtitle: 'Personalized sessions for focused learning',
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FeatureCard(
+                  icon: FontAwesomeIcons.computer,
+
+                  onTap: () {},
+                  title: 'Webinars',
+                  subtitle: 'Live expert discussions and sessions',
+                ),
+                SizedBox(width: 10),
+                FeatureCard(
+                  icon: FontAwesomeIcons.computer,
+
+                  onTap: () {},
+                  title: 'Study Material',
+                  subtitle: 'High-quality notes, PDFs, and resources',
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FeatureCard(
+                  icon: Icons.computer,
+                  title: "Online Tests",
+                  subtitle:
+                      "Evaluate yourself with real-time tests and analytics",
+                  onTap: () {},
+                ),
+              ],
+            ),
+            SizedBox(height: 20,)
+          ],
+        ),
       ),
     );
   }
