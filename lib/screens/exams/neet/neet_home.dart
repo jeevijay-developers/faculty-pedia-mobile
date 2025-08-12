@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class IITHomePage extends StatelessWidget {
-  const IITHomePage({super.key});
+class NeetHomePage extends StatelessWidget {
+  const NeetHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -93,10 +93,10 @@ class IITHomePage extends StatelessWidget {
                   EducatorCard(
                     imageUrl: "https://placehold.co/600x400.png",
                     name: "Prof. Neha Sharma",
-                    subject: "Mathematics",
-                    education: "PhD, Mathematics",
+                    subject: "Biology",
+                    education: "PhD, Biology",
                     experience: "15 years",
-                    specialization: "Calculus & Algebra",
+                    specialization: "Biotechnology",
                     onViewProfile: () {},
                   ),
                   EducatorCard(
@@ -119,7 +119,7 @@ class IITHomePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      "Online Courses for IIT-JEE",
+                      "Online Courses for NEET",
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -168,7 +168,7 @@ class IITHomePage extends StatelessWidget {
                   ),
                   CourseCard(
                     imageUrl: "https://placehold.co/600x400.png",
-                    title: "Physics for Engineering",
+                    title: "Physics for NEET",
                     educatorName: "Prof. Anita Singh",
                     description:
                         "Advanced physics concepts for engineering entrance exams with practical applications.",

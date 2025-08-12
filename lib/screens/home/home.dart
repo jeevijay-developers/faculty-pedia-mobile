@@ -4,6 +4,7 @@ import 'package:facultypedia/components/feature_button.dart';
 import 'package:facultypedia/components/mytext.dart';
 import 'package:facultypedia/screens/exams/cbse/cbse_home.dart';
 import 'package:facultypedia/screens/exams/iit/iit_home.dart';
+import 'package:facultypedia/screens/exams/neet/neet_home.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -55,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const TopEducatorsCarousel(),
+                          builder: (context) => const IITHomePage(),
                         ),
                       );
                     },
@@ -70,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const CBSEHome(),
+                          builder: (context) => const NeetHomePage(),
                         ),
                       );
                     },
@@ -169,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            SizedBox(height: 20,)
+            SizedBox(height: 20),
           ],
         ),
       ),
