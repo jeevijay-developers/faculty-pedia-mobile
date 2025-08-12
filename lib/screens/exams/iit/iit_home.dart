@@ -1,6 +1,8 @@
 import 'package:facultypedia/components/course_card.dart';
 import 'package:facultypedia/components/custom_drawer.dart';
 import 'package:facultypedia/components/educator_card.dart';
+import 'package:facultypedia/components/livecard.dart';
+import 'package:facultypedia/components/test_series_card.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -38,7 +40,7 @@ class TopEducatorsCarousel extends StatelessWidget {
             children: [
               // Header row
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -72,7 +74,7 @@ class TopEducatorsCarousel extends StatelessWidget {
               CarouselSlider(
                 options: CarouselOptions(
                   height: 360,
-                  enlargeCenterPage: true,
+                  enlargeCenterPage: false,
                   enableInfiniteScroll: true,
                   viewportFraction: 0.7,
                   autoPlay: true,
@@ -130,48 +132,259 @@ class TopEducatorsCarousel extends StatelessWidget {
                   ],
                 ),
               ),
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 400,
+                  enlargeCenterPage: false,
+                  enableInfiniteScroll: true,
+                  viewportFraction: 0.7,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 4),
+                ),
+                items: [
+                  CourseCard(
+                    title: "English for Competitive Exams",
+                    educatorName: "Ms. Priya Mehta",
+                    description:
+                        "Complete English preparation for all competitive exams with grammar and comprehension.",
+                    durationText: "4 months starting from 10 Sep 2025",
+                    price: 4999,
+                    oldPrice: 6999,
+                    onEnroll: () {},
+                    onViewDetails: () {},
+                    imageUrl: 'https://placehold.co/600x400.png',
+                  ),
+                  CourseCard(
+                    title: "Chemistry Complete Package",
+                    educatorName: "Dr. Vikram Patel",
+                    description:
+                        "Comprehensive chemistry course covering organic, inorganic, and physical chemistry.",
+                    durationText: "7 months starting from 20 Aug 2025",
+                    price: 7499,
+                    oldPrice: 9499,
+                    onEnroll: () {},
+                    onViewDetails: () {},
+                    imageUrl: 'https://placehold.co/600x400.png',
+                  ),
+                  CourseCard(
+                    imageUrl: "https://placehold.co/600x400.png",
+                    title: "Physics for Engineering",
+                    educatorName: "Prof. Anita Singh",
+                    description:
+                        "Advanced physics concepts for engineering entrance exams with practical applications.",
+                    durationText: "5 months starting from 1 Sep 2025",
+                    price: 6999,
+                    oldPrice: 9999,
+                    onEnroll: () {},
+                    onViewDetails: () {},
+                  ),
+                ],
+              ),
 
-              SizedBox(
-                height: 380,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CourseCard(
-                      title: "Physics for Engineering",
-                      educatorName: "Prof. Anita Singh",
-                      description:
-                          "Advanced physics concepts for engineering entrance exams with practical applications.",
-                      durationText: "5 months starting from 1 Sep 2025",
-                      price: 6999,
-                      oldPrice: 9999,
-                      onEnroll: () {},
-                      onViewDetails: () {},
+                    const Text(
+                      "1 V 1 Live Course Classes",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    CourseCard(
-                      title: "Chemistry Complete Package",
-                      educatorName: "Dr. Vikram Patel",
-                      description:
-                          "Comprehensive chemistry course covering organic, inorganic, and physical chemistry.",
-                      durationText: "7 months starting from 20 Aug 2025",
-                      price: 7499,
-                      oldPrice: 9499,
-                      onEnroll: () {},
-                      onViewDetails: () {},
-                    ),
-                    CourseCard(
-                      title: "English for Competitive Exams",
-                      educatorName: "Ms. Priya Mehta",
-                      description:
-                          "Complete English preparation for all competitive exams with grammar and comprehension.",
-                      durationText: "4 months starting from 10 Sep 2025",
-                      price: 4999,
-                      oldPrice: 6999,
-                      onEnroll: () {},
-                      onViewDetails: () {},
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text("View More"),
                     ),
                   ],
                 ),
               ),
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 400,
+                  enlargeCenterPage: false,
+                  enableInfiniteScroll: true,
+                  viewportFraction: 0.7,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 4),
+                ),
+                items: [
+                  LiveCard(
+                    imageUrl: 'https://placehold.co/600x400.png',
+                    courseTitle: 'Physics Concepts Simplified',
+                    instructorName: "Dr Rajiv Mehta",
+                    onEnroll: () {},
+                    qualification: "Ph.D., Physics",
+                    subject: "Physics",
+                    totalHours: 38,
+                    fee: "14,500",
+                    onViewDetails: () {},
+                  ),
+                  LiveCard(
+                    imageUrl: 'https://placehold.co/600x400.png',
+                    courseTitle: 'Physics Concepts Simplified',
+                    instructorName: "Dr Rajiv Mehta",
+                    onEnroll: () {},
+                    qualification: "Ph.D., Physics",
+                    subject: "Physics",
+                    totalHours: 38,
+                    fee: "14,500",
+                    onViewDetails: () {},
+                  ),
+                  LiveCard(
+                    imageUrl: 'https://placehold.co/600x400.png',
+                    courseTitle: 'Physics Concepts Simplified',
+                    instructorName: "Dr Rajiv Mehta",
+                    onEnroll: () {},
+                    qualification: "Ph.D., Physics",
+                    subject: "Physics",
+                    totalHours: 38,
+                    fee: "14,500",
+                    onViewDetails: () {},
+                  ),
+                ],
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "1 V 1 Live Pay Per Hour Class",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text("View More"),
+                    ),
+                  ],
+                ),
+              ),
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 400,
+                  enlargeCenterPage: false,
+                  enableInfiniteScroll: true,
+                  viewportFraction: 0.7,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 4),
+                ),
+                items: [
+                  LiveCard(
+                    imageUrl: 'https://placehold.co/600x400.png',
+                    courseTitle: 'Physics Concepts Simplified',
+                    instructorName: "Dr Rajiv Mehta",
+                    onEnroll: () {},
+                    qualification: "Ph.D., Physics",
+                    subject: "Physics",
+                    totalHours: 38,
+                    fee: "14,500",
+                    onViewDetails: () {},
+                  ),
+                  LiveCard(
+                    imageUrl: 'https://placehold.co/600x400.png',
+                    courseTitle: 'Physics Concepts Simplified',
+                    instructorName: "Dr Rajiv Mehta",
+                    onEnroll: () {},
+                    qualification: "Ph.D., Physics",
+                    subject: "Physics",
+                    totalHours: 38,
+                    fee: "14,500",
+                    onViewDetails: () {},
+                  ),
+                  LiveCard(
+                    imageUrl: 'https://placehold.co/600x400.png',
+                    courseTitle: 'Physics Concepts Simplified',
+                    instructorName: "Dr Rajiv Mehta",
+                    onEnroll: () {},
+                    qualification: "Ph.D., Physics",
+                    subject: "Physics",
+                    totalHours: 38,
+                    fee: "14,500",
+                    onViewDetails: () {},
+                  ),
+                ],
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Online Test Series",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text("View More"),
+                    ),
+                  ],
+                ),
+              ),
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 400,
+                  enlargeCenterPage: false,
+                  enableInfiniteScroll: true,
+                  viewportFraction: 0.7,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 4),
+                ),
+                items: [
+                  TestSeriesCard(
+                    imageUrl: 'https://placehold.co/600x400.png',
+                    courseTitle: 'Physics Concepts Simplified',
+                    instructorName: "Dr Rajiv Mehta",
+                    onEnroll: () {},
+                    qualification: "Ph.D., Physics",
+                    subject: "Physics",
+                    totalTests: 18,
+                    fee: "14,500",
+                    onViewDetails: () {},
+                  ),
+                  TestSeriesCard(
+                    imageUrl: 'https://placehold.co/600x400.png',
+                    courseTitle: 'Physics Concepts Simplified',
+                    instructorName: "Dr Rajiv Mehta",
+                    onEnroll: () {},
+                    qualification: "Ph.D., Physics",
+                    subject: "Physics",
+                    totalTests: 18,
+                    fee: "14,500",
+                    onViewDetails: () {},
+                  ),
+                  TestSeriesCard(
+                    imageUrl: 'https://placehold.co/600x400.png',
+                    courseTitle: 'Physics Concepts Simplified',
+                    instructorName: "Dr Rajiv Mehta",
+                    onEnroll: () {},
+                    qualification: "Ph.D., Physics",
+                    subject: "Physics",
+                    totalTests: 18,
+                    fee: "14,500",
+                    onViewDetails: () {},
+                  ),
+                ],
+              ),
+
               SizedBox(height: 20),
             ],
           ),

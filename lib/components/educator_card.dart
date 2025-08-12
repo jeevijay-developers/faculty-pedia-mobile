@@ -23,13 +23,17 @@ class EducatorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 280,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
+      width: 270,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -37,53 +41,102 @@ class EducatorCard extends StatelessWidget {
         children: [
           // Top Image
           ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-            ),
-            child: Image.network(
-              imageUrl,
-              height: 150,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          // Info section
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+            child: Stack(
               children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                Image.network(
+                  imageUrl,
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.black.withOpacity(0.4),
+                        Colors.transparent,
+                      ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  subject,
-                  style: const TextStyle(
-                    color: Colors.blue,
-                    fontSize: 14,
-                    height: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                _infoRow("Education", education),
-                _infoRow("Experience", experience),
-                _infoRow("Specialization", specialization),
-                const SizedBox(height: 8),
-                InkWell(
-                  onTap: onViewProfile,
-                  child: const Text(
-                    "View Profile →",
-                    style: TextStyle(color: Colors.blue, fontSize: 14),
+                Positioned(
+                  left: 12,
+                  bottom: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blueAccent.withOpacity(0.85),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      subject,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ),
               ],
+            ),
+          ),
+
+          // Info Section - Expanded so it adapts to height
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+
+                  // Info Rows
+                  _infoRow(Icons.school, "Education", education),
+                  const SizedBox(height: 4),
+                  _infoRow(Icons.work_outline, "Experience", experience),
+                  const SizedBox(height: 4),
+                  _infoRow(Icons.star_border, "Specialization", specialization),
+
+                  const Spacer(),
+
+                  Divider(color: Colors.grey.shade300, height: 1),
+                  const SizedBox(height: 10),
+
+                  // Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.blueAccent,
+                        side: const BorderSide(color: Colors.blueAccent),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      onPressed: onViewProfile,
+                      child: const Text("View Profile"),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -91,16 +144,31 @@ class EducatorCard extends StatelessWidget {
     );
   }
 
-  Widget _infoRow(String label, String value) {
+  Widget _infoRow(IconData icon, String label, String value) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 12),
+        Icon(icon, size: 16, color: Colors.blueAccent),
+        const SizedBox(width: 6),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              text: "$label: ",
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+              children: [
+                TextSpan(
+                  text: value,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black54,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
