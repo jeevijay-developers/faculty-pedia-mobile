@@ -54,7 +54,7 @@ class CoursePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "$subject",
+                    subject,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

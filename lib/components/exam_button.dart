@@ -8,13 +8,13 @@ class ExamCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const ExamCard({
-    Key? key,
+    super.key,
     required this.backgroundImage,
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

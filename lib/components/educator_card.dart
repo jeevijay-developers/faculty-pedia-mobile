@@ -10,7 +10,7 @@ class EducatorCard extends StatelessWidget {
   final VoidCallback onViewProfile;
 
   const EducatorCard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.name,
     required this.subject,
@@ -18,7 +18,7 @@ class EducatorCard extends StatelessWidget {
     required this.experience,
     required this.specialization,
     required this.onViewProfile,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
