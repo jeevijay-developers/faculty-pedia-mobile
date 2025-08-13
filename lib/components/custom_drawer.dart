@@ -1,4 +1,5 @@
 import 'package:facultypedia/screens/courses/courses_screen.dart';
+import 'package:facultypedia/screens/help&support/help_home.dart';
 import 'package:facultypedia/screens/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -69,13 +70,26 @@ class CustomDrawer extends StatelessWidget {
                     _buildMenuItem(Icons.person_rounded, "Profile", () {}),
                     _buildMenuItem(FontAwesomeIcons.book, "Courses", () {
                       Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const CoursesPage()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CoursesPage(),
+                        ),
+                      );
                     }),
                     _buildMenuItem(Icons.settings_rounded, "Settings", () {}),
                     _buildMenuItem(
                       Icons.help_outline_rounded,
-                      "Help & Support",
-                      () {},
+                      "About Company",
+                      () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HelpHome(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
