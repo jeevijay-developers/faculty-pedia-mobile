@@ -21,7 +21,8 @@ class ExamCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 250,
+        width: double.infinity,
+        height: 200,
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),

@@ -2,6 +2,7 @@ import 'package:facultypedia/components/custom_drawer.dart';
 import 'package:facultypedia/components/help_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HelpHome extends StatefulWidget {
   const HelpHome({super.key});
@@ -11,15 +12,34 @@ class HelpHome extends StatefulWidget {
 }
 
 class _HelpHomeState extends State<HelpHome> {
+  Future<void> _launchUrl(Uri url) async {
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Future<void> _launchFacebook() async {
+    final Uri fbApp = Uri.parse(
+      "fb://page/101045905588617",
+    ); // Replace with your Page ID
+    final Uri fbWeb = Uri.parse("https://www.facebook.com/facultypedia");
+    if (await canLaunchUrl(fbApp)) {
+      await launchUrl(fbApp, mode: LaunchMode.externalApplication);
+    } else {
+      await _launchUrl(fbWeb);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB), // Softer background
+      backgroundColor: const Color(0xFFF8F9FB),
       key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0, // cleaner look
+        elevation: 0,
         leading: IconButton(
           icon: const FaIcon(
             FontAwesomeIcons.bars,
@@ -44,9 +64,48 @@ class _HelpHomeState extends State<HelpHome> {
           HelpCard(
             title: "Contact us",
             icon: FontAwesomeIcons.phone,
-            details: 'Phone: +91 1234567890',
-            subDetails: "Email: test@test.com",
-            address: "Address: Delhi, India",
+            details: 'Phone: +91 80007 93693',
+            subDetails: "Email: nucleonorder@gmail.com",
+            address:
+                "Address: C304 om enclave, Anantpura, Kota, Rajasthan, 324005",
+            extra: Row(
+              children: [
+                // Facebook
+                IconButton(
+                  icon: const FaIcon(
+                    FontAwesomeIcons.facebook,
+                    color: Colors.black,
+                  ),
+                  onPressed: _launchFacebook,
+                ),
+                // Instagram
+                IconButton(
+                  icon: const FaIcon(
+                    FontAwesomeIcons.instagram,
+                    color: Colors.black,
+                  ),
+                  onPressed: () async {
+                    await _launchUrl(
+                      Uri.parse("https://www.instagram.com/facultypedia"),
+                    );
+                  },
+                ),
+                // YouTube
+                IconButton(
+                  icon: const FaIcon(
+                    FontAwesomeIcons.youtube,
+                    color: Colors.black,
+                  ),
+                  onPressed: () async {
+                    await _launchUrl(
+                      Uri.parse("https://www.youtube.com/@facultypedia"),
+                    );
+                  },
+                ),
+
+                // Phone
+              ],
+            ),
           ),
         ],
       ),

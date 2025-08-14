@@ -17,34 +17,33 @@ class FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        width: width/2.3,
+        width: width,
+        height: height / 5,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E88E5), // blue color
+          color: const Color(0xFF155DFC), // blue color
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 6,
               offset: Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
               backgroundColor: Colors.white,
-              radius: 20,
-              child: Icon(
-                icon,
-                color: const Color(0xFF1E88E5),
-                size: 20,
-              ),
+              radius: 40,
+              child: Icon(icon, color: const Color(0xFF155DFC), size: 40),
             ),
             const SizedBox(height: 10),
             Text(
@@ -52,17 +51,14 @@ class FeatureCard extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 14,
+                fontSize: 18,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 5),
             Text(
               subtitle,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.white70, fontSize: 15),
               textAlign: TextAlign.center,
             ),
           ],

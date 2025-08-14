@@ -8,6 +8,7 @@ class HelpCard extends StatefulWidget {
   final String details;
   final String? subDetails;
   final String? address;
+  final Widget? extra;
 
   const HelpCard({
     super.key,
@@ -16,6 +17,7 @@ class HelpCard extends StatefulWidget {
     required this.details,
     this.subDetails,
     this.address,
+    this.extra,
   });
 
   @override
@@ -136,6 +138,11 @@ class _HelpCardState extends State<HelpCard> {
                     style: const TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
+
+              if (widget.extra != null) ...[
+                const SizedBox(height: 12),
+                widget.extra!, // Show social icons row here
+              ],
             ],
           ],
         ),

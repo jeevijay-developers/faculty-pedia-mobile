@@ -19,6 +19,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -44,12 +46,26 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            MyText(text: "Exam"),
+            Center(
+              child: Column(
+                children: [
+                  MyText(text: "Choose your Exam"),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Select your target exam and get access to specialized courses, expert guidance, and comprehensive study materials",
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: 10),
+
             SizedBox(
-              height: 220, // Height of the card section
-              child: ListView(
-                scrollDirection: Axis.horizontal, // Horizontal scrolling
+              height:
+                  MediaQuery.of(context).size.height /
+                  1.4, // Height of the card section
+              child: Column(
                 children: [
                   ExamCard(
                     onTap: () {
@@ -65,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: "IIT JEE",
                     subtitle: 'Indian Institute of Technology',
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(height: 20),
                   ExamCard(
                     onTap: () {
                       Navigator.push(
@@ -80,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: "NEET",
                     subtitle: 'National Eligibility cum Entrance Exam',
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(height: 20),
                   ExamCard(
                     onTap: () {
                       Navigator.push(
@@ -116,61 +132,126 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FeatureCard(
-                  icon: FontAwesomeIcons.computer,
+            Padding(
+              padding: EdgeInsetsGeometry.all(8.0),
+              child: Column(
+                children: [
+                  FeatureCard(
+                    icon: FontAwesomeIcons.computer,
 
-                  onTap: () {},
-                  title: 'Online Classes',
-                  subtitle: 'Attend interactive classes from anywhere, anytime',
-                ),
-                SizedBox(width: 10),
-                FeatureCard(
-                  icon: FontAwesomeIcons.computer,
+                    onTap: () {},
+                    title: 'Online Classes',
+                    subtitle:
+                        'Attend interactive classes from anywhere, anytime',
+                  ),
+                  SizedBox(height: 10),
+                  FeatureCard(
+                    icon: FontAwesomeIcons.computer,
 
-                  onTap: () {},
-                  title: '1 on 1 Live classes',
-                  subtitle: 'Personalized sessions for focused learning',
-                ),
-              ],
+                    onTap: () {},
+                    title: '1 on 1 Live classes',
+                    subtitle: 'Personalized sessions for focused learning',
+                  ),
+                  SizedBox(height: 10),
+                  FeatureCard(
+                    icon: FontAwesomeIcons.computer,
+
+                    onTap: () {},
+                    title: 'Webinars',
+                    subtitle: 'Live expert discussions and sessions',
+                  ),
+                  SizedBox(height: 10),
+                  FeatureCard(
+                    icon: FontAwesomeIcons.computer,
+
+                    onTap: () {},
+                    title: 'Study Material',
+                    subtitle: 'High-quality notes, PDFs, and resources',
+                  ),
+                  SizedBox(height: 10),
+                  FeatureCard(
+                    icon: Icons.computer,
+                    title: "Online Tests",
+                    subtitle:
+                        "Evaluate yourself with real-time tests and analytics",
+                    onTap: () {},
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FeatureCard(
-                  icon: FontAwesomeIcons.computer,
 
-                  onTap: () {},
-                  title: 'Webinars',
-                  subtitle: 'Live expert discussions and sessions',
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF155DFC), // Blue background
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 6,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 10),
-                FeatureCard(
-                  icon: FontAwesomeIcons.computer,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Become a FacultyPedia Educator",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
 
-                  onTap: () {},
-                  title: 'Study Material',
-                  subtitle: 'High-quality notes, PDFs, and resources',
+                    const Text(
+                      "Share your expertise, inspire learners, and earn for your impact. "
+                      "Join our growing network of passionate educators today!",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    Center(
+                      child: SizedBox(
+                        width: 120,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF155DFC),
+                            elevation: 5,
+
+                            shadowColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          onPressed: () {},
+                          child: const Text(
+                            "Join",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FeatureCard(
-                  icon: Icons.computer,
-                  title: "Online Tests",
-                  subtitle:
-                      "Evaluate yourself with real-time tests and analytics",
-                  onTap: () {},
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
+            SizedBox(height: 40),
           ],
         ),
       ),
