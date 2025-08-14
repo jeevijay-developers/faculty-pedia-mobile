@@ -70,8 +70,7 @@ class LiveCard extends StatelessWidget {
                   instructorName,
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
+                    color: Color(0xFF155DFC),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -90,7 +89,7 @@ class LiveCard extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Color(0xFF155DFC),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -101,7 +100,7 @@ class LiveCard extends StatelessWidget {
                           "Enroll Now",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -110,7 +109,7 @@ class LiveCard extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.blueAccent),
+                          side: BorderSide(color: Color(0xFF155DFC)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -119,7 +118,7 @@ class LiveCard extends StatelessWidget {
                         onPressed: onViewDetails,
                         child: const Text(
                           "View Details",
-                          style: TextStyle(color: Colors.blueAccent),
+                          style: TextStyle(color: Color(0xFF155DFC)),
                         ),
                       ),
                     ),

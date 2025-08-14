@@ -76,7 +76,7 @@ class CourseCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.blueAccent,
+                      color: Color(0xFF155DFC),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -132,7 +132,7 @@ class CourseCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
+                        color: Color(0xFF155DFC),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -152,7 +152,7 @@ class CourseCard extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Color(0xFF155DFC),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -163,7 +163,7 @@ class CourseCard extends StatelessWidget {
                           "Enroll Now",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -172,7 +172,7 @@ class CourseCard extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.blueAccent),
+                          side: BorderSide(color: Color(0xFF155DFC)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -181,7 +181,7 @@ class CourseCard extends StatelessWidget {
                         onPressed: onViewDetails,
                         child: const Text(
                           "View Details",
-                          style: TextStyle(color: Colors.blueAccent),
+                          style: TextStyle(color: Color(0xFF155DFC)),
                         ),
                       ),
                     ),

@@ -72,7 +72,7 @@ class EducatorCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.blueAccent.withOpacity(0.85),
+                      color: Color(0xff155DFC),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -124,8 +124,8 @@ class EducatorCard extends StatelessWidget {
                     width: double.infinity,
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.blueAccent,
-                        side: const BorderSide(color: Colors.blueAccent),
+                        foregroundColor: Color(0xff155DFC),
+                        side: const BorderSide(color: Color(0xff155DFC)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -148,7 +148,7 @@ class EducatorCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16, color: Colors.blueAccent),
+        Icon(icon, size: 16, color: Color(0xFF155DFC)),
         const SizedBox(width: 6),
         Expanded(
           child: RichText(
