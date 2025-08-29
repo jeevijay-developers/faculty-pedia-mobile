@@ -1,5 +1,6 @@
 import 'package:facultypedia/components/course_card.dart';
 import 'package:facultypedia/components/test_series_card.dart';
+import 'package:facultypedia/screens/courses/course_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -277,7 +278,23 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 price: 2999,
                 oldPrice: 4999,
                 onEnroll: () {},
-                onViewDetails: () {},
+                onViewDetails: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CourseDetailsPage(
+                        title: "Complete Physics Course",
+                        educatorName: widget.name,
+                        description:
+                            "A comprehensive physics course for JEE/NEET.",
+                        durationText: "6 Months",
+                        price: 2999,
+                        oldPrice: 4999,
+                        imageUrl: widget.imageUrl,
+                      ),
+                    ),
+                  );
+                },
                 imageUrl: widget.imageUrl,
               ),
               CourseCard(
