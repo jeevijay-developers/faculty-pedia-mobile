@@ -1,4 +1,5 @@
 import 'package:facultypedia/screens/courses/courses_screen.dart';
+import 'package:facultypedia/screens/educators/educators_page.dart';
 import 'package:facultypedia/screens/help&support/help_home.dart';
 import 'package:facultypedia/screens/home/home.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +68,19 @@ class CustomDrawer extends StatelessWidget {
                         ),
                       );
                     }),
+                    _buildMenuItem(
+                      FontAwesomeIcons.chalkboardUser,
+                      "Educators",
+                      () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const EducatorsPage(),
+                          ),
+                        );
+                      },
+                    ),
                     _buildMenuItem(Icons.person_rounded, "Profile", () {}),
                     _buildMenuItem(FontAwesomeIcons.book, "Courses", () {
                       Navigator.pop(context);

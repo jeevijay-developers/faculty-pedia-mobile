@@ -9,7 +9,7 @@ class CourseCard extends StatelessWidget {
   final double oldPrice;
   final VoidCallback onEnroll;
   final VoidCallback onViewDetails;
-  final String imageUrl; // New field for thumbnail
+  final String imageUrl;
 
   const CourseCard({
     super.key,
@@ -27,7 +27,7 @@ class CourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 280,
+      width: 280, // perfect for horizontal scroll
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -43,7 +43,7 @@ class CourseCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top image with overlay
+          // Top Image with gradient + duration
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
             child: Stack(
@@ -71,12 +71,10 @@ class CourseCard extends StatelessWidget {
                   left: 10,
                   bottom: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Color(0xFF155DFC),
+                      color: const Color(0xFF155DFC),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -99,6 +97,7 @@ class CourseCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title
                 Text(
                   title,
                   style: const TextStyle(
@@ -109,6 +108,8 @@ class CourseCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
+
+                // Educator
                 Text(
                   "By $educatorName",
                   style: TextStyle(
@@ -118,6 +119,8 @@ class CourseCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
+
+                // Description
                 Text(
                   description,
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
@@ -125,6 +128,8 @@ class CourseCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 10),
+
+                // Price
                 Row(
                   children: [
                     Text(
@@ -147,12 +152,14 @@ class CourseCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
+
+                // Buttons
                 Row(
                   children: [
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF155DFC),
+                          backgroundColor: const Color(0xFF155DFC),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -172,7 +179,7 @@ class CourseCard extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Color(0xFF155DFC)),
+                          side: const BorderSide(color: Color(0xFF155DFC)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
