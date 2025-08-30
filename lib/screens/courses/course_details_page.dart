@@ -1,6 +1,6 @@
-import 'package:facultypedia/components/course_class_card.dart';
-import 'package:facultypedia/components/course_overview.dart';
-import 'package:facultypedia/components/test_series_card.dart';
+import 'package:facultypedia/components/courses/course_class_card.dart';
+import 'package:facultypedia/components/courses/course_overview.dart';
+import 'package:facultypedia/components/cards/test_series_card.dart';
 import 'package:flutter/material.dart';
 
 class CourseDetailsPage extends StatelessWidget {
@@ -8,8 +8,8 @@ class CourseDetailsPage extends StatelessWidget {
   final String educatorName;
   final String description;
   final String durationText;
-  final double price;
-  final double oldPrice;
+  final num price;
+  final num oldPrice;
   final String imageUrl;
 
   const CourseDetailsPage({

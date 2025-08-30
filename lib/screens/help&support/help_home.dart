@@ -1,5 +1,5 @@
 import 'package:facultypedia/components/custom_drawer.dart';
-import 'package:facultypedia/components/help_card.dart';
+import 'package:facultypedia/components/cards/help_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';

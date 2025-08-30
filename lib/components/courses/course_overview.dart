@@ -1,3 +1,4 @@
+import 'package:facultypedia/components/fullscreen_video.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -50,6 +51,7 @@ class CourseOverview extends StatelessWidget {
             children: [
               Expanded(
                 child: _videoCard(
+                  context,
                   "Course Introduction",
                   "https://youtu.be/jCVjudmnByk?si=32HT74QtsWX9KKPE",
                 ),
@@ -57,6 +59,7 @@ class CourseOverview extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _videoCard(
+                  context,
                   "Demo Video",
                   "https://youtu.be/jCVjudmnByk?si=32HT74QtsWX9KKPE",
                 ),
@@ -199,39 +202,63 @@ class _TimelineItem extends StatelessWidget {
   }
 }
 
-Widget _videoCard(String title, String videoUrl) {
+Widget _videoCard(BuildContext context, String title, String videoUrl) {
   final videoId = YoutubePlayer.convertUrlToId(videoUrl);
 
-  return Container(
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => FullScreenVideoPage(videoUrl: videoUrl),
         ),
-        const SizedBox(height: 8),
-
-        if (videoId != null)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: YoutubePlayer(
-              controller: YoutubePlayerController(
-                initialVideoId: videoId,
-                flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
+      );
+    },
+    child: Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(height: 8),
+          if (videoId != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.network(
+                    "https://img.youtube.com/vi/$videoId/hqdefault.jpg",
+                    height: 160,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  const Icon(Icons.play_circle_fill,
+                      size: 50, color: Colors.white),
+                ],
               ),
-              showVideoProgressIndicator: true,
-              progressIndicatorColor: Colors.blue,
+            )
+          else
+            Container(
+              height: 160,
+              decoration: BoxDecoration(
+                color: Colors.black12,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                child: Text("Invalid Video"),
+              ),
             ),
-          )
-        else
-          const Text("Invalid video URL"),
-      ],
+        ],
+      ),
     ),
   );
 }
+

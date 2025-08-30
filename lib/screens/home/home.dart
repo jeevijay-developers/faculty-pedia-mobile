@@ -1,6 +1,6 @@
 import 'package:facultypedia/components/custom_drawer.dart';
-import 'package:facultypedia/components/exam_button.dart';
-import 'package:facultypedia/components/feature_button.dart';
+import 'package:facultypedia/components/buttons/exam_button.dart';
+import 'package:facultypedia/components/buttons/feature_button.dart';
 import 'package:facultypedia/components/mytext.dart';
 import 'package:facultypedia/screens/exams/cbse/cbse_home.dart';
 import 'package:facultypedia/screens/exams/iit/iit_home.dart';

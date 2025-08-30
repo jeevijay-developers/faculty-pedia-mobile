@@ -5,8 +5,8 @@ class CourseCard extends StatelessWidget {
   final String educatorName;
   final String description;
   final String durationText;
-  final double price;
-  final double oldPrice;
+  final num price;
+  final num oldPrice;
   final VoidCallback onEnroll;
   final VoidCallback onViewDetails;
   final String imageUrl;
@@ -71,8 +71,10 @@ class CourseCard extends StatelessWidget {
                   left: 10,
                   bottom: 10,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF155DFC),
                       borderRadius: BorderRadius.circular(6),

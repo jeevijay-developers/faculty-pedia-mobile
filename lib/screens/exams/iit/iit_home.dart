@@ -1,8 +1,8 @@
-import 'package:facultypedia/components/course_card.dart';
+import 'package:facultypedia/components/courses/course_card.dart';
 import 'package:facultypedia/components/custom_drawer.dart';
-import 'package:facultypedia/components/educator_card.dart';
-import 'package:facultypedia/components/livecard.dart';
-import 'package:facultypedia/components/test_series_card.dart';
+import 'package:facultypedia/components/educator/educator_card.dart';
+import 'package:facultypedia/components/cards/livecard.dart';
+import 'package:facultypedia/components/cards/test_series_card.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

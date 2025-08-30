@@ -1,0 +1,271 @@
+{
+  "categories": [
+    {
+      "title": "Courses for CBSE",
+      "courses": [
+        {
+          "title": "CBSE Class 10 Science",
+          "educatorName": "Mr. Rajesh Kumar",
+          "description": "Complete NCERT Class 10 Science with experiments and problem solving.",
+          "durationText": "6 months starting from 5 Sep 2025",
+          "price": 3999,
+          "oldPrice": 5999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 50, "perClass": "1.5h", "totalClasses": 100, "enrolled": 5 },
+          "videos": [{ "title": "Science Overview", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-09-05", "endDate": "2026-03-05", "duration": "26 weeks" },
+          "longDescription": "CBSE Class 10 Science full syllabus with NCERT solutions, experiments, and past paper practice."
+        },
+        {
+          "title": "CBSE Class 12 Mathematics",
+          "educatorName": "Dr. Neha Sharma",
+          "description": "In-depth coverage of NCERT Class 12 Mathematics with problem-solving and exam strategies.",
+          "durationText": "8 months starting from 1 Sep 2025",
+          "price": 4999,
+          "oldPrice": 7499,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 70, "perClass": "2h", "totalClasses": 120, "enrolled": 20 },
+          "videos": [{ "title": "Math Demo", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-09-01", "endDate": "2026-05-01", "duration": "34 weeks" },
+          "longDescription": "Covers Class 12 NCERT syllabus, including calculus, algebra, and vectors, with practice papers."
+        },
+        {
+          "title": "CBSE Class 9 English",
+          "educatorName": "Ms. Kavita Joshi",
+          "description": "Complete NCERT Class 9 English literature and grammar.",
+          "durationText": "5 months starting from 15 Sep 2025",
+          "price": 2999,
+          "oldPrice": 4999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 40, "perClass": "1h", "totalClasses": 60, "enrolled": 10 },
+          "videos": [{ "title": "English Intro", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-09-15", "endDate": "2026-02-15", "duration": "20 weeks" },
+          "longDescription": "Class 9 English syllabus with NCERT textbook coverage, grammar, and writing practice."
+        },
+        {
+          "title": "CBSE Class 11 Physics",
+          "educatorName": "Prof. Amit Verma",
+          "description": "Physics concepts for Class 11 with NCERT examples and derivations.",
+          "durationText": "7 months starting from 10 Sep 2025",
+          "price": 4499,
+          "oldPrice": 6499,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 60, "perClass": "1.5h", "totalClasses": 90, "enrolled": 15 },
+          "videos": [{ "title": "Physics Basics", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-09-10", "endDate": "2026-04-10", "duration": "28 weeks" },
+          "longDescription": "Complete Class 11 Physics NCERT syllabus with solved examples and practice problems."
+        },
+        {
+          "title": "CBSE Class 12 Biology",
+          "educatorName": "Dr. Sneha Kapoor",
+          "description": "Full coverage of NCERT Class 12 Biology with diagrams and lab practice.",
+          "durationText": "6 months starting from 20 Sep 2025",
+          "price": 3999,
+          "oldPrice": 5999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 80, "perClass": "1.5h", "totalClasses": 80, "enrolled": 12 },
+          "videos": [{ "title": "Biology Overview", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-09-20", "endDate": "2026-03-20", "duration": "26 weeks" },
+          "longDescription": "NCERT Class 12 Biology with detailed explanation of all chapters and board exam preparation."
+        }
+      ]
+    },
+    {
+      "title": "Courses for NEET",
+      "courses": [
+        {
+          "title": "NEET Biology Foundation",
+          "educatorName": "Dr. Arjun Nair",
+          "description": "Detailed Biology syllabus for NEET including NCERT and PYQs.",
+          "durationText": "9 months starting from 1 Sep 2025",
+          "price": 9999,
+          "oldPrice": 12999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 120, "perClass": "2h", "totalClasses": 150, "enrolled": 40 },
+          "videos": [{ "title": "Biology Intro", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-09-01", "endDate": "2026-06-01", "duration": "36 weeks" },
+          "longDescription": "Covers full Biology syllabus for NEET with detailed diagrams, MCQs, and practice tests."
+        },
+        {
+          "title": "NEET Chemistry Crash Course",
+          "educatorName": "Dr. Ritu Sharma",
+          "description": "Fast-track Chemistry revision for NEET aspirants.",
+          "durationText": "3 months starting from 10 Sep 2025",
+          "price": 4999,
+          "oldPrice": 7999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 100, "perClass": "2h", "totalClasses": 40, "enrolled": 20 },
+          "videos": [{ "title": "Chemistry Quick Start", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-09-10", "endDate": "2025-12-10", "duration": "12 weeks" },
+          "longDescription": "Crash course covering Organic, Inorganic, and Physical Chemistry with important NEET PYQs."
+        },
+        {
+          "title": "NEET Physics Masterclass",
+          "educatorName": "Prof. Suresh Iyer",
+          "description": "Complete Physics for NEET with problem-solving.",
+          "durationText": "8 months starting from 15 Aug 2025",
+          "price": 8999,
+          "oldPrice": 11999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 90, "perClass": "2.5h", "totalClasses": 100, "enrolled": 30 },
+          "videos": [{ "title": "Physics Demo", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-08-15", "endDate": "2026-04-15", "duration": "32 weeks" },
+          "longDescription": "Covers mechanics, thermodynamics, electricity, and magnetism with NEET-specific practice."
+        },
+        {
+          "title": "NEET Zoology Advanced",
+          "educatorName": "Dr. Meenakshi Rao",
+          "description": "Zoology portion of NEET Biology with human physiology.",
+          "durationText": "6 months starting from 1 Oct 2025",
+          "price": 7999,
+          "oldPrice": 10999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 70, "perClass": "2h", "totalClasses": 90, "enrolled": 15 },
+          "videos": [{ "title": "Zoology Basics", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-10-01", "endDate": "2026-04-01", "duration": "26 weeks" },
+          "longDescription": "Zoology syllabus with NCERT coverage, diagrams, and chapter-wise tests."
+        },
+        {
+          "title": "NEET Botany Intensive",
+          "educatorName": "Prof. Kavya Menon",
+          "description": "Botany course covering plant physiology and morphology.",
+          "durationText": "7 months starting from 5 Sep 2025",
+          "price": 8499,
+          "oldPrice": 11499,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 80, "perClass": "2h", "totalClasses": 100, "enrolled": 18 },
+          "videos": [{ "title": "Botany Overview", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-09-05", "endDate": "2026-04-05", "duration": "30 weeks" },
+          "longDescription": "Botany portion of NEET Biology with NCERT focus and exam-centric preparation."
+        }
+      ]
+    },
+    {
+      "title": "Courses for JEE Advanced",
+      "courses": [
+        {
+          "title": "JEE Advanced Physics",
+          "educatorName": "Prof. Manish Khanna",
+          "description": "Advanced Physics for JEE with numerical problem solving.",
+          "durationText": "10 months starting from 1 Aug 2025",
+          "price": 11999,
+          "oldPrice": 14999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 100, "perClass": "3h", "totalClasses": 140, "enrolled": 35 },
+          "videos": [{ "title": "Physics Demo", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-08-01", "endDate": "2026-06-01", "duration": "40 weeks" },
+          "longDescription": "Covers mechanics, thermodynamics, and modern physics for JEE Advanced."
+        },
+        {
+          "title": "JEE Advanced Chemistry",
+          "educatorName": "Dr. Anjali Desai",
+          "description": "Comprehensive Chemistry for JEE Advanced aspirants.",
+          "durationText": "9 months starting from 15 Aug 2025",
+          "price": 10999,
+          "oldPrice": 13999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 80, "perClass": "2.5h", "totalClasses": 130, "enrolled": 28 },
+          "videos": [{ "title": "Chemistry Intro", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-08-15", "endDate": "2026-05-15", "duration": "38 weeks" },
+          "longDescription": "Organic, inorganic, and physical chemistry with higher-level problem solving."
+        },
+        {
+          "title": "JEE Advanced Mathematics",
+          "educatorName": "Dr. Rakesh Yadav",
+          "description": "Complete Mathematics for JEE Advanced preparation.",
+          "durationText": "11 months starting from 20 Jul 2025",
+          "price": 12999,
+          "oldPrice": 15999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 120, "perClass": "3h", "totalClasses": 160, "enrolled": 45 },
+          "videos": [{ "title": "Math Overview", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-07-20", "endDate": "2026-06-15", "duration": "44 weeks" },
+          "longDescription": "Covers full JEE Advanced syllabus with calculus, algebra, coordinate geometry, and probability."
+        },
+        {
+          "title": "JEE Advanced Mock Test Series",
+          "educatorName": "Team IIT Experts",
+          "description": "Series of full-length mock tests for JEE Advanced.",
+          "durationText": "4 months starting from 1 Jan 2026",
+          "price": 4999,
+          "oldPrice": 7999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 500, "perClass": "3h", "totalClasses": 20, "enrolled": 100 },
+          "videos": [{ "title": "Test Series Intro", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2026-01-01", "endDate": "2026-04-30", "duration": "16 weeks" },
+          "longDescription": "20 mock tests with detailed solutions and rank prediction for JEE Advanced."
+        },
+        {
+          "title": "JEE Advanced Crash Course",
+          "educatorName": "Prof. Sunil Agrawal",
+          "description": "Last minute revision course for JEE Advanced.",
+          "durationText": "3 months starting from 1 Apr 2026",
+          "price": 6999,
+          "oldPrice": 9999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 150, "perClass": "3h", "totalClasses": 45, "enrolled": 50 },
+          "videos": [{ "title": "Crash Course Intro", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2026-04-01", "endDate": "2026-06-30", "duration": "12 weeks" },
+          "longDescription": "Quick revision of all three subjects for JEE Advanced aspirants."
+        }
+      ]
+    },
+    {
+      "title": "Courses for JEE Mains",
+      "courses": [
+        {
+          "title": "English for Competitive Exams",
+          "educatorName": "Ms. Priya Mehta",
+          "description": "Complete English preparation for all competitive exams with grammar and comprehension.",
+          "durationText": "4 months starting from 10 Sep 2025",
+          "price": 4999,
+          "oldPrice": 6999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 60, "perClass": "2h", "totalClasses": 40, "enrolled": 0 },
+          "videos": [{ "title": "Course Introduction", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-09-10", "endDate": "2026-01-20", "duration": "20 weeks" },
+          "longDescription": "Comprehensive English course covering grammar, comprehension, and vocabulary with mock tests."
+        },
+        {
+          "title": "Chemistry Complete Package",
+          "educatorName": "Dr. Vikram Patel",
+          "description": "Comprehensive chemistry course covering organic, inorganic, and physical chemistry.",
+          "durationText": "7 months starting from 20 Aug 2025",
+          "price": 7499,
+          "oldPrice": 9499,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 80, "perClass": "2.5h", "totalClasses": 60, "enrolled": 12 },
+          "videos": [{ "title": "Chemistry Overview", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-08-20", "endDate": "2026-03-20", "duration": "30 weeks" },
+          "longDescription": "Full coverage of organic, inorganic, and physical chemistry with real exam-oriented practice."
+        },
+        {
+          "title": "Physics for Engineering",
+          "educatorName": "Prof. Anita Singh",
+          "description": "Advanced physics concepts for engineering entrance exams with practical applications.",
+          "durationText": "5 months starting from 1 Sep 2025",
+          "price": 6999,
+          "oldPrice": 9999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 100, "perClass": "3h", "totalClasses": 50, "enrolled": 25 },
+          "videos": [{ "title": "Physics Intro", "url": "https://youtu.be/jCVjudmnByk" }],
+          "timeline": { "startDate": "2025-08-20", "endDate": "2026-03-20", "duration": "30 weeks" },
+          "longDescription": "Full coverage of organic, inorganic, and physical chemistry with real exam-oriented practice."
+        },
+        {
+          "title": "Physics for Engineering",
+          "educatorName": "Prof. Anita Singh",
+          "description": "Advanced physics concepts for engineering entrance exams with practical applications.",
+          "durationText": "5 months starting from 1 Sep 2025",
+          "price": 6999,
+          "oldPrice": 9999,
+          "imageUrl": "https://placehold.co/600x400.png",
+          "stats": { "seatLimit": 100, "perClass": "3h", "totalClasses": 50, "enrolled": 25 },
+                    "videos": [{ "title": "Physics Intro", "url": "https://youtu.be/jCVjudmnByk" }],
+                    "timeline": { "startDate": "2025-08-20", "endDate": "2026-03-20", "duration": "30 weeks" },
+                    "longDescription": "Full coverage of organic, inorganic, and physical chemistry with real exam-oriented practice."
+                  }
+                ]
+              }
+            ]
+          }
