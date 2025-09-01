@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class CourseOverview extends StatelessWidget {
-  const CourseOverview({super.key});
+  final String description;
+  const CourseOverview({super.key, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,7 @@ class CourseOverview extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.grey.shade300),
             ),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -83,11 +84,7 @@ class CourseOverview extends StatelessWidget {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
-                Text(
-                  "Comprehensive Physics course for engineering aspirants covering mechanics, thermodynamics, waves, optics, and modern physics. "
-                  "Designed specifically for JEE Main and Advanced with extensive problem-solving sessions and conceptual clarity.",
-                  style: TextStyle(color: Colors.black87),
-                ),
+                Text(description, style: TextStyle(color: Colors.black87)),
               ],
             ),
           ),
@@ -240,8 +237,11 @@ Widget _videoCard(BuildContext context, String title, String videoUrl) {
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                  const Icon(Icons.play_circle_fill,
-                      size: 50, color: Colors.white),
+                  const Icon(
+                    Icons.play_circle_fill,
+                    size: 50,
+                    color: Colors.white,
+                  ),
                 ],
               ),
             )
@@ -252,13 +252,10 @@ Widget _videoCard(BuildContext context, String title, String videoUrl) {
                 color: Colors.black12,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Center(
-                child: Text("Invalid Video"),
-              ),
+              child: const Center(child: Text("Invalid Video")),
             ),
         ],
       ),
     ),
   );
 }
-
