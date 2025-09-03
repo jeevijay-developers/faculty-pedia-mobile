@@ -1,4 +1,5 @@
-import 'package:facultypedia/screens/home/home.dart';
+import 'package:facultypedia/router/router.dart';
+
 import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {
@@ -12,9 +13,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(),
+      initialRoute: AppRouter.login,
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }
-
-

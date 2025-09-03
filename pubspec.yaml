@@ -39,6 +39,13 @@ dependencies:
   url_launcher: ^6.3.2
   youtube_player_flutter: ^9.1.2
   intl: ^0.20.2
+  http: ^1.5.0
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.7
+  shared_preferences: ^2.5.3
+  lottie: ^3.3.1
+  flutter_html: ^3.0.0
+  flutter_svg: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +75,8 @@ flutter:
     - assets/images/fp.png
     - assets/data/
     - assets/data/courses.json
+    - assets/lottie/success.json
+    - assets/lottie/
 
   #   - images/a_dot_ham.jpeg
 

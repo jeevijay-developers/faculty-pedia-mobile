@@ -19,8 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+
 
     return Scaffold(
       backgroundColor: Colors.white,
