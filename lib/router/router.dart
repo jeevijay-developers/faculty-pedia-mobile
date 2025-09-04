@@ -1,5 +1,6 @@
 import 'package:facultypedia/screens/blogs/blog_screen.dart';
 import 'package:facultypedia/screens/profile/profile_screen.dart';
+import 'package:facultypedia/screens/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:facultypedia/screens/auth/login_page.dart';
 import 'package:facultypedia/screens/auth/signup_page.dart';
@@ -10,6 +11,7 @@ import 'package:facultypedia/screens/help&support/help_home.dart';
 import 'package:facultypedia/screens/profile/update_profile.dart';
 
 class AppRouter {
+  static const String splash = '/';
   static const String login = '/login';
   static const String signup = '/signup';
   static const String home = '/home';
@@ -20,9 +22,10 @@ class AppRouter {
   static const String updateProfile = '/updateProfile';
   static const String blog = '/blog';
 
-
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case splash:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       case login:
         return MaterialPageRoute(builder: (_) => const LoginPage());
       case signup:
@@ -40,18 +43,15 @@ class AppRouter {
       case updateProfile:
         final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => UpdateProfilePage(
-            token: args['token'],
-            userId: args['userId'],
-          ),
+          builder: (_) =>
+              UpdateProfilePage(token: args['token'], userId: args['userId']),
         );
       case blog:
         return MaterialPageRoute(builder: (_) => const BlogScreen());
       default:
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(child: Text('No route defined')),
-          ),
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text('No route defined'))),
         );
     }
   }

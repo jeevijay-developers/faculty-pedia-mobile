@@ -39,9 +39,24 @@ class UpdateProfileRequested extends AuthEvent {
   final String email;
   final String mobile;
 
-  UpdateProfileRequested(this.token, this.userId, this.name, this.email, this.mobile);
+  UpdateProfileRequested(
+    this.token,
+    this.userId,
+    this.name,
+    this.email,
+    this.mobile,
+  );
 
   @override
   List<Object?> get props => [token, userId, name, email, mobile];
 }
 
+class CheckAuthStatusRequested extends AuthEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class RefreshSessionRequested extends AuthEvent {
+  @override
+  List<Object?> get props => [];
+}

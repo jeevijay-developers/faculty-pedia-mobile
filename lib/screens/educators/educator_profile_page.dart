@@ -291,6 +291,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                         price: 2999,
                         oldPrice: 4999,
                         imageUrl: widget.imageUrl,
+                        tag: "Physics",
                       ),
                     ),
                   );

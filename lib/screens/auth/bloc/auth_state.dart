@@ -26,3 +26,12 @@ class AuthFailure extends AuthState {
   @override
   List<Object?> get props => [error];
 }
+
+class AuthAuthenticated extends AuthState {
+  final Map<String, dynamic> userData;
+
+  AuthAuthenticated(this.userData);
+
+  @override
+  List<Object?> get props => [userData];
+}

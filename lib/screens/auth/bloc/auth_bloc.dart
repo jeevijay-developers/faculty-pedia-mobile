@@ -39,11 +39,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final user = (data['user'] ?? {}) as Map<String, dynamic>;
         final token = data['TOKEN'] ?? data['token'];
 
+        // Store login timestamp for 7-day expiry
+        final loginTimestamp = DateTime.now().millisecondsSinceEpoch;
+
         await prefs.setString("token", token?.toString() ?? "");
-        await prefs.setString("userId", (user['_id'] ?? data['userId'] ?? "").toString());
-        await prefs.setString("name", (user['name'] ?? data['name'] ?? "").toString());
-        await prefs.setString("email", (user['email'] ?? data['email'] ?? "").toString());
-        await prefs.setString("mobile", (user['mobileNumber'] ?? data['mobileNumber'] ?? "").toString());
+        await prefs.setString(
+          "userId",
+          (user['_id'] ?? data['userId'] ?? "").toString(),
+        );
+        await prefs.setString(
+          "name",
+          (user['name'] ?? data['name'] ?? "").toString(),
+        );
+        await prefs.setString(
+          "email",
+          (user['email'] ?? data['email'] ?? "").toString(),
+        );
+        await prefs.setString(
+          "mobile",
+          (user['mobileNumber'] ?? data['mobileNumber'] ?? "").toString(),
+        );
+        await prefs.setInt("loginTimestamp", loginTimestamp);
 
         log("data ---> $data");
         emit(AuthSuccess(data));
@@ -54,7 +70,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<LogoutRequested>((event, emit) async {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
+      await prefs
+          .clear(); // This already clears everything including loginTimestamp
       emit(AuthInitial());
     });
 
@@ -91,13 +108,69 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
 
         // Update local values only for changed keys
-        if (fields.containsKey("name")) await prefs.setString("name", fields["name"]!);
-        if (fields.containsKey("email")) await prefs.setString("email", fields["email"]!);
-        if (fields.containsKey("mobileNumber")) await prefs.setString("mobile", fields["mobileNumber"]!);
+        if (fields.containsKey("name"))
+          await prefs.setString("name", fields["name"]!);
+        if (fields.containsKey("email"))
+          await prefs.setString("email", fields["email"]!);
+        if (fields.containsKey("mobileNumber"))
+          await prefs.setString("mobile", fields["mobileNumber"]!);
 
         emit(AuthSuccess(data));
       } catch (e) {
         emit(AuthFailure(e.toString()));
+      }
+    });
+
+    on<CheckAuthStatusRequested>((event, emit) async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString("token");
+        final loginTimestamp = prefs.getInt("loginTimestamp");
+
+        if (token == null || token.isEmpty || loginTimestamp == null) {
+          emit(AuthInitial());
+          return;
+        }
+
+        // Check if 7 days have passed (7 * 24 * 60 * 60 * 1000 milliseconds)
+        final currentTime = DateTime.now().millisecondsSinceEpoch;
+        final sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000;
+
+        if (currentTime - loginTimestamp > sevenDaysInMillis) {
+          // Session expired, clear data
+          await prefs.clear();
+          emit(AuthInitial());
+          return;
+        }
+
+        // Session is still valid, restore user data
+        final userData = {
+          'token': token,
+          'userId': prefs.getString("userId") ?? "",
+          'name': prefs.getString("name") ?? "",
+          'email': prefs.getString("email") ?? "",
+          'mobile': prefs.getString("mobile") ?? "",
+        };
+
+        emit(AuthAuthenticated(userData));
+      } catch (e) {
+        emit(AuthInitial());
+      }
+    });
+
+    on<RefreshSessionRequested>((event, emit) async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString("token");
+
+        if (token != null && token.isNotEmpty) {
+          // Refresh the login timestamp to extend session
+          final newTimestamp = DateTime.now().millisecondsSinceEpoch;
+          await prefs.setInt("loginTimestamp", newTimestamp);
+        }
+      } catch (e) {
+        // If there's an error, don't change the current state
+        log("Error refreshing session: $e");
       }
     });
   }
