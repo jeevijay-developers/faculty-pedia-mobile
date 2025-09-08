@@ -1,6 +1,8 @@
 import 'package:facultypedia/screens/blogs/blog_screen.dart';
 import 'package:facultypedia/screens/profile/profile_screen.dart';
 import 'package:facultypedia/screens/splash/splash_screen.dart';
+import 'package:facultypedia/screens/webinars/webinars_screen.dart';
+import 'package:facultypedia/screens/test_series/test_series_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:facultypedia/screens/auth/login_page.dart';
 import 'package:facultypedia/screens/auth/signup_page.dart';
@@ -17,6 +19,8 @@ class AppRouter {
   static const String home = '/home';
   static const String educators = '/educators';
   static const String courses = '/courses';
+  static const String webinars = '/webinars';
+  static const String testSeries = '/testSeries';
   static const String help = '/help';
   static const String profile = '/profile';
   static const String updateProfile = '/updateProfile';
@@ -36,6 +40,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const EducatorsPage());
       case courses:
         return MaterialPageRoute(builder: (_) => const CoursesPage());
+      case webinars:
+        return MaterialPageRoute(builder: (_) => const WebinarsScreen());
+      case testSeries:
+        return MaterialPageRoute(builder: (_) => const TestSeriesScreen());
       case help:
         return MaterialPageRoute(builder: (_) => const HelpHome());
       case profile:

@@ -5,10 +5,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-// components
-
-import 'package:facultypedia/components/custom_drawer.dart';
-
 // pages
 import 'package:facultypedia/screens/courses/course_details_page.dart';
 
@@ -21,117 +17,63 @@ class NeetHomePage extends StatefulWidget {
   State<NeetHomePage> createState() => _NeetHomePageState();
 }
 
-class _NeetHomePageState extends State<NeetHomePage> {
+class _NeetHomePageState extends State<NeetHomePage>
+    with TickerProviderStateMixin {
   List<dynamic> categories = [];
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearchExpanded = false;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     loadCourses();
   }
 
   Future<void> loadCourses() async {
-    try {
-      final String response = await rootBundle.loadString(
-        'assets/data/courses.json',
-      );
-      final data = await json.decode(response);
+    final String response = await rootBundle.loadString(
+      'assets/data/courses.json',
+    );
+    final data = await json.decode(response);
 
-      // ✅ Filter only "NEET" related courses - more flexible filtering
-      final filtered = (data["categories"] as List? ?? []).where((cat) {
-        final title = (cat["title"] ?? "").toString().toLowerCase();
-        return title.contains("neet") ||
-            title.contains("biology") ||
-            title.contains("chemistry") ||
-            title.contains("physics");
-      }).toList();
+    // ✅ Filter only "JEE Advanced" & "JEE Mains"
+    final filtered = (data["categories"] as List).where((cat) {
+      final title = cat["title"].toString().toLowerCase();
+      return title.contains("neet") || title.contains("jee mains");
+    }).toList();
 
-      setState(() {
-        categories = filtered;
-      });
+    setState(() {
+      categories = filtered;
+    });
+  }
 
-      // If no NEET courses found, add fallback courses
-      if (filtered.isEmpty) {
-        setState(() {
-          categories = [
-            {
-              "title": "NEET Biology",
-              "courses": [
-                {
-                  "title": "NEET Biology Complete Course",
-                  "educatorName": "Prof. Neha Sharma",
-                  "description":
-                      "Complete Biology preparation for NEET with detailed explanations",
-                  "durationText": "12 months",
-                  "price": 15999,
-                  "oldPrice": 20999,
-                  "imageUrl": "https://placehold.co/600x400.png",
-                  "tag": "NEET",
-                  "stats": {"enrolled": 150},
-                },
-              ],
-            },
-            {
-              "title": "NEET Chemistry",
-              "courses": [
-                {
-                  "title": "NEET Chemistry Master Class",
-                  "educatorName": "Dr. Ankur Gupta",
-                  "description":
-                      "Complete Chemistry preparation covering all NEET topics",
-                  "durationText": "10 months",
-                  "price": 14999,
-                  "oldPrice": 19999,
-                  "imageUrl": "https://placehold.co/600x400.png",
-                  "tag": "NEET",
-                  "stats": {"enrolled": 120},
-                },
-              ],
-            },
-            {
-              "title": "NEET Physics",
-              "courses": [
-                {
-                  "title": "NEET Physics Complete Package",
-                  "educatorName": "Dr. Rajiv Mehta",
-                  "description":
-                      "Complete Physics preparation for NEET entrance exam",
-                  "durationText": "10 months",
-                  "price": 13999,
-                  "oldPrice": 18999,
-                  "imageUrl": "https://placehold.co/600x400.png",
-                  "tag": "NEET",
-                  "stats": {"enrolled": 100},
-                },
-              ],
-            },
-          ];
-        });
-      }
-    } catch (e) {
-      print('Error loading courses: $e');
-      // Set fallback categories on error
-      setState(() {
-        categories = [
-          {
-            "title": "NEET Preparation",
-            "courses": [
-              {
-                "title": "Complete NEET Preparation",
-                "educatorName": "Expert Faculty",
-                "description": "Comprehensive NEET preparation course",
-                "durationText": "12 months",
-                "price": 19999,
-                "oldPrice": 25999,
-                "imageUrl": "https://placehold.co/600x400.png",
-                "tag": "NEET",
-                "stats": {"enrolled": 200},
-              },
-            ],
-          },
-        ];
-      });
-    }
+  List<dynamic> get _filteredCategories {
+    if (_searchQuery.isEmpty) return categories;
+
+    return categories.where((category) {
+      final title = category["title"]?.toString().toLowerCase() ?? '';
+      final description =
+          category["description"]?.toString().toLowerCase() ?? '';
+      final query = _searchQuery.toLowerCase();
+
+      return title.contains(query) || description.contains(query);
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -151,14 +93,30 @@ class _NeetHomePageState extends State<NeetHomePage> {
               color: kPrimaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.menu, color: kPrimaryColor, size: 16),
+            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 16),
           ),
-          onPressed: () => scaffoldKey.currentState?.openDrawer(),
+          onPressed: () => Navigator.pop(context),
         ),
-        title: Container(
-          height: 40,
-          child: Image.asset("assets/images/fp.png"),
-        ),
+        title: _isSearchExpanded
+            ? FadeTransition(
+                opacity: _fadeAnimation,
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: 'Search NEET courses...',
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                  ),
+                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                ),
+              )
+            : Container(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
         actions: [
           IconButton(
@@ -168,14 +126,29 @@ class _NeetHomePageState extends State<NeetHomePage> {
                 color: kPrimaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.search, color: kPrimaryColor, size: 20),
+              child: Icon(
+                _isSearchExpanded ? Icons.close : Icons.search,
+                color: kPrimaryColor,
+                size: 20,
+              ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                if (_isSearchExpanded) {
+                  _isSearchExpanded = false;
+                  _searchController.clear();
+                  _searchQuery = '';
+                  _animationController.reverse();
+                } else {
+                  _isSearchExpanded = true;
+                  _animationController.forward();
+                }
+              });
+            },
           ),
           const SizedBox(width: 8),
         ],
       ),
-      drawer: const CustomDrawer(),
       body: categories.isEmpty
           ? Center(
               child: CircularProgressIndicator(
@@ -226,7 +199,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                   // Featured Educators Section
                   _buildModernSection(
                     "Featured Educators",
-                    "Top-rated instructors for NEET preparation",
+                    "Top-rated instructors for IIT-JEE preparation",
                     CarouselSlider(
                       options: CarouselOptions(
                         height: 320,
@@ -260,7 +233,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                                     rating: 4.8,
                                     reviews: 120,
                                     followers: 500,
-                                    tag: "NEET",
+                                    tag: "IIT-JEE",
                                     imageUrl:
                                         "https://placehold.co/600x400.png",
                                     youtubeUrl: "https://www.youtube.com/",
@@ -271,47 +244,6 @@ class _NeetHomePageState extends State<NeetHomePage> {
                                           "https://www.linkedin.com/in/ankur-gupta",
                                       "Twitter":
                                           "https://twitter.com/ankur_gupta",
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(right: 16, left: 4),
-                          child: _buildModernEducatorCard(
-                            "Prof. Neha Sharma",
-                            "Biology",
-                            "PhD, Biology",
-                            "15 years",
-                            "Biotechnology & Genetics",
-                            "https://placehold.co/600x400.png",
-                            () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EducatorProfilePage(
-                                    name: "Prof. Neha Sharma",
-                                    subject: "Biology",
-                                    description:
-                                        "Expert in Biotechnology & Genetics",
-                                    education: "PhD, Biology",
-                                    experience: "15 years",
-                                    rating: 4.9,
-                                    reviews: 95,
-                                    followers: 750,
-                                    tag: "NEET",
-                                    imageUrl:
-                                        "https://placehold.co/600x400.png",
-                                    youtubeUrl: "https://www.youtube.com/",
-                                    email: "neha.sharma@example.com",
-                                    phone: "123-456-7891",
-                                    socialLinks: {
-                                      "LinkedIn":
-                                          "https://www.linkedin.com/in/neha-sharma",
-                                      "Twitter":
-                                          "https://twitter.com/neha_sharma",
                                     },
                                   ),
                                 ),
@@ -340,14 +272,14 @@ class _NeetHomePageState extends State<NeetHomePage> {
                                     education: "PhD, Physics",
                                     experience: "10 years",
                                     rating: 4.7,
-                                    reviews: 80,
-                                    followers: 600,
-                                    tag: "NEET",
+                                    reviews: 100,
+                                    followers: 450,
+                                    tag: "IIT-JEE",
                                     imageUrl:
                                         "https://placehold.co/600x400.png",
                                     youtubeUrl: "https://www.youtube.com/",
                                     email: "rajiv.mehta@example.com",
-                                    phone: "123-456-7892",
+                                    phone: "987-654-3210",
                                     socialLinks: {
                                       "LinkedIn":
                                           "https://www.linkedin.com/in/rajiv-mehta",
@@ -365,14 +297,14 @@ class _NeetHomePageState extends State<NeetHomePage> {
                   ),
 
                   // Course Categories
-                  ...categories.map((category) {
-                    return _buildCategorySection(category);
+                  ..._filteredCategories.map((category) {
+                    return _buildModernCategorySection(context, category);
                   }).toList(),
 
                   // Live Courses Section
                   _buildModernSection(
-                    "🔴 Live Courses",
-                    "Join interactive classes for real-time learning",
+                    "1 V 1 Live Course Classes",
+                    "Personalized one-on-one learning sessions",
                     CarouselSlider(
                       options: CarouselOptions(
                         height: 380,
@@ -387,7 +319,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                           margin: const EdgeInsets.only(right: 16, left: 4),
                           child: _buildModernLiveCard(
                             'Physics Concepts Simplified',
-                            "Dr. Rajiv Mehta",
+                            "Dr Rajiv Mehta",
                             "Ph.D., Physics",
                             "Physics",
                             38,
@@ -399,15 +331,15 @@ class _NeetHomePageState extends State<NeetHomePage> {
                                 MaterialPageRoute(
                                   builder: (_) => CourseDetailsPage(
                                     title: 'Physics Concepts Simplified',
-                                    educatorName: "Dr. Rajiv Mehta",
+                                    educatorName: "Dr Rajiv Mehta",
                                     description:
-                                        "Interactive live physics sessions for NEET preparation",
+                                        "A deep dive into the fundamental concepts of Physics.",
                                     durationText: "38 hours",
                                     price: 14500,
-                                    oldPrice: 18000,
+                                    oldPrice: 16000,
                                     imageUrl:
                                         'https://placehold.co/600x400.png',
-                                    tag: 'Live',
+                                    tag: 'Physics',
                                   ),
                                 ),
                               );
@@ -417,59 +349,28 @@ class _NeetHomePageState extends State<NeetHomePage> {
                         Container(
                           margin: const EdgeInsets.only(right: 16, left: 4),
                           child: _buildModernLiveCard(
-                            'Biology Master Class',
-                            "Prof. Neha Sharma",
-                            "Ph.D., Biology",
-                            "Biology",
-                            42,
-                            "16,500",
-                            'https://placehold.co/600x400.png',
-                            () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => CourseDetailsPage(
-                                    title: 'Biology Master Class',
-                                    educatorName: "Prof. Neha Sharma",
-                                    description:
-                                        "Comprehensive biology course for medical entrance exams",
-                                    durationText: "42 hours",
-                                    price: 16500,
-                                    oldPrice: 20000,
-                                    imageUrl:
-                                        'https://placehold.co/600x400.png',
-                                    tag: 'Live',
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(right: 16, left: 4),
-                          child: _buildModernLiveCard(
-                            'Chemistry Complete Package',
-                            "Dr. Ankur Gupta",
+                            'Advanced Chemistry',
+                            "Dr Ankur Gupta",
                             "Ph.D., Chemistry",
                             "Chemistry",
-                            45,
-                            "18,000",
+                            40,
+                            "15,000",
                             'https://placehold.co/600x400.png',
                             () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => CourseDetailsPage(
-                                    title: 'Chemistry Complete Package',
-                                    educatorName: "Dr. Ankur Gupta",
+                                    title: 'Advanced Chemistry',
+                                    educatorName: "Dr Ankur Gupta",
                                     description:
-                                        "Complete chemistry preparation with practical experiments",
-                                    durationText: "45 hours",
-                                    price: 18000,
-                                    oldPrice: 22000,
+                                        "An in-depth exploration of chemical principles.",
+                                    durationText: "40 hours",
+                                    price: 15000,
+                                    oldPrice: 16000,
                                     imageUrl:
                                         'https://placehold.co/600x400.png',
-                                    tag: 'Live',
+                                    tag: 'Chemistry',
                                   ),
                                 ),
                               );
@@ -487,6 +388,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
     );
   }
 
+  // Modern Section Builder
   Widget _buildModernSection(String title, String subtitle, Widget content) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
@@ -537,7 +439,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                       style: TextStyle(
                         color: kPrimaryColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                        fontSize: 14,
                       ),
                     ),
                     style: TextButton.styleFrom(
@@ -551,13 +453,14 @@ class _NeetHomePageState extends State<NeetHomePage> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           content,
         ],
       ),
     );
   }
 
+  // Modern Educator Card
   Widget _buildModernEducatorCard(
     String name,
     String subject,
@@ -570,81 +473,63 @@ class _NeetHomePageState extends State<NeetHomePage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image & Subject Tag
+            // Educator Image
             Container(
               height: 140,
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
-                color: kPrimaryColor.withOpacity(0.1),
+                image: DecorationImage(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
               ),
               child: Stack(
                 children: [
-                  Center(
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 3),
-                        color: Colors.grey[300],
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       ),
-                      child: ClipOval(
-                        child: Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey[300],
-                              child: Icon(
-                                Icons.person,
-                                size: 40,
-                                color: Colors.grey[600],
-                              ),
-                            );
-                          },
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value:
-                                    loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
-                        ),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.3),
+                        ],
                       ),
                     ),
                   ),
                   Positioned(
-                    top: 12,
-                    right: 12,
+                    bottom: 12,
+                    left: 12,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
+                        horizontal: 12,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
                         color: kPrimaryColor,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         subject,
@@ -660,7 +545,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
               ),
             ),
 
-            // Content
+            // Educator Content
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -670,59 +555,66 @@ class _NeetHomePageState extends State<NeetHomePage> {
                     Text(
                       name,
                       style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
                         color: Colors.black87,
+                        height: 1.3,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
+                      education,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
                       specialization,
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 14,
                         color: Colors.grey[600],
-                        height: 1.3,
+                        height: 1.4,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const Spacer(),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(
-                          Icons.school_outlined,
-                          size: 14,
-                          color: Colors.grey[500],
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            education,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.work_outline_outlined,
-                          size: 14,
-                          color: Colors.grey[500],
-                        ),
-                        const SizedBox(width: 4),
                         Text(
-                          experience,
+                          "$experience experience",
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: onTap,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kPrimaryColor,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            "View Profile",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],
@@ -737,38 +629,99 @@ class _NeetHomePageState extends State<NeetHomePage> {
     );
   }
 
-  Widget _buildCategorySection(dynamic category) {
-    final courses = (category["courses"] as List? ?? []);
-    final categoryTitle = category["title"] ?? "Courses";
+  // Modern Category Section (similar to courses screen)
+  Widget _buildModernCategorySection(
+    BuildContext context,
+    Map<String, dynamic> category,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Category Header
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        category["title"],
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "${(category["courses"] as List).length} courses available",
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: kPrimaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: TextButton.icon(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: kPrimaryColor,
+                    ),
+                    label: Text(
+                      "View All",
+                      style: TextStyle(
+                        color: kPrimaryColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
 
-    if (courses.isEmpty) {
-      return Container(); // Return empty container if no courses
-    }
-
-    return _buildModernSection(
-      categoryTitle,
-      "Choose from ${courses.length} expert-led courses",
-      CarouselSlider(
-        options: CarouselOptions(
-          height: 280,
-          enlargeCenterPage: false,
-          enableInfiniteScroll: courses.length > 2,
-          viewportFraction: 0.85,
-          autoPlay: courses.length > 2,
-          autoPlayInterval: const Duration(seconds: 6),
-          padEnds: false,
-        ),
-        items: courses.map((course) {
-          return Container(
-            margin: const EdgeInsets.only(right: 16, left: 4),
-            child: _buildModernCourseCard(context, course),
-          );
-        }).toList(),
+          // Course Cards Carousel
+          CarouselSlider(
+            options: CarouselOptions(
+              height: 420,
+              enlargeCenterPage: false,
+              enableInfiniteScroll: false,
+              viewportFraction: 0.85,
+              autoPlay: false,
+              padEnds: false,
+            ),
+            items: (category["courses"] as List).map((course) {
+              return Container(
+                margin: const EdgeInsets.only(right: 16, left: 4),
+                child: _buildModernCourseCard(context, course),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
 
-  // Modern Course Card (same as IIT screen)
+  // Modern Course Card (same as courses screen)
   Widget _buildModernCourseCard(
     BuildContext context,
     Map<String, dynamic> course,
@@ -779,20 +732,14 @@ class _NeetHomePageState extends State<NeetHomePage> {
           context,
           MaterialPageRoute(
             builder: (_) => CourseDetailsPage(
-              title: course["title"] ?? "Course Title",
-              educatorName:
-                  course["educatorName"] ?? course["educator"] ?? "Educator",
-              description:
-                  course["description"] ?? course["longDescription"] ?? "",
-              durationText:
-                  course["durationText"] ?? course["duration"] ?? "Duration",
-              price: course["price"] ?? 0,
-              oldPrice: course["oldPrice"] ?? course["price"] ?? 0,
-              imageUrl:
-                  course["imageUrl"] ??
-                  course["image"] ??
-                  "https://placehold.co/600x400.png",
-              tag: course["tag"] ?? "Course",
+              title: course["title"],
+              educatorName: course["educatorName"],
+              description: course["description"],
+              durationText: course["durationText"],
+              price: course["price"],
+              oldPrice: course["oldPrice"],
+              imageUrl: course["imageUrl"],
+              tag: course["tag"] ?? '',
             ),
           ),
         );
@@ -821,37 +768,13 @@ class _NeetHomePageState extends State<NeetHomePage> {
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
-                color: Colors.grey[200],
+                image: DecorationImage(
+                  image: NetworkImage(course["imageUrl"]),
+                  fit: BoxFit.cover,
+                ),
               ),
               child: Stack(
                 children: [
-                  // Background Image
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                      child: Image.network(
-                        course["imageUrl"] ??
-                            course["image"] ??
-                            "https://placehold.co/600x400.png",
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: Center(
-                              child: Icon(
-                                Icons.image_not_supported,
-                                size: 40,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
@@ -897,9 +820,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        course["durationText"] ??
-                            course["duration"] ??
-                            "Duration",
+                        course["durationText"],
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -920,7 +841,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      course["title"] ?? "Course Title",
+                      course["title"],
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -945,9 +866,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            course["educatorName"] ??
-                                course["educator"] ??
-                                "Educator",
+                            course["educatorName"],
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],
@@ -959,7 +878,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      course["description"] ?? course["longDescription"] ?? "",
+                      course["description"],
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],
@@ -985,7 +904,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                                 ),
                               ),
                             Text(
-                              "₹${course["price"] ?? 0}",
+                              "₹${course["price"]}",
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
@@ -1000,29 +919,14 @@ class _NeetHomePageState extends State<NeetHomePage> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => CourseDetailsPage(
-                                  title: course["title"] ?? "Course Title",
-                                  educatorName:
-                                      course["educatorName"] ??
-                                      course["educator"] ??
-                                      "Educator",
-                                  description:
-                                      course["description"] ??
-                                      course["longDescription"] ??
-                                      "",
-                                  durationText:
-                                      course["durationText"] ??
-                                      course["duration"] ??
-                                      "Duration",
-                                  price: course["price"] ?? 0,
-                                  oldPrice:
-                                      course["oldPrice"] ??
-                                      course["price"] ??
-                                      0,
-                                  imageUrl:
-                                      course["imageUrl"] ??
-                                      course["image"] ??
-                                      "https://placehold.co/600x400.png",
-                                  tag: course["tag"] ?? "Course",
+                                  title: course["title"],
+                                  educatorName: course["educatorName"],
+                                  description: course["description"],
+                                  durationText: course["durationText"],
+                                  price: course["price"],
+                                  oldPrice: course["oldPrice"],
+                                  imageUrl: course["imageUrl"],
+                                  tag: course["tag"] ?? '',
                                 ),
                               ),
                             );
@@ -1032,7 +936,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                             foregroundColor: Colors.white,
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
+                              horizontal: 20,
                               vertical: 12,
                             ),
                             shape: RoundedRectangleBorder(
@@ -1040,7 +944,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
                             ),
                           ),
                           child: const Text(
-                            "Enroll Now",
+                            "Enroll",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -1059,6 +963,7 @@ class _NeetHomePageState extends State<NeetHomePage> {
     );
   }
 
+  // Modern Live Card
   Widget _buildModernLiveCard(
     String title,
     String instructorName,

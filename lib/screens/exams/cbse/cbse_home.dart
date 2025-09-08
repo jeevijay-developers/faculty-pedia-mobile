@@ -3,9 +3,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-// components
-import 'package:facultypedia/components/custom_drawer.dart';
-
 // pages
 import 'package:facultypedia/screens/courses/course_details_page.dart';
 import 'package:facultypedia/screens/educators/educator_profile_page.dart';
@@ -19,14 +16,26 @@ class CBSEHome extends StatefulWidget {
   State<CBSEHome> createState() => _CBSEHomeState();
 }
 
-class _CBSEHomeState extends State<CBSEHome> {
+class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
   List<dynamic> allCourses = [];
   List<dynamic> filteredCourses = [];
   String? selectedClass;
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearchExpanded = false;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     loadCourses();
   }
 
@@ -53,14 +62,42 @@ class _CBSEHomeState extends State<CBSEHome> {
   void filterByClass(String? className) {
     setState(() {
       selectedClass = className;
-      if (className == null || className == "All") {
-        filteredCourses = allCourses;
-      } else {
-        filteredCourses = allCourses.where((course) {
-          return course['title'].toString().contains(className);
-        }).toList();
-      }
+      _applyFilters();
     });
+  }
+
+  void _applyFilters() {
+    List<dynamic> filtered = allCourses;
+
+    // Filter by class
+    if (selectedClass != null && selectedClass != "All") {
+      filtered = filtered.where((course) {
+        return course['title'].toString().contains(selectedClass!);
+      }).toList();
+    }
+
+    // Filter by search query
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered.where((course) {
+        final title = course['title']?.toString().toLowerCase() ?? '';
+        final description =
+            course['description']?.toString().toLowerCase() ?? '';
+        final query = _searchQuery.toLowerCase();
+
+        return title.contains(query) || description.contains(query);
+      }).toList();
+    }
+
+    setState(() {
+      filteredCourses = filtered;
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -80,18 +117,31 @@ class _CBSEHomeState extends State<CBSEHome> {
               color: kPrimaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              Icons.menu,
-              color: kPrimaryColor,
-              size: 16,
-            ),
+            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 16),
           ),
-          onPressed: () => scaffoldKey.currentState?.openDrawer(),
+          onPressed: () => Navigator.pop(context),
         ),
-        title: Container(
-          height: 40,
-          child: Image.asset("assets/images/fp.png"),
-        ),
+        title: _isSearchExpanded
+            ? FadeTransition(
+                opacity: _fadeAnimation,
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: 'Search CBSE courses...',
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                  ),
+                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                      _applyFilters();
+                    });
+                  },
+                ),
+              )
+            : Container(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
         actions: [
           IconButton(
@@ -101,14 +151,30 @@ class _CBSEHomeState extends State<CBSEHome> {
                 color: kPrimaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.search, color: kPrimaryColor, size: 20),
+              child: Icon(
+                _isSearchExpanded ? Icons.close : Icons.search,
+                color: kPrimaryColor,
+                size: 20,
+              ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                if (_isSearchExpanded) {
+                  _isSearchExpanded = false;
+                  _searchController.clear();
+                  _searchQuery = '';
+                  _animationController.reverse();
+                  _applyFilters();
+                } else {
+                  _isSearchExpanded = true;
+                  _animationController.forward();
+                }
+              });
+            },
           ),
           const SizedBox(width: 8),
         ],
       ),
-      drawer: const CustomDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -183,13 +249,21 @@ class _CBSEHomeState extends State<CBSEHome> {
                         labelText: "Choose class to filter courses",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: kPrimaryColor.withOpacity(0.3)),
+                          borderSide: BorderSide(
+                            color: kPrimaryColor.withOpacity(0.3),
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: kPrimaryColor, width: 2),
+                          borderSide: BorderSide(
+                            color: kPrimaryColor,
+                            width: 2,
+                          ),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       value: selectedClass,
                       items: [
@@ -276,7 +350,8 @@ class _CBSEHomeState extends State<CBSEHome> {
                               email: "priya.sharma@example.com",
                               phone: "123-456-7890",
                               socialLinks: {
-                                "LinkedIn": "https://www.linkedin.com/in/priya-sharma",
+                                "LinkedIn":
+                                    "https://www.linkedin.com/in/priya-sharma",
                                 "Twitter": "https://twitter.com/priya_sharma",
                               },
                             ),
@@ -313,7 +388,8 @@ class _CBSEHomeState extends State<CBSEHome> {
                               email: "amit.kumar@example.com",
                               phone: "987-654-3210",
                               socialLinks: {
-                                "LinkedIn": "https://www.linkedin.com/in/amit-kumar",
+                                "LinkedIn":
+                                    "https://www.linkedin.com/in/amit-kumar",
                                 "Twitter": "https://twitter.com/amit_kumar",
                               },
                             ),
@@ -328,39 +404,39 @@ class _CBSEHomeState extends State<CBSEHome> {
 
             // Courses Section
             _buildModernSection(
-              selectedClass != null && selectedClass != "All" 
-                ? "$selectedClass Courses" 
-                : "CBSE Courses",
+              selectedClass != null && selectedClass != "All"
+                  ? "$selectedClass Courses"
+                  : "CBSE Courses",
               "${filteredCourses.length} courses available",
               filteredCourses.isEmpty
-                ? Container(
-                    height: 200,
-                    child: Center(
-                      child: Text(
-                        "No courses found for the selected class",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
+                  ? Container(
+                      height: 200,
+                      child: Center(
+                        child: Text(
+                          "No courses found for the selected class",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ),
+                    )
+                  : CarouselSlider(
+                      options: CarouselOptions(
+                        height: 420,
+                        enlargeCenterPage: false,
+                        enableInfiniteScroll: false,
+                        viewportFraction: 0.85,
+                        autoPlay: false,
+                        padEnds: false,
+                      ),
+                      items: filteredCourses.map((course) {
+                        return Container(
+                          margin: const EdgeInsets.only(right: 16, left: 4),
+                          child: _buildModernCourseCard(context, course),
+                        );
+                      }).toList(),
                     ),
-                  )
-                : CarouselSlider(
-                    options: CarouselOptions(
-                      height: 420,
-                      enlargeCenterPage: false,
-                      enableInfiniteScroll: false,
-                      viewportFraction: 0.85,
-                      autoPlay: false,
-                      padEnds: false,
-                    ),
-                    items: filteredCourses.map((course) {
-                      return Container(
-                        margin: const EdgeInsets.only(right: 16, left: 4),
-                        child: _buildModernCourseCard(context, course),
-                      );
-                    }).toList(),
-                  ),
             ),
 
             const SizedBox(height: 20),

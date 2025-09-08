@@ -307,10 +307,30 @@ class _CustomDrawerState extends State<CustomDrawer>
                               ),
                             ),
                             _buildEnhancedCardItem(
+                              FontAwesomeIcons.video,
+                              'Webinars',
+                              'Live Learning Sessions',
+                              4,
+                              () => Navigator.pushReplacementNamed(
+                                context,
+                                AppRouter.webinars,
+                              ),
+                            ),
+                            _buildEnhancedCardItem(
+                              FontAwesomeIcons.clipboardList,
+                              'Test Series',
+                              'Practice & Assessment',
+                              5,
+                              () => Navigator.pushReplacementNamed(
+                                context,
+                                AppRouter.testSeries,
+                              ),
+                            ),
+                            _buildEnhancedCardItem(
                               Icons.settings_rounded,
                               'Settings',
                               'App Preferences',
-                              4,
+                              6,
                               () =>
                                   Navigator.pushNamed(context, AppRouter.help),
                             ),
@@ -318,7 +338,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                               Icons.info_outline_rounded,
                               'About Company',
                               'Learn More',
-                              5,
+                              7,
                               () => Navigator.pushReplacementNamed(
                                 context,
                                 AppRouter.help,

@@ -5,10 +5,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-// components
-
-import 'package:facultypedia/components/custom_drawer.dart';
-
 // pages
 import 'package:facultypedia/screens/courses/course_details_page.dart';
 
@@ -21,12 +17,25 @@ class IITHomePage extends StatefulWidget {
   State<IITHomePage> createState() => _IITHomePageState();
 }
 
-class _IITHomePageState extends State<IITHomePage> {
+class _IITHomePageState extends State<IITHomePage>
+    with TickerProviderStateMixin {
   List<dynamic> categories = [];
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearchExpanded = false;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     loadCourses();
   }
 
@@ -47,6 +56,26 @@ class _IITHomePageState extends State<IITHomePage> {
     });
   }
 
+  List<dynamic> get _filteredCategories {
+    if (_searchQuery.isEmpty) return categories;
+
+    return categories.where((category) {
+      final title = category["title"]?.toString().toLowerCase() ?? '';
+      final description =
+          category["description"]?.toString().toLowerCase() ?? '';
+      final query = _searchQuery.toLowerCase();
+
+      return title.contains(query) || description.contains(query);
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -64,14 +93,30 @@ class _IITHomePageState extends State<IITHomePage> {
               color: kPrimaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.menu, color: kPrimaryColor, size: 16),
+            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 16),
           ),
-          onPressed: () => scaffoldKey.currentState?.openDrawer(),
+          onPressed: () => Navigator.pop(context),
         ),
-        title: Container(
-          height: 40,
-          child: Image.asset("assets/images/fp.png"),
-        ),
+        title: _isSearchExpanded
+            ? FadeTransition(
+                opacity: _fadeAnimation,
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: 'Search IIT courses...',
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                  ),
+                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                ),
+              )
+            : Container(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
         actions: [
           IconButton(
@@ -81,14 +126,29 @@ class _IITHomePageState extends State<IITHomePage> {
                 color: kPrimaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.search, color: kPrimaryColor, size: 20),
+              child: Icon(
+                _isSearchExpanded ? Icons.close : Icons.search,
+                color: kPrimaryColor,
+                size: 20,
+              ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                if (_isSearchExpanded) {
+                  _isSearchExpanded = false;
+                  _searchController.clear();
+                  _searchQuery = '';
+                  _animationController.reverse();
+                } else {
+                  _isSearchExpanded = true;
+                  _animationController.forward();
+                }
+              });
+            },
           ),
           const SizedBox(width: 8),
         ],
       ),
-      drawer: const CustomDrawer(),
       body: categories.isEmpty
           ? Center(
               child: CircularProgressIndicator(
@@ -237,7 +297,7 @@ class _IITHomePageState extends State<IITHomePage> {
                   ),
 
                   // Course Categories
-                  ...categories.map((category) {
+                  ..._filteredCategories.map((category) {
                     return _buildModernCategorySection(context, category);
                   }).toList(),
 
