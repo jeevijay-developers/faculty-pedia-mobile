@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:facultypedia/screens/educators/educator_profile_page.dart';
+import 'package:facultypedia/router/router.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -294,6 +296,13 @@ class _IITHomePageState extends State<IITHomePage>
                         ),
                       ],
                     ),
+                    onViewAllPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.educators,
+                        arguments: {'category': 'IIT'},
+                      );
+                    },
                   ),
 
                   // Course Categories
@@ -379,6 +388,13 @@ class _IITHomePageState extends State<IITHomePage>
                         ),
                       ],
                     ),
+                    onViewAllPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.testSeries,
+                        arguments: {'category': 'JEE Advanced'},
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 20),
@@ -389,7 +405,12 @@ class _IITHomePageState extends State<IITHomePage>
   }
 
   // Modern Section Builder
-  Widget _buildModernSection(String title, String subtitle, Widget content) {
+  Widget _buildModernSection(
+    String title,
+    String subtitle,
+    Widget content, {
+    VoidCallback? onViewAllPressed,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
@@ -428,7 +449,7 @@ class _IITHomePageState extends State<IITHomePage>
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextButton.icon(
-                    onPressed: () {},
+                    onPressed: onViewAllPressed,
                     icon: Icon(
                       Icons.arrow_forward_ios,
                       size: 14,
@@ -672,7 +693,34 @@ class _IITHomePageState extends State<IITHomePage>
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      log("View All pressed");
+
+                      // Determine the appropriate category based on the course category title
+                      String categoryTitle = category["title"];
+                      String targetCategory;
+
+                      if (categoryTitle.contains("Mains") ||
+                          categoryTitle.contains("Main")) {
+                        targetCategory = "JEE Mains";
+                      } else if (categoryTitle.contains("Advanced") ||
+                          categoryTitle.contains("Advance")) {
+                        targetCategory = "JEE Advanced";
+                      } else {
+                        // Default fallback
+                        targetCategory = "JEE Advanced";
+                      }
+
+                      // Navigate to courses category page with the determined category
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.coursesCategory,
+                        arguments: {
+                          'category': targetCategory,
+                          'categoryTitle': categoryTitle,
+                        },
+                      );
+                    },
                     icon: Icon(
                       Icons.arrow_forward_ios,
                       size: 14,

@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:facultypedia/components/custom_drawer.dart';
 import 'package:facultypedia/screens/courses/course_details_page.dart';
+import 'package:facultypedia/router/router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 const Color kPrimaryColor = Color(0xFF4A90E2);
 
 class CoursesPage extends StatefulWidget {
-  const CoursesPage({super.key});
+  final String? preselectedCategory;
+
+  const CoursesPage({super.key, this.preselectedCategory});
 
   @override
   State<CoursesPage> createState() => _CoursesPageState();
@@ -18,11 +21,21 @@ class CoursesPage extends StatefulWidget {
 class _CoursesPageState extends State<CoursesPage>
     with TickerProviderStateMixin {
   List<dynamic> categories = [];
+  String selectedCategory = "All";
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
   bool _isSearchExpanded = false;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+
+  final List<String> categoryFilters = [
+    "All",
+    "JEE Advanced",
+    "JEE Mains",
+    "NEET",
+    "CBSE",
+    "Foundation",
+  ];
 
   @override
   void initState() {
@@ -34,6 +47,13 @@ class _CoursesPageState extends State<CoursesPage>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+
+    // Set preselected category if provided
+    if (widget.preselectedCategory != null &&
+        categoryFilters.contains(widget.preselectedCategory)) {
+      selectedCategory = widget.preselectedCategory!;
+    }
+
     loadCourses();
   }
 
@@ -48,16 +68,30 @@ class _CoursesPageState extends State<CoursesPage>
   }
 
   List<dynamic> get _filteredCategories {
-    if (_searchQuery.isEmpty) return categories;
+    var filtered = categories;
 
-    return categories.where((category) {
-      final title = category["title"]?.toString().toLowerCase() ?? '';
-      final description =
-          category["description"]?.toString().toLowerCase() ?? '';
-      final query = _searchQuery.toLowerCase();
+    // Filter by selected category
+    if (selectedCategory != "All") {
+      filtered = filtered.where((category) {
+        final title = category["title"]?.toString().toLowerCase() ?? '';
+        final selectedLower = selectedCategory.toLowerCase();
+        return title.contains(selectedLower);
+      }).toList();
+    }
 
-      return title.contains(query) || description.contains(query);
-    }).toList();
+    // Filter by search query
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered.where((category) {
+        final title = category["title"]?.toString().toLowerCase() ?? '';
+        final description =
+            category["description"]?.toString().toLowerCase() ?? '';
+        final query = _searchQuery.toLowerCase();
+
+        return title.contains(query) || description.contains(query);
+      }).toList();
+    }
+
+    return filtered;
   }
 
   @override
@@ -83,13 +117,13 @@ class _CoursesPageState extends State<CoursesPage>
               color: kPrimaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: FaIcon(
-              FontAwesomeIcons.bars,
-              color: kPrimaryColor,
-              size: 16,
-            ),
+            child: widget.preselectedCategory != null
+                ? Icon(Icons.arrow_back, color: kPrimaryColor, size: 16)
+                : FaIcon(FontAwesomeIcons.bars, color: kPrimaryColor, size: 16),
           ),
-          onPressed: () => scaffoldKey.currentState?.openDrawer(),
+          onPressed: widget.preselectedCategory != null
+              ? () => Navigator.pop(context)
+              : () => scaffoldKey.currentState?.openDrawer(),
         ),
         title: _isSearchExpanded
             ? FadeTransition(
@@ -143,7 +177,7 @@ class _CoursesPageState extends State<CoursesPage>
           const SizedBox(width: 8),
         ],
       ),
-      drawer: const CustomDrawer(),
+      drawer: widget.preselectedCategory != null ? null : const CustomDrawer(),
       body: categories.isEmpty
           ? Center(
               child: CircularProgressIndicator(
@@ -188,6 +222,49 @@ class _CoursesPageState extends State<CoursesPage>
                           ),
                         ],
                       ),
+                    ),
+                  ),
+
+                  // Category Filter Chips
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 24),
+                    height: 50,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: categoryFilters.length,
+                      itemBuilder: (context, index) {
+                        final category = categoryFilters[index];
+                        final isSelected = selectedCategory == category;
+                        return Container(
+                          margin: const EdgeInsets.only(right: 12),
+                          child: FilterChip(
+                            label: Text(
+                              category,
+                              style: TextStyle(
+                                color: isSelected
+                                    ? Colors.white
+                                    : kPrimaryColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                            selected: isSelected,
+                            selectedColor: kPrimaryColor,
+                            backgroundColor: Colors.white,
+                            side: BorderSide(
+                              color: isSelected
+                                  ? kPrimaryColor
+                                  : Colors.grey[300]!,
+                            ),
+                            onSelected: (bool selected) {
+                              setState(() {
+                                selectedCategory = category;
+                              });
+                            },
+                          ),
+                        );
+                      },
                     ),
                   ),
 
@@ -245,7 +322,36 @@ class _CoursesPageState extends State<CoursesPage>
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Navigate to the dedicated category screen
+                      String categoryTitle = category["title"];
+                      String targetCategory;
+
+                      // Map category title to filter category
+                      if (categoryTitle.contains("JEE")) {
+                        if (categoryTitle.contains("Advanced")) {
+                          targetCategory = "JEE Advanced";
+                        } else {
+                          targetCategory = "JEE Mains";
+                        }
+                      } else if (categoryTitle.contains("NEET")) {
+                        targetCategory = "NEET";
+                      } else if (categoryTitle.contains("CBSE")) {
+                        targetCategory = "CBSE";
+                      } else {
+                        targetCategory = categoryTitle;
+                      }
+
+                      // Navigate to courses category screen
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.coursesCategory,
+                        arguments: {
+                          'category': targetCategory,
+                          'categoryTitle': categoryTitle,
+                        },
+                      );
+                    },
                     icon: Icon(
                       Icons.arrow_forward_ios,
                       size: 14,

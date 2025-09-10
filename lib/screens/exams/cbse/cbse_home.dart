@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 // pages
 import 'package:facultypedia/screens/courses/course_details_page.dart';
 import 'package:facultypedia/screens/educators/educator_profile_page.dart';
+import 'package:facultypedia/router/router.dart';
 
 const Color kPrimaryColor = Color(0xFF4A90E2);
 
@@ -400,6 +401,13 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                   ),
                 ],
               ),
+              onViewAllPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRouter.educators,
+                  arguments: {'category': 'CBSE'},
+                );
+              },
             ),
 
             // Courses Section
@@ -437,6 +445,13 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                         );
                       }).toList(),
                     ),
+              onViewAllPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRouter.courses,
+                  arguments: {'category': 'CBSE'},
+                );
+              },
             ),
 
             const SizedBox(height: 20),
@@ -447,7 +462,12 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
   }
 
   // Modern Section Builder
-  Widget _buildModernSection(String title, String subtitle, Widget content) {
+  Widget _buildModernSection(
+    String title,
+    String subtitle,
+    Widget content, {
+    VoidCallback? onViewAllPressed,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
@@ -486,7 +506,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextButton.icon(
-                    onPressed: () {},
+                    onPressed: onViewAllPressed,
                     icon: Icon(
                       Icons.arrow_forward_ios,
                       size: 14,

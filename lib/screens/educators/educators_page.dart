@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 const Color kPrimaryColor = Color(0xFF4A90E2);
 
 class EducatorsPage extends StatefulWidget {
-  const EducatorsPage({super.key});
+  final String? preselectedCategory;
+
+  const EducatorsPage({super.key, this.preselectedCategory});
 
   @override
   State<EducatorsPage> createState() => _EducatorsPageState();
@@ -28,6 +30,9 @@ class _EducatorsPageState extends State<EducatorsPage>
     "Physics",
     "Chemistry",
     "Biology",
+    "IIT",
+    "NEET",
+    "CBSE",
   ];
 
   // 👩‍🏫 Sample educators data
@@ -117,6 +122,12 @@ class _EducatorsPageState extends State<EducatorsPage>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+
+    // Set preselected category if provided
+    if (widget.preselectedCategory != null &&
+        categories.contains(widget.preselectedCategory)) {
+      selectedCategory = widget.preselectedCategory!;
+    }
   }
 
   @override
@@ -146,9 +157,17 @@ class _EducatorsPageState extends State<EducatorsPage>
               color: kPrimaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.menu, color: kPrimaryColor, size: 16),
+            child: Icon(
+              widget.preselectedCategory != null
+                  ? Icons.arrow_back
+                  : Icons.menu,
+              color: kPrimaryColor,
+              size: 16,
+            ),
           ),
-          onPressed: () => scaffoldKey.currentState?.openDrawer(),
+          onPressed: widget.preselectedCategory != null
+              ? () => Navigator.pop(context)
+              : () => scaffoldKey.currentState?.openDrawer(),
         ),
         title: _isSearchExpanded
             ? FadeTransition(
@@ -202,7 +221,7 @@ class _EducatorsPageState extends State<EducatorsPage>
           const SizedBox(width: 8),
         ],
       ),
-      drawer: const CustomDrawer(),
+      drawer: widget.preselectedCategory != null ? null : const CustomDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [

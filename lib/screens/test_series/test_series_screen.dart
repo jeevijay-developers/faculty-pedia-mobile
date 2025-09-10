@@ -5,7 +5,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 const Color kPrimaryColor = Color(0xFF4A90E2);
 
 class TestSeriesScreen extends StatefulWidget {
-  const TestSeriesScreen({super.key});
+  final String? preselectedCategory;
+
+  const TestSeriesScreen({super.key, this.preselectedCategory});
 
   @override
   State<TestSeriesScreen> createState() => _TestSeriesScreenState();
@@ -14,7 +16,6 @@ class TestSeriesScreen extends StatefulWidget {
 class _TestSeriesScreenState extends State<TestSeriesScreen>
     with TickerProviderStateMixin {
   String _selectedCategory = 'All';
-  String _selectedLevel = 'All';
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
   bool _isSearchExpanded = false;
@@ -28,14 +29,13 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
     'NEET',
     'CBSE',
   ];
-  final List<String> _levels = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 
   final List<Map<String, dynamic>> _testSeries = [
     {
       'id': 1,
       'title': 'JEE Main Physics Mock Test Series',
       'category': 'JEE Main',
-      'level': 'Intermediate',
+
       'instructor': 'Dr. Rajesh Kumar',
       'totalTests': 25,
       'completedTests': 8,
@@ -60,7 +60,6 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
       'id': 2,
       'title': 'NEET Biology Complete Test Series',
       'category': 'NEET',
-      'level': 'Advanced',
       'instructor': 'Dr. Priya Sharma',
       'totalTests': 30,
       'completedTests': 0,
@@ -85,7 +84,6 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
       'id': 3,
       'title': 'JEE Advanced Mathematics',
       'category': 'JEE Advanced',
-      'level': 'Advanced',
       'instructor': 'Prof. Ankit Singh',
       'totalTests': 20,
       'completedTests': 5,
@@ -110,7 +108,6 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
       'id': 4,
       'title': 'CBSE Class 12 Chemistry',
       'category': 'CBSE',
-      'level': 'Beginner',
       'instructor': 'Ms. Kavya Patel',
       'totalTests': 15,
       'completedTests': 12,
@@ -139,7 +136,6 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
       'id': 5,
       'title': 'NEET Physics Crash Course Tests',
       'category': 'NEET',
-      'level': 'Intermediate',
       'instructor': 'Dr. Vikash Gupta',
       'totalTests': 18,
       'completedTests': 0,
@@ -172,14 +168,39 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+
+    // Set preselected category if provided
+    if (widget.preselectedCategory != null) {
+      String mappedCategory = _mapCategoryToTestSeries(
+        widget.preselectedCategory!,
+      );
+      if (_categories.contains(mappedCategory)) {
+        _selectedCategory = mappedCategory;
+      }
+    }
+  }
+
+  // Map category from navigation arguments to test series categories
+  String _mapCategoryToTestSeries(String category) {
+    switch (category) {
+      case 'IIT':
+        return 'JEE Advanced';
+      case 'JEE Advanced':
+        return 'JEE Advanced';
+      case 'NEET':
+        return 'NEET';
+      case 'CBSE':
+        return 'CBSE';
+      default:
+        return category;
+    }
   }
 
   List<Map<String, dynamic>> get _filteredTests {
     return _testSeries.where((test) {
       bool categoryMatch =
           _selectedCategory == 'All' || test['category'] == _selectedCategory;
-      bool levelMatch =
-          _selectedLevel == 'All' || test['level'] == _selectedLevel;
+
       bool searchMatch =
           _searchQuery.isEmpty ||
           test['title'].toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -189,7 +210,7 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
           test['topics'].any(
             (topic) => topic.toLowerCase().contains(_searchQuery.toLowerCase()),
           );
-      return categoryMatch && levelMatch && searchMatch;
+      return categoryMatch && searchMatch;
     }).toList();
   }
 
@@ -207,7 +228,7 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.grey[50],
-      drawer: const CustomDrawer(),
+      drawer: widget.preselectedCategory != null ? null : const CustomDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -218,9 +239,17 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
               color: kPrimaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.menu, color: kPrimaryColor, size: 20),
+            child: Icon(
+              widget.preselectedCategory != null
+                  ? Icons.arrow_back
+                  : Icons.menu,
+              color: kPrimaryColor,
+              size: 20,
+            ),
           ),
-          onPressed: () => scaffoldKey.currentState?.openDrawer(),
+          onPressed: widget.preselectedCategory != null
+              ? () => Navigator.pop(context)
+              : () => scaffoldKey.currentState?.openDrawer(),
         ),
         title: _isSearchExpanded
             ? FadeTransition(
@@ -421,60 +450,6 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                         ),
 
                         const SizedBox(height: 24),
-
-                        // Level Filter
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Level",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: _levels.map((level) {
-                                bool isSelected = _selectedLevel == level;
-                                return GestureDetector(
-                                  onTap: () =>
-                                      setState(() => _selectedLevel = level),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? kPrimaryColor
-                                          : Colors.grey[100],
-                                      borderRadius: BorderRadius.circular(25),
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? kPrimaryColor
-                                            : Colors.grey[300]!,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      level,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.grey[700],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
@@ -713,14 +688,11 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                 const SizedBox(height: 16),
               ],
 
-              // Category and Level badges
+              // Category badges
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: [
-                  _buildBadge(test['category'], kPrimaryColor),
-                  _buildBadge(test['level'], _getLevelColor(test['level'])),
-                ],
+                children: [_buildBadge(test['category'], kPrimaryColor)],
               ),
 
               const SizedBox(height: 12),
@@ -916,19 +888,8 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
     );
   }
 
-  // Get Level Color
-  Color _getLevelColor(String level) {
-    switch (level) {
-      case 'Beginner':
-        return Colors.green;
-      case 'Intermediate':
-        return Colors.orange;
-      case 'Advanced':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
+  
+  
 
   // Start Test Function
   void _startTest(Map<String, dynamic> test) {
@@ -1048,8 +1009,8 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                 Text("Instructor: ${test['instructor']}"),
                 const SizedBox(height: 4),
                 Text("Category: ${test['category']}"),
-                const SizedBox(height: 4),
-                Text("Level: ${test['level']}"),
+                
+                
                 const SizedBox(height: 4),
                 Text("Duration: ${test['duration']} minutes"),
                 const SizedBox(height: 4),

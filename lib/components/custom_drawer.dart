@@ -327,10 +327,18 @@ class _CustomDrawerState extends State<CustomDrawer>
                               ),
                             ),
                             _buildEnhancedCardItem(
+                              Icons.article_rounded,
+                              'Blogs',
+                              'Educational Articles',
+                              6,
+                              () =>
+                                  Navigator.pushNamed(context, AppRouter.blog),
+                            ),
+                            _buildEnhancedCardItem(
                               Icons.settings_rounded,
                               'Settings',
                               'App Preferences',
-                              6,
+                              7,
                               () =>
                                   Navigator.pushNamed(context, AppRouter.help),
                             ),
@@ -338,7 +346,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                               Icons.info_outline_rounded,
                               'About Company',
                               'Learn More',
-                              7,
+                              8,
                               () => Navigator.pushReplacementNamed(
                                 context,
                                 AppRouter.help,

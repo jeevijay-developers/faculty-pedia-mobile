@@ -9,6 +9,7 @@ import 'package:facultypedia/screens/auth/signup_page.dart';
 import 'package:facultypedia/screens/home/home.dart';
 import 'package:facultypedia/screens/educators/educators_page.dart';
 import 'package:facultypedia/screens/courses/courses_screen.dart';
+import 'package:facultypedia/screens/courses/courses_category_screen.dart';
 import 'package:facultypedia/screens/help&support/help_home.dart';
 import 'package:facultypedia/screens/profile/update_profile.dart';
 
@@ -19,6 +20,7 @@ class AppRouter {
   static const String home = '/home';
   static const String educators = '/educators';
   static const String courses = '/courses';
+  static const String coursesCategory = '/coursesCategory';
   static const String webinars = '/webinars';
   static const String testSeries = '/testSeries';
   static const String help = '/help';
@@ -37,13 +39,31 @@ class AppRouter {
       case home:
         return MaterialPageRoute(builder: (_) => const MyHomePage());
       case educators:
-        return MaterialPageRoute(builder: (_) => const EducatorsPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => EducatorsPage(preselectedCategory: args?['category']),
+        );
       case courses:
-        return MaterialPageRoute(builder: (_) => const CoursesPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => CoursesPage(preselectedCategory: args?['category']),
+        );
+      case coursesCategory:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => CoursesCategoryScreen(
+            category: args?['category'] ?? 'All',
+            categoryTitle: args?['categoryTitle'],
+          ),
+        );
       case webinars:
         return MaterialPageRoute(builder: (_) => const WebinarsScreen());
       case testSeries:
-        return MaterialPageRoute(builder: (_) => const TestSeriesScreen());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) =>
+              TestSeriesScreen(preselectedCategory: args?['category']),
+        );
       case help:
         return MaterialPageRoute(builder: (_) => const HelpHome());
       case profile:

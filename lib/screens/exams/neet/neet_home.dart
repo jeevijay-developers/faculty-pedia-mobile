@@ -7,6 +7,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 // pages
 import 'package:facultypedia/screens/courses/course_details_page.dart';
+import 'package:facultypedia/router/router.dart';
 
 const Color kPrimaryColor = Color(0xFF4A90E2);
 
@@ -48,7 +49,7 @@ class _NeetHomePageState extends State<NeetHomePage>
     // ✅ Filter only "JEE Advanced" & "JEE Mains"
     final filtered = (data["categories"] as List).where((cat) {
       final title = cat["title"].toString().toLowerCase();
-      return title.contains("neet") || title.contains("jee mains");
+      return title.contains("neet");
     }).toList();
 
     setState(() {
@@ -199,7 +200,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                   // Featured Educators Section
                   _buildModernSection(
                     "Featured Educators",
-                    "Top-rated instructors for IIT-JEE preparation",
+                    "Top-rated instructors for NEET preparation",
                     CarouselSlider(
                       options: CarouselOptions(
                         height: 320,
@@ -294,6 +295,13 @@ class _NeetHomePageState extends State<NeetHomePage>
                         ),
                       ],
                     ),
+                    onViewAllPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.educators,
+                        arguments: {'category': 'NEET'},
+                      );
+                    },
                   ),
 
                   // Course Categories
@@ -379,6 +387,13 @@ class _NeetHomePageState extends State<NeetHomePage>
                         ),
                       ],
                     ),
+                    onViewAllPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.testSeries,
+                        arguments: {'category': 'NEET'},
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 20),
@@ -389,7 +404,12 @@ class _NeetHomePageState extends State<NeetHomePage>
   }
 
   // Modern Section Builder
-  Widget _buildModernSection(String title, String subtitle, Widget content) {
+  Widget _buildModernSection(
+    String title,
+    String subtitle,
+    Widget content, {
+    VoidCallback? onViewAllPressed,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
@@ -428,7 +448,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextButton.icon(
-                    onPressed: () {},
+                    onPressed: onViewAllPressed,
                     icon: Icon(
                       Icons.arrow_forward_ios,
                       size: 14,
@@ -672,7 +692,17 @@ class _NeetHomePageState extends State<NeetHomePage>
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Navigate to courses category page with NEET category
+                      Navigator.pushNamed(
+                        context,
+                        AppRouter.coursesCategory,
+                        arguments: {
+                          'category': 'NEET',
+                          'categoryTitle': category["title"] ?? 'NEET Courses',
+                        },
+                      );
+                    },
                     icon: Icon(
                       Icons.arrow_forward_ios,
                       size: 14,
