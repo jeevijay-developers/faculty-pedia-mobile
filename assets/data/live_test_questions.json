@@ -1,0 +1,336 @@
+{
+  "testId": "test_001",
+  "title": "JEE Main Physics Mock Test",
+  "subject": "Physics",
+  "duration": 60,
+  "totalMarks": 100,
+  "positiveMarks": 4,
+  "negativeMarks": -1,
+  "questions": [
+    {
+      "id": "q1",
+      "question": "A particle moves in a circular path of radius 0.5 m with a constant speed of 2 m/s. What is the centripetal acceleration?",
+      "type": "single_choice",
+      "options": [
+        "2 m/s²",
+        "4 m/s²", 
+        "8 m/s²",
+        "1 m/s²"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Centripetal acceleration = v²/r = (2)²/0.5 = 8 m/s²"
+    },
+    {
+      "id": "q2",
+      "question": "The unit of electric field intensity is:",
+      "type": "single_choice",
+      "options": [
+        "N/C",
+        "C/N",
+        "J/C",
+        "C/J"
+      ],
+      "correctAnswer": 0,
+      "explanation": "Electric field intensity = Force/Charge, so unit is N/C (Newton per Coulomb)"
+    },
+    {
+      "id": "q3",
+      "question": "Which of the following is NOT a vector quantity?",
+      "type": "single_choice",
+      "options": [
+        "Velocity",
+        "Acceleration",
+        "Speed",
+        "Force"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Speed is a scalar quantity as it has only magnitude. Velocity, acceleration, and force are vector quantities."
+    },
+    {
+      "id": "q4",
+      "question": "The work done by a conservative force around a closed path is:",
+      "type": "single_choice",
+      "options": [
+        "Always positive",
+        "Always negative", 
+        "Always zero",
+        "Depends on the path"
+      ],
+      "correctAnswer": 2,
+      "explanation": "For conservative forces, work done around a closed path is always zero."
+    },
+    {
+      "id": "q5",
+      "question": "A body of mass 2 kg is moving with velocity 10 m/s. Its kinetic energy is:",
+      "type": "single_choice",
+      "options": [
+        "20 J",
+        "100 J",
+        "200 J",
+        "400 J"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Kinetic Energy = (1/2)mv² = (1/2) × 2 × (10)² = 100 J"
+    },
+    {
+      "id": "q6",
+      "question": "The SI unit of power is:",
+      "type": "single_choice",
+      "options": [
+        "Joule",
+        "Newton",
+        "Watt",
+        "Pascal"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Watt is the SI unit of power, defined as energy per unit time (J/s)"
+    },
+    {
+      "id": "q7",
+      "question": "Which law states that 'Every action has an equal and opposite reaction'?",
+      "type": "single_choice",
+      "options": [
+        "Newton's First Law",
+        "Newton's Second Law",
+        "Newton's Third Law",
+        "Law of Conservation of Energy"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Newton's Third Law states that for every action, there is an equal and opposite reaction."
+    },
+    {
+      "id": "q8",
+      "question": "The dimensional formula for momentum is:",
+      "type": "single_choice",
+      "options": [
+        "[MLT⁻¹]",
+        "[MLT⁻²]",
+        "[ML⁻¹T⁻¹]",
+        "[M⁻¹LT⁻¹]"
+      ],
+      "correctAnswer": 0,
+      "explanation": "Momentum = mass × velocity, so dimensional formula is [M][LT⁻¹] = [MLT⁻¹]"
+    },
+    {
+      "id": "q9",
+      "question": "At what angle should a projectile be launched to achieve maximum range?",
+      "type": "single_choice",
+      "options": [
+        "30°",
+        "45°",
+        "60°",
+        "90°"
+      ],
+      "correctAnswer": 1,
+      "explanation": "For maximum range in projectile motion, the launch angle should be 45°"
+    },
+    {
+      "id": "q10",
+      "question": "The acceleration due to gravity on Earth is approximately:",
+      "type": "single_choice",
+      "options": [
+        "9.8 m/s",
+        "9.8 m/s²",
+        "98 m/s²",
+        "0.98 m/s²"
+      ],
+      "correctAnswer": 1,
+      "explanation": "The acceleration due to gravity on Earth is approximately 9.8 m/s²"
+    },
+    {
+      "id": "q11",
+      "question": "Which of the following waves can travel through vacuum?",
+      "type": "single_choice",
+      "options": [
+        "Sound waves",
+        "Water waves",
+        "Light waves",
+        "Seismic waves"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Light waves are electromagnetic waves and can travel through vacuum, unlike sound waves which need a medium."
+    },
+    {
+      "id": "q12",
+      "question": "The frequency of a wave is 50 Hz and its wavelength is 6 m. What is its speed?",
+      "type": "single_choice",
+      "options": [
+        "300 m/s",
+        "8.33 m/s",
+        "56 m/s",
+        "44 m/s"
+      ],
+      "correctAnswer": 0,
+      "explanation": "Wave speed = frequency × wavelength = 50 × 6 = 300 m/s"
+    },
+    {
+      "id": "q13",
+      "question": "The potential energy of a body at height h is mgh. What happens to this energy when the body falls freely?",
+      "type": "single_choice",
+      "options": [
+        "It is lost",
+        "It converts to kinetic energy",
+        "It increases",
+        "It remains constant"
+      ],
+      "correctAnswer": 1,
+      "explanation": "During free fall, potential energy converts to kinetic energy due to conservation of energy."
+    },
+    {
+      "id": "q14",
+      "question": "The resistance of a conductor depends on:",
+      "type": "single_choice",
+      "options": [
+        "Length only",
+        "Area of cross-section only",
+        "Material only",
+        "All of the above"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Resistance R = ρl/A, where ρ is resistivity (material property), l is length, and A is cross-sectional area."
+    },
+    {
+      "id": "q15",
+      "question": "Which quantity remains conserved in an isolated system?",
+      "type": "single_choice",
+      "options": [
+        "Kinetic energy only",
+        "Potential energy only",
+        "Total mechanical energy",
+        "Speed only"
+      ],
+      "correctAnswer": 2,
+      "explanation": "In an isolated system with only conservative forces, total mechanical energy is conserved."
+    },
+    {
+      "id": "q16",
+      "question": "The escape velocity from Earth's surface is approximately:",
+      "type": "single_choice",
+      "options": [
+        "11.2 km/s",
+        "7.9 km/s",
+        "15.0 km/s",
+        "9.8 km/s"
+      ],
+      "correctAnswer": 0,
+      "explanation": "The escape velocity from Earth's surface is approximately 11.2 km/s."
+    },
+    {
+      "id": "q17",
+      "question": "In simple harmonic motion, the acceleration is:",
+      "type": "single_choice",
+      "options": [
+        "Constant",
+        "Zero at equilibrium",
+        "Maximum at equilibrium",
+        "Proportional to displacement"
+      ],
+      "correctAnswer": 3,
+      "explanation": "In SHM, acceleration a = -ω²x, which is directly proportional to displacement from equilibrium."
+    },
+    {
+      "id": "q18",
+      "question": "The coefficient of restitution for a perfectly elastic collision is:",
+      "type": "single_choice",
+      "options": [
+        "0",
+        "1",
+        "Greater than 1",
+        "Negative"
+      ],
+      "correctAnswer": 1,
+      "explanation": "For perfectly elastic collision, coefficient of restitution e = 1."
+    },
+    {
+      "id": "q19",
+      "question": "Which type of lens is used to correct myopia (nearsightedness)?",
+      "type": "single_choice",
+      "options": [
+        "Convex lens",
+        "Concave lens",
+        "Cylindrical lens",
+        "Bifocal lens"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Concave lens is used to correct myopia as it diverges light rays before they enter the eye."
+    },
+    {
+      "id": "q20",
+      "question": "The magnetic field inside a long solenoid is:",
+      "type": "single_choice",
+      "options": [
+        "Zero",
+        "Uniform and parallel to axis",
+        "Non-uniform",
+        "Perpendicular to axis"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Inside a long solenoid, the magnetic field is uniform and parallel to the solenoid's axis."
+    },
+    {
+      "id": "q21",
+      "question": "The photoelectric effect was explained by:",
+      "type": "single_choice",
+      "options": [
+        "Newton",
+        "Einstein",
+        "Planck",
+        "Bohr"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Einstein explained the photoelectric effect using the concept of photons and won the Nobel Prize for this work."
+    },
+    {
+      "id": "q22",
+      "question": "The energy of a photon is given by:",
+      "type": "single_choice",
+      "options": [
+        "hf",
+        "mc²",
+        "½mv²",
+        "mgh"
+      ],
+      "correctAnswer": 0,
+      "explanation": "The energy of a photon is E = hf, where h is Planck's constant and f is frequency."
+    },
+    {
+      "id": "q23",
+      "question": "In which process does a nucleus split into smaller fragments?",
+      "type": "single_choice",
+      "options": [
+        "Nuclear fusion",
+        "Nuclear fission",
+        "Radioactive decay",
+        "Beta decay"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Nuclear fission is the process where a heavy nucleus splits into smaller fragments."
+    },
+    {
+      "id": "q24",
+      "question": "The half-life of a radioactive element is 10 years. What fraction remains after 30 years?",
+      "type": "single_choice",
+      "options": [
+        "1/2",
+        "1/4",
+        "1/8",
+        "1/16"
+      ],
+      "correctAnswer": 2,
+      "explanation": "After 3 half-lives (30 years), the remaining fraction is (1/2)³ = 1/8."
+    },
+    {
+      "id": "q25",
+      "question": "The phenomenon of bending of light around obstacles is called:",
+      "type": "single_choice",
+      "options": [
+        "Reflection",
+        "Refraction",
+        "Diffraction",
+        "Dispersion"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Diffraction is the bending of light waves around obstacles or through apertures."
+    }
+  ]
+}

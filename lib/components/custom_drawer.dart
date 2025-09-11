@@ -1,5 +1,6 @@
 import 'package:facultypedia/screens/auth/bloc/auth_bloc.dart';
 import 'package:facultypedia/screens/auth/bloc/auth_event.dart';
+import 'package:facultypedia/screens/live_test/live_test_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -287,10 +288,20 @@ class _CustomDrawerState extends State<CustomDrawer>
                               ),
                             ),
                             _buildEnhancedCardItem(
+                              Icons.favorite_rounded,
+                              'Following',
+                              'Followed Educators',
+                              2,
+                              () => Navigator.pushNamed(
+                                context,
+                                AppRouter.followedEducators,
+                              ),
+                            ),
+                            _buildEnhancedCardItem(
                               Icons.person_rounded,
                               'Profile',
                               'Manage Account',
-                              2,
+                              3,
                               () => Navigator.pushNamed(
                                 context,
                                 AppRouter.profile,
@@ -300,7 +311,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                               FontAwesomeIcons.book,
                               'Courses',
                               'Learning Materials',
-                              3,
+                              4,
                               () => Navigator.pushReplacementNamed(
                                 context,
                                 AppRouter.courses,
@@ -310,7 +321,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                               FontAwesomeIcons.video,
                               'Webinars',
                               'Live Learning Sessions',
-                              4,
+                              5,
                               () => Navigator.pushReplacementNamed(
                                 context,
                                 AppRouter.webinars,
@@ -320,17 +331,31 @@ class _CustomDrawerState extends State<CustomDrawer>
                               FontAwesomeIcons.clipboardList,
                               'Test Series',
                               'Practice & Assessment',
-                              5,
+                              6,
                               () => Navigator.pushReplacementNamed(
                                 context,
                                 AppRouter.testSeries,
                               ),
                             ),
                             _buildEnhancedCardItem(
+                              FontAwesomeIcons.stopwatch,
+                              'Live Tests',
+                              'Attempt Live Tests',
+                              7,
+                              () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LiveTestListScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            _buildEnhancedCardItem(
                               Icons.article_rounded,
                               'Blogs',
                               'Educational Articles',
-                              6,
+                              8,
                               () =>
                                   Navigator.pushNamed(context, AppRouter.blog),
                             ),
@@ -338,7 +363,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                               Icons.settings_rounded,
                               'Settings',
                               'App Preferences',
-                              7,
+                              9,
                               () =>
                                   Navigator.pushNamed(context, AppRouter.help),
                             ),
@@ -346,7 +371,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                               Icons.info_outline_rounded,
                               'About Company',
                               'Learn More',
-                              8,
+                              10,
                               () => Navigator.pushReplacementNamed(
                                 context,
                                 AppRouter.help,

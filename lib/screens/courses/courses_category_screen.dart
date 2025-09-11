@@ -52,8 +52,10 @@ class _CoursesCategoryScreenState extends State<CoursesCategoryScreen> {
           String categoryTitle =
               category["title"]?.toString().toLowerCase() ?? '';
           String targetCategory = widget.category.toLowerCase();
-          
-          print('CoursesCategoryScreen: Checking category "${category["title"]}" (lowercase: "$categoryTitle") against target "$targetCategory"');
+
+          print(
+            'CoursesCategoryScreen: Checking category "${category["title"]}" (lowercase: "$categoryTitle") against target "$targetCategory"',
+          );
 
           // Check if this category matches our target category
           bool categoryMatches = false;
@@ -62,22 +64,32 @@ class _CoursesCategoryScreenState extends State<CoursesCategoryScreen> {
               targetCategory.contains("jee main")) {
             categoryMatches =
                 categoryTitle.contains("jee") && categoryTitle.contains("main");
-            print('CoursesCategoryScreen: JEE Main check - categoryMatches = $categoryMatches');
+            print(
+              'CoursesCategoryScreen: JEE Main check - categoryMatches = $categoryMatches',
+            );
           } else if (targetCategory.contains("jee advanced") ||
               targetCategory.contains("jee advance")) {
             categoryMatches =
                 categoryTitle.contains("jee") &&
                 categoryTitle.contains("advance");
-            print('CoursesCategoryScreen: JEE Advanced check - categoryMatches = $categoryMatches');
+            print(
+              'CoursesCategoryScreen: JEE Advanced check - categoryMatches = $categoryMatches',
+            );
           } else if (targetCategory.contains("neet")) {
             categoryMatches = categoryTitle.contains("neet");
-            print('CoursesCategoryScreen: NEET check - categoryMatches = $categoryMatches');
+            print(
+              'CoursesCategoryScreen: NEET check - categoryMatches = $categoryMatches',
+            );
           } else if (targetCategory.contains("cbse")) {
             categoryMatches = categoryTitle.contains("cbse");
-            print('CoursesCategoryScreen: CBSE check - categoryMatches = $categoryMatches');
+            print(
+              'CoursesCategoryScreen: CBSE check - categoryMatches = $categoryMatches',
+            );
           } else {
             categoryMatches = categoryTitle.contains(targetCategory);
-            print('CoursesCategoryScreen: Default check - categoryMatches = $categoryMatches');
+            print(
+              'CoursesCategoryScreen: Default check - categoryMatches = $categoryMatches',
+            );
           }
 
           // If category matches, add all its courses

@@ -8,6 +8,7 @@ import 'package:facultypedia/screens/auth/login_page.dart';
 import 'package:facultypedia/screens/auth/signup_page.dart';
 import 'package:facultypedia/screens/home/home.dart';
 import 'package:facultypedia/screens/educators/educators_page.dart';
+import 'package:facultypedia/screens/educators/followed_educators_screen.dart';
 import 'package:facultypedia/screens/courses/courses_screen.dart';
 import 'package:facultypedia/screens/courses/courses_category_screen.dart';
 import 'package:facultypedia/screens/help&support/help_home.dart';
@@ -27,6 +28,7 @@ class AppRouter {
   static const String profile = '/profile';
   static const String updateProfile = '/updateProfile';
   static const String blog = '/blog';
+  static const String followedEducators = '/followedEducators';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -76,6 +78,8 @@ class AppRouter {
         );
       case blog:
         return MaterialPageRoute(builder: (_) => const BlogScreen());
+      case followedEducators:
+        return MaterialPageRoute(builder: (_) => const FollowedEducatorsScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>
