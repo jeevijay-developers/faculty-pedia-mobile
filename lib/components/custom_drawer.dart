@@ -1,11 +1,13 @@
 import 'package:facultypedia/screens/auth/bloc/auth_bloc.dart';
 import 'package:facultypedia/screens/auth/bloc/auth_event.dart';
+import 'package:facultypedia/screens/auth/bloc/auth_state.dart';
 import 'package:facultypedia/screens/live_test/live_test_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:facultypedia/router/router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/snackbar_utils.dart';
 
 const Color kPrimaryColor = Color(0xFF4A90E2);
 
@@ -57,392 +59,415 @@ class _CustomDrawerState extends State<CustomDrawer>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(_slideAnimation.value * 300, 0),
-          child: Opacity(
-            opacity: _fadeAnimation.value,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(40),
-                bottomRight: Radius.circular(40),
-              ),
-              child: Drawer(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0xFFFBFDFF),
-                        Color(0xFFF7FAFF),
-                        Color(0xFFF2F6FB),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        print("Auth state changed: ${state.runtimeType}");
+        if (state is LogoutSuccess) {
+          print("Logout success detected");
+          SnackBarUtils.showSuccess(context, 'Logged out successfully!');
+          // Navigate to login screen
+          Navigator.pushReplacementNamed(context, AppRouter.login);
+        } else if (state is AuthFailure) {
+          print("Auth failure detected: ${state.error}");
+          SnackBarUtils.showError(context, 'Logout failed: ${state.error}');
+        }
+      },
+      child: AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(_slideAnimation.value * 300, 0),
+            child: Opacity(
+              opacity: _fadeAnimation.value,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
+                ),
+                child: Drawer(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFFBFDFF),
+                          Color(0xFFF7FAFF),
+                          Color(0xFFF2F6FB),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      // Enhanced Header with decorative elements
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(24, 40, 24, 32),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              kPrimaryColor.withOpacity(0.08),
-                              Colors.white.withOpacity(0.95),
-                              Colors.white,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: kPrimaryColor.withOpacity(0.05),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
+                    child: Column(
+                      children: [
+                        // Enhanced Header with decorative elements
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(24, 40, 24, 32),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                kPrimaryColor.withOpacity(0.08),
+                                Colors.white.withOpacity(0.95),
+                                Colors.white,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            // Avatar section with status indicator
-                            Stack(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        kPrimaryColor.withOpacity(0.1),
-                                        kPrimaryColor.withOpacity(0.05),
-                                      ],
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: kPrimaryColor.withOpacity(0.15),
-                                        blurRadius: 15,
-                                        offset: const Offset(0, 8),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Container(
+                            boxShadow: [
+                              BoxShadow(
+                                color: kPrimaryColor.withOpacity(0.05),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              // Avatar section with status indicator
+                              Stack(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 3,
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          kPrimaryColor.withOpacity(0.1),
+                                          kPrimaryColor.withOpacity(0.05),
+                                        ],
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.08),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 4),
+                                          color: kPrimaryColor.withOpacity(
+                                            0.15,
+                                          ),
+                                          blurRadius: 15,
+                                          offset: const Offset(0, 8),
                                         ),
                                       ],
                                     ),
-                                    child: CircleAvatar(
-                                      radius: 42,
-                                      backgroundColor: Colors.white,
-                                      backgroundImage: const AssetImage(
-                                        'assets/images/fp.png',
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 3,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.08,
+                                            ),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: CircleAvatar(
+                                        radius: 42,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: const AssetImage(
+                                          'assets/images/fp.png',
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                // Online status indicator
-                                Positioned(
-                                  bottom: 8,
-                                  right: 8,
-                                  child: Container(
-                                    width: 16,
-                                    height: 16,
-                                    decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 2,
+                                  // Online status indicator
+                                  Positioned(
+                                    bottom: 8,
+                                    right: 8,
+                                    child: Container(
+                                      width: 16,
+                                      height: 16,
+                                      decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 2,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            // Name and email with better typography
-                            Text(
-                              _name,
-                              style: const TextStyle(
-                                color: Colors.black87,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            if (_email.isNotEmpty)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: kPrimaryColor.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  _email,
-                                  style: TextStyle(
-                                    color: kPrimaryColor.withOpacity(0.8),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            const SizedBox(height: 16),
-                            // Edit profile button
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
+                              const SizedBox(height: 16),
+                              // Name and email with better typography
+                              Text(
+                                _name,
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              if (_email.isNotEmpty)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: kPrimaryColor.withOpacity(0.08),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    _email,
+                                    style: TextStyle(
+                                      color: kPrimaryColor.withOpacity(0.8),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(height: 16),
+                              // Edit profile button
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
-                                  onTap: () => Navigator.pushNamed(
-                                    context,
-                                    AppRouter.profile,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8,
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.edit_rounded,
-                                          size: 16,
-                                          color: kPrimaryColor,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'Edit Profile',
-                                          style: TextStyle(
-                                            color: kPrimaryColor,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Enhanced Menu Items with staggered animation
-                      Expanded(
-                        child: ListView(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8,
-                            horizontal: 16,
-                          ),
-                          children: [
-                            _buildEnhancedCardItem(
-                              Icons.home_rounded,
-                              'Home',
-                              'Dashboard & Overview',
-                              0,
-                              () => Navigator.pushReplacementNamed(
-                                context,
-                                AppRouter.home,
-                              ),
-                            ),
-                            _buildEnhancedCardItem(
-                              FontAwesomeIcons.chalkboardUser,
-                              'Educators',
-                              'Browse Teachers',
-                              1,
-                              () => Navigator.pushReplacementNamed(
-                                context,
-                                AppRouter.educators,
-                              ),
-                            ),
-                            _buildEnhancedCardItem(
-                              Icons.favorite_rounded,
-                              'Following',
-                              'Followed Educators',
-                              2,
-                              () => Navigator.pushNamed(
-                                context,
-                                AppRouter.followedEducators,
-                              ),
-                            ),
-                            _buildEnhancedCardItem(
-                              Icons.person_rounded,
-                              'Profile',
-                              'Manage Account',
-                              3,
-                              () => Navigator.pushNamed(
-                                context,
-                                AppRouter.profile,
-                              ),
-                            ),
-                            _buildEnhancedCardItem(
-                              FontAwesomeIcons.book,
-                              'Courses',
-                              'Learning Materials',
-                              4,
-                              () => Navigator.pushReplacementNamed(
-                                context,
-                                AppRouter.courses,
-                              ),
-                            ),
-                            _buildEnhancedCardItem(
-                              FontAwesomeIcons.video,
-                              'Webinars',
-                              'Live Learning Sessions',
-                              5,
-                              () => Navigator.pushReplacementNamed(
-                                context,
-                                AppRouter.webinars,
-                              ),
-                            ),
-                            _buildEnhancedCardItem(
-                              FontAwesomeIcons.clipboardList,
-                              'Test Series',
-                              'Practice & Assessment',
-                              6,
-                              () => Navigator.pushReplacementNamed(
-                                context,
-                                AppRouter.testSeries,
-                              ),
-                            ),
-                            _buildEnhancedCardItem(
-                              FontAwesomeIcons.stopwatch,
-                              'Live Tests',
-                              'Attempt Live Tests',
-                              7,
-                              () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const LiveTestListScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                            _buildEnhancedCardItem(
-                              Icons.article_rounded,
-                              'Blogs',
-                              'Educational Articles',
-                              8,
-                              () =>
-                                  Navigator.pushNamed(context, AppRouter.blog),
-                            ),
-                            _buildEnhancedCardItem(
-                              Icons.settings_rounded,
-                              'Settings',
-                              'App Preferences',
-                              9,
-                              () =>
-                                  Navigator.pushNamed(context, AppRouter.help),
-                            ),
-                            _buildEnhancedCardItem(
-                              Icons.info_outline_rounded,
-                              'About Company',
-                              'Learn More',
-                              10,
-                              () => Navigator.pushReplacementNamed(
-                                context,
-                                AppRouter.help,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Enhanced Logout Button
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.red.shade50,
-                                Colors.red.shade100.withOpacity(0.3),
-                              ],
-                            ),
-                            border: Border.all(
-                              color: Colors.red.shade200,
-                              width: 1,
-                            ),
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(16),
-                              onTap: () {
-                                _showLogoutDialog(context);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 20,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.logout_rounded,
-                                      color: Colors.red.shade600,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      'Logout',
-                                      style: TextStyle(
-                                        color: Colors.red.shade700,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.5,
-                                      ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
                                     ),
                                   ],
                                 ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(20),
+                                    onTap: () => Navigator.pushNamed(
+                                      context,
+                                      AppRouter.profile,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.edit_rounded,
+                                            size: 16,
+                                            color: kPrimaryColor,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            'Edit Profile',
+                                            style: TextStyle(
+                                              color: kPrimaryColor,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Enhanced Menu Items with staggered animation
+                        Expanded(
+                          child: ListView(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 16,
+                            ),
+                            children: [
+                              _buildEnhancedCardItem(
+                                Icons.home_rounded,
+                                'Home',
+                                'Dashboard & Overview',
+                                0,
+                                () => Navigator.pushReplacementNamed(
+                                  context,
+                                  AppRouter.home,
+                                ),
+                              ),
+                              _buildEnhancedCardItem(
+                                FontAwesomeIcons.chalkboardUser,
+                                'Educators',
+                                'Browse Teachers',
+                                1,
+                                () => Navigator.pushReplacementNamed(
+                                  context,
+                                  AppRouter.educators,
+                                ),
+                              ),
+                              _buildEnhancedCardItem(
+                                Icons.favorite_rounded,
+                                'Following',
+                                'Followed Educators',
+                                2,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  AppRouter.followedEducators,
+                                ),
+                              ),
+                              _buildEnhancedCardItem(
+                                Icons.person_rounded,
+                                'Profile',
+                                'Manage Account',
+                                3,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  AppRouter.profile,
+                                ),
+                              ),
+                              _buildEnhancedCardItem(
+                                FontAwesomeIcons.book,
+                                'Courses',
+                                'Learning Materials',
+                                4,
+                                () => Navigator.pushReplacementNamed(
+                                  context,
+                                  AppRouter.courses,
+                                ),
+                              ),
+                              _buildEnhancedCardItem(
+                                FontAwesomeIcons.video,
+                                'Webinars',
+                                'Live Learning Sessions',
+                                5,
+                                () => Navigator.pushReplacementNamed(
+                                  context,
+                                  AppRouter.webinars,
+                                ),
+                              ),
+                              _buildEnhancedCardItem(
+                                FontAwesomeIcons.clipboardList,
+                                'Test Series',
+                                'Practice & Assessment',
+                                6,
+                                () => Navigator.pushReplacementNamed(
+                                  context,
+                                  AppRouter.testSeries,
+                                ),
+                              ),
+                              _buildEnhancedCardItem(
+                                FontAwesomeIcons.stopwatch,
+                                'Live Tests',
+                                'Attempt Live Tests',
+                                7,
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const LiveTestListScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              _buildEnhancedCardItem(
+                                Icons.article_rounded,
+                                'Blogs',
+                                'Educational Articles',
+                                8,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  AppRouter.blog,
+                                ),
+                              ),
+                              _buildEnhancedCardItem(
+                                Icons.settings_rounded,
+                                'Settings',
+                                'App Preferences',
+                                9,
+                                () => Navigator.pushNamed(
+                                  context,
+                                  AppRouter.help,
+                                ),
+                              ),
+                              _buildEnhancedCardItem(
+                                Icons.info_outline_rounded,
+                                'About Company',
+                                'Learn More',
+                                10,
+                                () => Navigator.pushReplacementNamed(
+                                  context,
+                                  AppRouter.help,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Enhanced Logout Button
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.red.shade50,
+                                  Colors.red.shade100.withOpacity(0.3),
+                                ],
+                              ),
+                              border: Border.all(
+                                color: Colors.red.shade200,
+                                width: 1,
+                              ),
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(16),
+                                onTap: () {
+                                  _showLogoutDialog(context);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                    horizontal: 20,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.logout_rounded,
+                                        color: Colors.red.shade600,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text(
+                                        'Logout',
+                                        style: TextStyle(
+                                          color: Colors.red.shade700,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -576,9 +601,11 @@ class _CustomDrawerState extends State<CustomDrawer>
                 ),
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Close the dialog
+
+                // Trigger logout through AuthBloc
+                print("Triggering logout through AuthBloc");
                 context.read<AuthBloc>().add(LogoutRequested());
-                Navigator.pushReplacementNamed(context, AppRouter.login);
               },
               child: const Text(
                 'Logout',

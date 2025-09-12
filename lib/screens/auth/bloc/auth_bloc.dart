@@ -68,13 +68,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-    on<LogoutRequested>((event, emit) async {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs
-          .clear(); // This already clears everything including loginTimestamp
-      emit(AuthInitial());
-    });
-
     on<UpdateProfileRequested>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -171,6 +164,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } catch (e) {
         // If there's an error, don't change the current state
         log("Error refreshing session: $e");
+      }
+    });
+
+    on<LogoutRequested>((event, emit) async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        log("Logout successful, clearing preferences");
+        emit(LogoutSuccess());
+      } catch (e) {
+        log("Logout error: $e");
+        emit(AuthFailure("Failed to logout: $e"));
       }
     });
   }

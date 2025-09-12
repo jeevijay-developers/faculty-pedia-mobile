@@ -1,6 +1,7 @@
 import 'package:facultypedia/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../utils/snackbar_utils.dart';
 import 'bloc/auth_bloc.dart';
 import 'bloc/auth_event.dart';
 import 'bloc/auth_state.dart';
@@ -43,25 +44,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text("Login successful!")));
+            SnackBarUtils.showSuccess(context, "Login successful!");
             // Navigate to home page after successful login
             Navigator.pushReplacementNamed(context, AppRouter.home);
           } else if (state is AuthFailure) {
             String userFriendlyMessage = _getUserFriendlyErrorMessage(
               state.error,
             );
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(userFriendlyMessage),
-                backgroundColor: Colors.red[600],
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            );
+            SnackBarUtils.showError(context, userFriendlyMessage);
           }
         },
         builder: (context, state) {
@@ -169,63 +159,27 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
                                     // Validate if both fields are empty
                                     if (email.isEmpty && password.isEmpty) {
-                                      ScaffoldMessenger.of(
+                                      SnackBarUtils.showWarning(
                                         context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: const Text(
-                                            "All fields are required",
-                                          ),
-                                          backgroundColor: Colors.orange[600],
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
+                                        "All fields are required",
                                       );
                                       return;
                                     }
 
                                     // Validate if email is empty
                                     if (email.isEmpty) {
-                                      ScaffoldMessenger.of(
+                                      SnackBarUtils.showWarning(
                                         context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: const Text(
-                                            "Email is required",
-                                          ),
-                                          backgroundColor: Colors.orange[600],
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
+                                        "Email is required",
                                       );
                                       return;
                                     }
 
                                     // Validate if password is empty
                                     if (password.isEmpty) {
-                                      ScaffoldMessenger.of(
+                                      SnackBarUtils.showWarning(
                                         context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: const Text(
-                                            "Password is required",
-                                          ),
-                                          backgroundColor: Colors.orange[600],
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
+                                        "Password is required",
                                       );
                                       return;
                                     }

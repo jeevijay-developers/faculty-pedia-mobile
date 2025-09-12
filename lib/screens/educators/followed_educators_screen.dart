@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/educator_model.dart';
+import '../../utils/snackbar_utils.dart';
+import '../../utils/constants.dart';
 
 const Color kPrimaryColor = Color(0xFF4A90E2);
 
@@ -10,7 +12,8 @@ class FollowedEducatorsScreen extends StatefulWidget {
   const FollowedEducatorsScreen({Key? key}) : super(key: key);
 
   @override
-  _FollowedEducatorsScreenState createState() => _FollowedEducatorsScreenState();
+  _FollowedEducatorsScreenState createState() =>
+      _FollowedEducatorsScreenState();
 }
 
 class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
@@ -33,9 +36,9 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
 
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
-      final studentId = prefs.getString('studentId');
+      final userId = prefs.getString('userId');
 
-      if (token == null || studentId == null) {
+      if (token == null || userId == null) {
         setState(() {
           error = 'Authentication required';
           isLoading = false;
@@ -44,7 +47,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
       }
 
       final response = await http.get(
-        Uri.parse('http://your-backend-url/api/follow/followed/$studentId'),
+        Uri.parse('$MAIN_URL/follow/followed/$userId'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -54,7 +57,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final List<dynamic> educatorsData = data['followedEducators'] ?? [];
-        
+
         setState(() {
           followedEducators = educatorsData
               .map((json) => Educator.fromJson(json))
@@ -62,14 +65,20 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
           isLoading = false;
         });
       } else {
+        print(
+          'Failed to load followed educators. Status: ${response.statusCode}',
+        );
+        print('Response body: ${response.body}');
         setState(() {
-          error = 'Failed to load followed educators';
+          error =
+              'Failed to load followed educators. Status: ${response.statusCode}';
           isLoading = false;
         });
       }
     } catch (e) {
+      print('Error loading followed educators: $e');
       setState(() {
-        error = 'Error: \$e';
+        error = 'Network error: $e';
         isLoading = false;
       });
     }
@@ -79,20 +88,20 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
-      final studentId = prefs.getString('studentId');
+      final userId = prefs.getString('userId');
 
-      if (token == null || studentId == null) return;
+      if (token == null || userId == null) return;
 
       final response = await http.put(
-        Uri.parse('http://your-backend-url/api/follow/update/followers'),
+        Uri.parse('$MAIN_URL/follow/update/followers'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
         body: json.encode({
           'educatorid': educatorId,
-          'studentid': studentId,
-          'status': 'unfollow',
+          'studentid': userId,
+          'action': 'unfollow',
         }),
       );
 
@@ -100,18 +109,12 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
         setState(() {
           followedEducators.removeAt(index);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Educator unfollowed successfully')),
-        );
+        SnackBarUtils.showSuccess(context, 'Educator unfollowed successfully');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to unfollow educator')),
-        );
+        SnackBarUtils.showError(context, 'Failed to unfollow educator');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: \$e')),
-      );
+      SnackBarUtils.showError(context, 'Error: $e');
     }
   }
 
@@ -154,9 +157,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
   Widget _buildBody() {
     if (isLoading) {
       return const Center(
-        child: CircularProgressIndicator(
-          color: kPrimaryColor,
-        ),
+        child: CircularProgressIndicator(color: kPrimaryColor),
       );
     }
 
@@ -165,18 +166,11 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
               error!,
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 16,
-              ),
+              style: TextStyle(color: Colors.grey[600], fontSize: 16),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -197,11 +191,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.people_outline,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.people_outline, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
               'No followed educators',
@@ -214,10 +204,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
             const SizedBox(height: 8),
             Text(
               'Follow educators to see them here',
-              style: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey[500], fontSize: 14),
             ),
           ],
         ),
@@ -270,15 +257,11 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                         : null,
                   ),
                   child: educator.image?.url == null
-                      ? Icon(
-                          Icons.person,
-                          color: kPrimaryColor,
-                          size: 30,
-                        )
+                      ? Icon(Icons.person, color: kPrimaryColor, size: 30)
                       : null,
                 ),
                 const SizedBox(width: 12),
-                
+
                 // Name and Info
                 Expanded(
                   child: Column(
@@ -294,7 +277,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        educator.specialization,
+                        educator.specialization ?? educator.subject,
                         style: TextStyle(
                           fontSize: 12,
                           color: kPrimaryColor,
@@ -314,7 +297,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                     ],
                   ),
                 ),
-                
+
                 // Unfollow Button
                 IconButton(
                   onPressed: () => _showUnfollowDialog(educator, index),
@@ -326,7 +309,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                 ),
               ],
             ),
-            
+
             // Bio
             if (educator.bio != null) ...[
               const SizedBox(height: 12),
@@ -341,7 +324,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-            
+
             // Stats Row
             const SizedBox(height: 12),
             Row(
@@ -364,10 +347,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                   const SizedBox(width: 4),
                   Text(
                     '\${educator.totalFollowers} followers',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
               ],
@@ -395,9 +375,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                 Navigator.pop(context);
                 _unfollowEducator(educator.id, index);
               },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Unfollow'),
             ),
           ],

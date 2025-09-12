@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/snackbar_utils.dart';
 
 const Color kPrimaryColor = Color(0xFF4A90E2);
 
@@ -592,10 +593,9 @@ class LiveTestResultScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () {
                   // TODO: Implement retry functionality
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Retry functionality coming soon!'),
-                    ),
+                  SnackBarUtils.showInfo(
+                    context,
+                    'Retry functionality coming soon!',
                   );
                 },
                 icon: Icon(Icons.refresh, color: kPrimaryColor),
@@ -617,9 +617,7 @@ class LiveTestResultScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () {
                   // TODO: Implement save results functionality
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Results saved!')),
-                  );
+                  SnackBarUtils.showSuccess(context, 'Results saved!');
                 },
                 icon: Icon(Icons.save, color: kPrimaryColor),
                 label: Text(
