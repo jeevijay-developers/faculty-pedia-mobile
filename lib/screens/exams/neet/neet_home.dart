@@ -226,6 +226,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EducatorProfilePage(
+                                    id: "demo_educator_3",
                                     name: "Dr. Ankur Gupta",
                                     subject: "Chemistry",
                                     description: "Expert in Physical Chemistry",
@@ -266,6 +267,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EducatorProfilePage(
+                                    id: "demo_educator_4",
                                     name: "Dr. Rajiv Mehta",
                                     subject: "Physics",
                                     description:

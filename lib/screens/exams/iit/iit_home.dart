@@ -227,6 +227,7 @@ class _IITHomePageState extends State<IITHomePage>
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EducatorProfilePage(
+                                    id: "demo_educator_1",
                                     name: "Dr. Ankur Gupta",
                                     subject: "Chemistry",
                                     description: "Expert in Physical Chemistry",
@@ -267,6 +268,7 @@ class _IITHomePageState extends State<IITHomePage>
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EducatorProfilePage(
+                                    id: "demo_educator_2",
                                     name: "Dr. Rajiv Mehta",
                                     subject: "Physics",
                                     description:

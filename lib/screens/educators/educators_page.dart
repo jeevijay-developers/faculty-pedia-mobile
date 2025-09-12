@@ -290,281 +290,375 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
           drawer: widget.preselectedCategory != null
               ? null
               : const CustomDrawer(),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                // Hero Section
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.grey.shade50,
+                  Colors.white,
+                  Colors.grey.shade50,
+                ],
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Enhanced Hero Section
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white,
+                          kPrimaryColor.withOpacity(0.08),
+                          kPrimaryColor.withOpacity(0.03),
+                        ],
+                      ),
                     ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-                    child: Column(
-                      children: [
-                        Text(
-                          "👩‍🏫 Our Expert Educators",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black87,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "Learn from industry experts and experienced educators",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Category Filter Section
-                _buildModernSection(
-                  "Subject Categories",
-                  "Filter educators by their expertise",
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    controller: _chipsScrollController,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: categories.map((category) {
-                          final isSelected = selectedCategory == category;
-                          return Container(
-                            margin: const EdgeInsets.only(right: 12),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  selectedCategory = category;
-                                });
-                                // Reload educators for new category using BLoC
-                                context.read<EducatorBloc>().add(
-                                  FetchEducators(),
-                                );
-                              },
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 36),
+                      child: Column(
+                        children: [
+                          // Enhanced Title with Icon
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: kPrimaryColor.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(25),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? kPrimaryColor
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(25),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? kPrimaryColor
-                                        : Colors.grey.withOpacity(0.3),
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  category,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Colors.black87,
-                                  ),
-                                ),
+                              border: Border.all(
+                                color: kPrimaryColor.withOpacity(0.2),
+                                width: 1,
                               ),
                             ),
-                          );
-                        }).toList(),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: kPrimaryColor,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Icon(
+                                    Icons.school_rounded,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Expert Educators",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: kPrimaryColor,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            "Learn from the Best Minds",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black87,
+                              letterSpacing: -0.8,
+                              height: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            constraints: const BoxConstraints(maxWidth: 280),
+                            child: Text(
+                              "Connect with industry experts and experienced educators who are passionate about sharing knowledge",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                                height: 1.5,
+                                letterSpacing: 0.1,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
 
-                // Educators Grid Section
-                _buildModernSection(
-                  isLoading
-                      ? "Loading Educators..."
-                      : "${filteredEducators.length} Expert${filteredEducators.length != 1 ? 's' : ''} Available",
-                  selectedCategory == "All"
-                      ? "Discover all our professional educators"
-                      : "Specialists in $selectedCategory",
-                  isLoading
-                      ? Container(
-                          height: 200,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: kPrimaryColor,
-                            ),
-                          ),
-                        )
-                      : error != null
-                      ? Container(
-                          height: 200,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  size: 48,
-                                  color: Colors.red[400],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  "Error loading educators",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.red[600],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  error,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[500],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: () => context
-                                      .read<EducatorBloc>()
-                                      .add(FetchEducators()),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: kPrimaryColor,
-                                  ),
-                                  child: Text(
-                                    'Retry',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : filteredEducators.isEmpty
-                      ? Container(
-                          height: 200,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.search_off,
-                                  size: 48,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  "No educators found",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Try selecting a different category",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 0.65,
-                                  crossAxisSpacing: 16,
-                                  mainAxisSpacing: 16,
-                                ),
-                            itemCount: filteredEducators.length,
-                            itemBuilder: (context, index) {
-                              final educator = filteredEducators[index];
-                              // Use subject if available, otherwise use specialization, otherwise use "General"
-                              String displaySubject =
-                                  educator.subject.isNotEmpty
-                                  ? educator.subject
-                                  : (educator.specialization?.isNotEmpty == true
-                                        ? educator.specialization!
-                                        : "General");
-
-                              return _buildModernEducatorCard(
-                                educator.name,
-                                displaySubject,
-                                educator.experience ?? 'N/A',
-                                educator.experience ?? 'N/A',
-                                educator.bio ?? 'No description available',
-                                educator.image?.url ??
-                                    'https://placehold.co/150.png',
-                                educator.rating ?? 0.0,
-                                0, // reviews - not in model
-                                () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => EducatorProfilePage(
-                                        name: educator.name,
-                                        subject: displaySubject,
-                                        description:
-                                            educator.bio ??
-                                            'No description available',
-                                        education: 'N/A', // not in model
-                                        experience:
-                                            educator.experience ?? 'N/A',
-                                        rating: educator.rating ?? 0.0,
-                                        reviews: 0, // not in model
-                                        followers: educator.totalFollowers ?? 0,
-                                        tag: displaySubject,
-                                        imageUrl:
-                                            educator.image?.url ??
-                                            'https://placehold.co/150.png',
-                                        youtubeUrl: 'N/A', // not in model
-                                        email: educator.email,
-                                        phone: 'N/A', // not in model
-                                        socialLinks: {}, // not in model
+                  // Category Filter Section
+                  _buildModernSection(
+                    "Subject Categories",
+                    "Filter educators by their expertise",
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      controller: _chipsScrollController,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: categories.map((category) {
+                            final isSelected = selectedCategory == category;
+                            return Container(
+                              margin: const EdgeInsets.only(right: 14),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedCategory = category;
+                                    });
+                                    // Reload educators for new category using BLoC
+                                    context.read<EducatorBloc>().add(
+                                      FetchEducators(),
+                                    );
+                                  },
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 14,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: isSelected
+                                          ? LinearGradient(
+                                              colors: [
+                                                kPrimaryColor,
+                                                kPrimaryColor.withBlue(255),
+                                              ],
+                                            )
+                                          : null,
+                                      color: isSelected ? null : Colors.white,
+                                      borderRadius: BorderRadius.circular(30),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? Colors.transparent
+                                            : Colors.grey.withOpacity(0.15),
+                                        width: 1,
+                                      ),
+                                      boxShadow: isSelected
+                                          ? [
+                                              BoxShadow(
+                                                color: kPrimaryColor
+                                                    .withOpacity(0.25),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 3),
+                                                spreadRadius: 0,
+                                              ),
+                                            ]
+                                          : [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(
+                                                  0.04,
+                                                ),
+                                                blurRadius: 6,
+                                                offset: const Offset(0, 2),
+                                                spreadRadius: 0,
+                                              ),
+                                            ],
+                                    ),
+                                    child: Text(
+                                      category,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        letterSpacing: 0.3,
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors.black87,
                                       ),
                                     ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                ),
+                      ),
+                    ),
+                  ),
 
-                const SizedBox(height: 32),
-              ],
+                  // Educators Grid Section
+                  _buildModernSection(
+                    isLoading
+                        ? "Loading Educators..."
+                        : "${filteredEducators.length} Expert${filteredEducators.length != 1 ? 's' : ''} Available",
+                    selectedCategory == "All"
+                        ? "Discover all our professional educators"
+                        : "Specialists in $selectedCategory",
+                    isLoading
+                        ? Container(
+                            height: 200,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: kPrimaryColor,
+                              ),
+                            ),
+                          )
+                        : error != null
+                        ? Container(
+                            height: 200,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
+                                    size: 48,
+                                    color: Colors.red[400],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    "Error loading educators",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.red[600],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    error,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[500],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton(
+                                    onPressed: () => context
+                                        .read<EducatorBloc>()
+                                        .add(FetchEducators()),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: kPrimaryColor,
+                                    ),
+                                    child: Text(
+                                      'Retry',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : filteredEducators.isEmpty
+                        ? Container(
+                            height: 200,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.search_off,
+                                    size: 48,
+                                    color: Colors.grey[400],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    "No educators found",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Try selecting a different category",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 0.78,
+                                    crossAxisSpacing: 14,
+                                    mainAxisSpacing: 14,
+                                  ),
+                              itemCount: filteredEducators.length,
+                              itemBuilder: (context, index) {
+                                final educator = filteredEducators[index];
+                                // Use subject if available, otherwise use specialization, otherwise use "General"
+                                String displaySubject =
+                                    educator.subject.isNotEmpty
+                                    ? educator.subject
+                                    : (educator.specialization?.isNotEmpty ==
+                                              true
+                                          ? educator.specialization!
+                                          : "General");
+
+                                return _buildModernEducatorCard(
+                                  educator.name,
+                                  displaySubject,
+                                  educator.experience ?? 'N/A',
+                                  educator.experience ?? 'N/A',
+                                  educator.bio ?? 'No description available',
+                                  educator.image?.url ??
+                                      'https://placehold.co/150.png',
+                                  educator.rating ?? 0.0,
+                                  0, // reviews - not in model
+                                  () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            EducatorProfilePage(
+                                              id: educator.id,
+                                              name: educator.name,
+                                              subject: displaySubject,
+                                              description:
+                                                  educator.bio ??
+                                                  'No description available',
+                                              education: 'N/A', // not in model
+                                              experience:
+                                                  educator.experience ?? 'N/A',
+                                              rating: educator.rating ?? 0.0,
+                                              reviews: 0, // not in model
+                                              followers:
+                                                  educator.totalFollowers ?? 0,
+                                              tag: displaySubject,
+                                              imageUrl:
+                                                  educator.image?.url ??
+                                                  'https://placehold.co/150.png',
+                                              youtubeUrl: 'N/A', // not in model
+                                              email: educator.email,
+                                              phone: 'N/A', // not in model
+                                              socialLinks: {}, // not in model
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                  ),
+
+                  const SizedBox(height: 32),
+                ],
+              ),
             ),
           ),
         );
@@ -578,25 +672,49 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
+          // Modern Section Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                    letterSpacing: -0.5,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [kPrimaryColor, kPrimaryColor.withBlue(255)],
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black87,
+                          letterSpacing: -0.8,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey.shade600,
+                      height: 1.4,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -621,190 +739,336 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
     int reviews,
     VoidCallback onTap,
   ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Colors.grey.shade50],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Educator Image
-            Container(
-              height: 100,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.3),
-                        ],
-                      ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 25,
+            offset: const Offset(0, 10),
+            spreadRadius: -5,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Column(
+              children: [
+                // Modern Profile Section - Made flexible
+                Container(
+                  width: double.infinity,
+                  constraints: const BoxConstraints(
+                    minHeight: 130,
+                    maxHeight: 160,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        kPrimaryColor.withOpacity(0.1),
+                        Colors.blue.shade100.withOpacity(0.3),
+                        Colors.purple.shade50.withOpacity(0.2),
+                      ],
                     ),
                   ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.star, size: 12, color: Colors.amber[600]),
-                          const SizedBox(width: 2),
-                          Text(
-                            rating.toString(),
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (subject.isNotEmpty)
-                    Positioned(
-                      bottom: 8,
-                      left: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: kPrimaryColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          subject,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-
-            // Educator Content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
-                        height: 1.2,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      education,
-                      style: TextStyle(
-                        fontSize: 9,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[600],
-                        height: 1.2,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            experience,
-                            style: TextStyle(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
-                              color: kPrimaryColor,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 3,
-                          ),
+                  child: Stack(
+                    children: [
+                      // Decorative circles
+                      Positioned(
+                        top: -20,
+                        right: -20,
+                        child: Container(
+                          width: 80,
+                          height: 80,
                           decoration: BoxDecoration(
-                            color: kPrimaryColor,
-                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white.withOpacity(0.1),
+                            shape: BoxShape.circle,
                           ),
-                          child: Text(
-                            "View",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 8,
-                              fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: -10,
+                        left: -10,
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: kPrimaryColor.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+
+                      // Profile image and content - Made flexible
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Profile Avatar
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ClipOval(
+                                child: Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey.shade200,
+                                      child: Icon(
+                                        Icons.person,
+                                        color: Colors.grey.shade400,
+                                        size: 30,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
+                            const SizedBox(height: 6),
+
+                            // Name - Fixed overflow
+                            Flexible(
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+                                child: Text(
+                                  name,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                    height: 1.2,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+
+                            // Subject tag - Fixed overflow
+                            if (subject.isNotEmpty)
+                              Container(
+                                margin: const EdgeInsets.only(top: 4),
+                                constraints: const BoxConstraints(
+                                  maxWidth: 120,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: kPrimaryColor,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Text(
+                                  subject,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+
+                      // Rating badge - only show if rating > 0
+                      if (rating > 0)
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.amber.shade600,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  rating.toStringAsFixed(1),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+
+                // Content Section - Fixed overflow issues
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Description - Better height management
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            width: double.infinity,
+                            child: Text(
+                              description,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                                height: 1.3,
+                              ),
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+
+                        // Fixed height spacer
+                        const SizedBox(height: 8),
+
+                        // Experience and Action Row - Fixed overflow
+                        Container(
+                          height: 32,
+                          child: Row(
+                            children: [
+                              // Experience - Flexible width
+                              if (experience.isNotEmpty && experience != 'N/A')
+                                Expanded(
+                                  flex: 3,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green.shade50,
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(
+                                        color: Colors.green.shade200,
+                                        width: 0.5,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      experience,
+                                      style: TextStyle(
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.green.shade700,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+
+                              // Spacing
+                              SizedBox(
+                                width:
+                                    experience.isNotEmpty && experience != 'N/A'
+                                    ? 6
+                                    : 0,
+                              ),
+
+                              // View Profile Button - Fixed width
+                              Container(
+                                height: 32,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      kPrimaryColor,
+                                      kPrimaryColor.withBlue(255),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: kPrimaryColor.withOpacity(0.2),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Text(
+                                  "View",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

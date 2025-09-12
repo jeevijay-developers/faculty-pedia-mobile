@@ -2,10 +2,15 @@ import 'package:facultypedia/screens/courses/course_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import '../../utils/constants.dart';
 
 const Color kPrimaryColor = Color(0xFF4A90E2);
 
 class EducatorProfilePage extends StatefulWidget {
+  final String id;
   final String name;
   final String subject;
   final String description;
@@ -23,6 +28,7 @@ class EducatorProfilePage extends StatefulWidget {
 
   const EducatorProfilePage({
     super.key,
+    required this.id,
     required this.name,
     required this.subject,
     required this.description,
@@ -46,6 +52,7 @@ class EducatorProfilePage extends StatefulWidget {
 class _EducatorProfilePageState extends State<EducatorProfilePage> {
   YoutubePlayerController? _controller;
   bool isFollowing = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -56,6 +63,103 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
         initialVideoId: videoId,
         flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
       );
+    }
+    _checkFollowStatus();
+  }
+
+  Future<void> _checkFollowStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+      final token = prefs.getString('token');
+
+      if (userId == null || token == null) return;
+
+      final response = await http.get(
+        Uri.parse('$MAIN_URL/follow/followed/$userId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> followedEducators = data['followedEducators'] ?? [];
+
+        setState(() {
+          isFollowing = followedEducators.any(
+            (educator) => educator['_id'] == widget.id,
+          );
+        });
+      }
+    } catch (e) {
+      print('Error checking follow status: $e');
+    }
+  }
+
+  Future<void> _toggleFollow() async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+      final token = prefs.getString('token');
+
+      if (userId == null || token == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please login to follow educators')),
+        );
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+
+      final response = await http.put(
+        Uri.parse('$MAIN_URL/follow/update/followers'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'educatorid': widget.id,
+          'studentid': userId,
+          'action': isFollowing ? 'unfollow' : 'follow',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          isFollowing = !isFollowing;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isFollowing ? 'Following educator!' : 'Unfollowed educator',
+            ),
+            backgroundColor: kPrimaryColor,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update follow status')),
+        );
+      }
+    } catch (e) {
+      print('Error toggling follow: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Network error. Please try again.')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -258,7 +362,9 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                             children: [
                               _buildStatItem(
                                 Icons.star,
-                                widget.rating.toString(),
+                                widget.rating > 0
+                                    ? widget.rating.toStringAsFixed(1)
+                                    : "N/A",
                                 "Rating",
                                 Colors.amber,
                               ),
@@ -280,7 +386,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                               ),
                               _buildStatItem(
                                 Icons.people,
-                                "${widget.followers}K",
+                                _formatFollowerCount(widget.followers),
                                 "Followers",
                                 Colors.purple,
                               ),
@@ -292,11 +398,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  isFollowing = !isFollowing;
-                                });
-                              },
+                              onPressed: isLoading ? null : _toggleFollow,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: isFollowing
                                     ? Colors.grey[300]
@@ -315,15 +417,32 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    isFollowing
-                                        ? Icons.check
-                                        : Icons.person_add,
-                                    size: 20,
-                                  ),
+                                  if (isLoading)
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                      ),
+                                    )
+                                  else
+                                    Icon(
+                                      isFollowing
+                                          ? Icons.check
+                                          : Icons.person_add,
+                                      size: 20,
+                                    ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    isFollowing ? "Following" : "Follow",
+                                    isLoading
+                                        ? "Loading..."
+                                        : (isFollowing
+                                              ? "Following"
+                                              : "Follow"),
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
@@ -1053,5 +1172,15 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
         ],
       ),
     );
+  }
+
+  String _formatFollowerCount(int count) {
+    if (count >= 1000000) {
+      return '${(count / 1000000).toStringAsFixed(1)}M';
+    } else if (count >= 1000) {
+      return '${(count / 1000).toStringAsFixed(1)}K';
+    } else {
+      return count.toString();
+    }
   }
 }

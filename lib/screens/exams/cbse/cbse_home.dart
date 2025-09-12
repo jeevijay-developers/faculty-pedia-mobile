@@ -337,6 +337,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                           context,
                           MaterialPageRoute(
                             builder: (context) => EducatorProfilePage(
+                              id: "demo_educator_5",
                               name: "Dr. Priya Sharma",
                               subject: "Biology",
                               description: "Expert in NEET Biology preparation",
@@ -375,6 +376,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                           context,
                           MaterialPageRoute(
                             builder: (context) => EducatorProfilePage(
+                              id: "demo_educator_6",
                               name: "Prof. Amit Kumar",
                               subject: "Mathematics",
                               description: "Expert in CBSE Mathematics",

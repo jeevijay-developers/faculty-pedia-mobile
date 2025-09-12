@@ -329,7 +329,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
             const SizedBox(height: 12),
             Row(
               children: [
-                if (educator.rating != null) ...[
+                if (educator.rating != null && educator.rating! > 0) ...[
                   Icon(Icons.star, color: Colors.amber, size: 16),
                   const SizedBox(width: 4),
                   Text(
@@ -342,11 +342,12 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                   ),
                   const SizedBox(width: 16),
                 ],
-                if (educator.totalFollowers != null) ...[
+                if (educator.totalFollowers != null &&
+                    educator.totalFollowers! > 0) ...[
                   Icon(Icons.people, color: Colors.grey[600], size: 16),
                   const SizedBox(width: 4),
                   Text(
-                    '\${educator.totalFollowers} followers',
+                    '${_formatFollowerCount(educator.totalFollowers!)} followers',
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
@@ -364,7 +365,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Unfollow Educator'),
-          content: Text('Are you sure you want to unfollow \${educator.name}?'),
+          content: Text('Are you sure you want to unfollow ${educator.name}?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -382,5 +383,15 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
         );
       },
     );
+  }
+
+  String _formatFollowerCount(int count) {
+    if (count >= 1000000) {
+      return '${(count / 1000000).toStringAsFixed(1)}M';
+    } else if (count >= 1000) {
+      return '${(count / 1000).toStringAsFixed(1)}K';
+    } else {
+      return count.toString();
+    }
   }
 }
