@@ -202,30 +202,37 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+
     if (isLoading) {
       return Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+            valueColor: AlwaysStoppedAnimation<Color>(primary),
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.cardColor,
         elevation: 2,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.error.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.close, color: Colors.red, size: 16),
+            child: Icon(
+              Icons.close,
+              color: Theme.of(context).colorScheme.error,
+              size: 16,
+            ),
           ),
           onPressed: () => _showExitDialog(),
         ),
@@ -233,15 +240,18 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
           children: [
             Text(
               widget.testTitle,
-              style: const TextStyle(
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: theme.textTheme.bodyLarge?.color,
               ),
             ),
             Text(
               'Question ${currentQuestionIndex + 1} of ${questions.length}',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                fontSize: 12,
+              ),
             ),
           ],
         ),
@@ -252,8 +262,8 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: remainingSeconds < 300
-                  ? Colors.red.withOpacity(0.1)
-                  : kPrimaryColor.withOpacity(0.1),
+                  ? theme.colorScheme.error.withOpacity(0.1)
+                  : primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -262,15 +272,19 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                 Icon(
                   Icons.timer,
                   size: 16,
-                  color: remainingSeconds < 300 ? Colors.red : kPrimaryColor,
+                  color: remainingSeconds < 300
+                      ? theme.colorScheme.error
+                      : primary,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   _formatTime(remainingSeconds),
-                  style: TextStyle(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: remainingSeconds < 300 ? Colors.red : kPrimaryColor,
+                    color: remainingSeconds < 300
+                        ? theme.colorScheme.error
+                        : primary,
                   ),
                 ),
               ],
@@ -285,8 +299,8 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
             height: 4,
             child: LinearProgressIndicator(
               value: (currentQuestionIndex + 1) / questions.length,
-              backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+              backgroundColor: theme.dividerColor.withOpacity(0.3),
+              valueColor: AlwaysStoppedAnimation<Color>(primary),
             ),
           ),
 
@@ -312,23 +326,25 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                     height: 40,
                     decoration: BoxDecoration(
                       color: isCurrent
-                          ? kPrimaryColor
+                          ? primary
                           : isAnswered
-                          ? Colors.green
-                          : Colors.grey[300],
+                          ? theme.colorScheme.secondary
+                          : theme.cardColor,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isCurrent ? kPrimaryColor : Colors.transparent,
+                        color: isCurrent ? primary : Colors.transparent,
                         width: 2,
                       ),
                     ),
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: TextStyle(
+                        style: theme.textTheme.bodySmall?.copyWith(
                           color: isCurrent || isAnswered
-                              ? Colors.white
-                              : Colors.grey[700],
+                              ? theme.colorScheme.onPrimary
+                              : theme.textTheme.bodyMedium?.color?.withOpacity(
+                                  0.9,
+                                ),
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -375,12 +391,12 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: kPrimaryColor.withOpacity(0.1),
+                                      color: primary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Icon(
                                       Icons.quiz_rounded,
-                                      color: kPrimaryColor,
+                                      color: primary,
                                       size: 20,
                                     ),
                                   ),
@@ -388,11 +404,12 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                                   Expanded(
                                     child: Text(
                                       'Question ${index + 1}',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: kPrimaryColor,
-                                      ),
+                                      style: theme.textTheme.bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: primary,
+                                          ),
                                     ),
                                   ),
                                   if (selectedAnswers.containsKey(questionId))
@@ -402,16 +419,19 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.green.withOpacity(0.1),
+                                        color: theme.colorScheme.secondary
+                                            .withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: const Text(
+                                      child: Text(
                                         'Answered',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                        style: theme.textTheme.labelSmall
+                                            ?.copyWith(
+                                              fontSize: 12,
+                                              color:
+                                                  theme.colorScheme.secondary,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                       ),
                                     ),
                                 ],
@@ -419,10 +439,10 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                               const SizedBox(height: 16),
                               Text(
                                 question['question'],
-                                style: const TextStyle(
+                                style: theme.textTheme.bodyLarge?.copyWith(
                                   fontSize: 16,
                                   height: 1.5,
-                                  color: Colors.black87,
+                                  color: theme.textTheme.bodyMedium?.color,
                                 ),
                               ),
                             ],
@@ -446,13 +466,13 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? kPrimaryColor.withOpacity(0.1)
-                                  : Colors.white,
+                                  ? primary.withOpacity(0.1)
+                                  : theme.cardColor,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: isSelected
-                                    ? kPrimaryColor
-                                    : Colors.grey[300]!,
+                                    ? primary
+                                    : theme.dividerColor.withOpacity(0.4),
                                 width: isSelected ? 2 : 1,
                               ),
                             ),
@@ -464,19 +484,19 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: isSelected
-                                        ? kPrimaryColor
+                                        ? primary
                                         : Colors.transparent,
                                     border: Border.all(
                                       color: isSelected
-                                          ? kPrimaryColor
-                                          : Colors.grey[400]!,
+                                          ? primary
+                                          : theme.dividerColor.withOpacity(0.6),
                                       width: 2,
                                     ),
                                   ),
                                   child: isSelected
-                                      ? const Icon(
+                                      ? Icon(
                                           Icons.check,
-                                          color: Colors.white,
+                                          color: theme.colorScheme.onPrimary,
                                           size: 16,
                                         )
                                       : null,
@@ -484,23 +504,24 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                                 const SizedBox(width: 12),
                                 Text(
                                   String.fromCharCode(65 + optionIndex),
-                                  style: TextStyle(
+                                  style: theme.textTheme.bodyLarge?.copyWith(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: isSelected
-                                        ? kPrimaryColor
-                                        : Colors.grey[600],
+                                        ? primary
+                                        : theme.textTheme.bodyMedium?.color
+                                              ?.withOpacity(0.9),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
                                     question['options'][optionIndex],
-                                    style: TextStyle(
+                                    style: theme.textTheme.bodyLarge?.copyWith(
                                       fontSize: 16,
                                       color: isSelected
-                                          ? kPrimaryColor
-                                          : Colors.black87,
+                                          ? primary
+                                          : theme.textTheme.bodyMedium?.color,
                                     ),
                                   ),
                                 ),
@@ -520,10 +541,10 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: theme.shadowColor.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -2),
                 ),
@@ -538,8 +559,8 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                       icon: const Icon(Icons.arrow_back),
                       label: const Text('Previous'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: kPrimaryColor,
-                        side: BorderSide(color: kPrimaryColor),
+                        foregroundColor: primary,
+                        side: BorderSide(color: primary),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
@@ -567,9 +588,9 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
                           currentQuestionIndex == questions.length - 1
-                          ? Colors.green
-                          : kPrimaryColor,
-                      foregroundColor: Colors.white,
+                          ? theme.colorScheme.secondary
+                          : primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
@@ -596,14 +617,22 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: const Text('Exit', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Exit',
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ),
         ],
       ),
@@ -627,9 +656,12 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
             Text('Questions Attempted: $attempted'),
             Text('Questions Remaining: $remaining'),
             if (remaining > 0)
-              const Text(
+              Text(
                 'Unanswered questions will be marked as incorrect.',
-                style: TextStyle(color: Colors.red, fontSize: 12),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                  fontSize: 12,
+                ),
               ),
           ],
         ),
@@ -643,8 +675,13 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
               Navigator.pop(context);
               _submitTest();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            child: const Text('Submit', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+            ),
+            child: Text(
+              'Submit',
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            ),
           ),
         ],
       ),

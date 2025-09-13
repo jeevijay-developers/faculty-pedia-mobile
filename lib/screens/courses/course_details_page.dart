@@ -28,10 +28,11 @@ class CourseDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: theme.scaffoldBackgroundColor,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -39,11 +40,11 @@ class CourseDetailsPage extends StatelessWidget {
           leading: Container(
             margin: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.9),
+              color: theme.cardColor.withOpacity(0.9),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black87),
+              icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -51,11 +52,11 @@ class CourseDetailsPage extends StatelessWidget {
             Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
+                color: theme.cardColor.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(
-                icon: Icon(Icons.share, color: Colors.black87),
+                icon: Icon(Icons.share, color: theme.iconTheme.color),
                 onPressed: () {},
               ),
             ),
@@ -84,9 +85,10 @@ class CourseDetailsPage extends StatelessWidget {
               pinned: true,
               delegate: _SliverTabBarDelegate(
                 TabBar(
-                  labelColor: kPrimaryColor,
-                  unselectedLabelColor: Colors.grey[600],
-                  indicatorColor: kPrimaryColor,
+                  labelColor: theme.colorScheme.primary,
+                  unselectedLabelColor: theme.textTheme.bodyMedium?.color
+                      ?.withOpacity(0.6),
+                  indicatorColor: theme.colorScheme.primary,
                   indicatorWeight: 3,
                   labelStyle: const TextStyle(
                     fontWeight: FontWeight.w600,
@@ -106,7 +108,7 @@ class CourseDetailsPage extends StatelessWidget {
             ),
           ],
           body: Container(
-            color: Colors.grey[50],
+            color: theme.scaffoldBackgroundColor,
             child: TabBarView(
               children: [
                 // Overview Tab
@@ -138,8 +140,8 @@ class CourseDetailsPage extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(0.3),
-              Colors.black.withOpacity(0.7),
+              Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+              Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             ],
           ),
         ),
@@ -159,13 +161,13 @@ class CourseDetailsPage extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: kPrimaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       durationText,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -175,12 +177,13 @@ class CourseDetailsPage extends StatelessWidget {
                   Flexible(
                     child: Text(
                       title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        height: 1.2,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            height: 1.2,
+                          ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),

@@ -171,26 +171,31 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 20),
+            child: Icon(
+              Icons.arrow_back,
+              color: theme.colorScheme.primary,
+              size: 20,
+            ),
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.name,
-          style: const TextStyle(
-            color: Colors.black87,
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             fontSize: 18,
           ),
@@ -201,10 +206,14 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.share, color: kPrimaryColor, size: 20),
+              child: Icon(
+                Icons.share,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
             ),
             onPressed: () {},
           ),
@@ -221,7 +230,10 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
+                  colors: [
+                    theme.cardColor,
+                    theme.colorScheme.primary.withOpacity(0.05),
+                  ],
                 ),
               ),
               child: Padding(
@@ -231,11 +243,11 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                     // Profile Image and Basic Info
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
+                            color: theme.shadowColor.withOpacity(0.08),
                             blurRadius: 15,
                             offset: const Offset(0, 5),
                           ),
@@ -251,7 +263,8 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: kPrimaryColor.withOpacity(0.2),
+                                    color: theme.colorScheme.primary
+                                        .withOpacity(0.2),
                                     width: 3,
                                   ),
                                 ),
@@ -271,13 +284,13 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: kPrimaryColor,
+                                    color: theme.colorScheme.primary,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     widget.subject,
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: theme.colorScheme.onPrimary,
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -291,10 +304,9 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                           // Name and Title
                           Text(
                             widget.name,
-                            style: const TextStyle(
+                            style: theme.textTheme.headlineSmall?.copyWith(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
                               letterSpacing: -0.5,
                             ),
                             textAlign: TextAlign.center,
@@ -302,9 +314,9 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                           const SizedBox(height: 4),
                           Text(
                             widget.education,
-                            style: TextStyle(
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 16,
-                              color: Colors.grey[600],
+                              color: theme.dividerColor,
                               fontWeight: FontWeight.w500,
                             ),
                             textAlign: TextAlign.center,
@@ -321,14 +333,16 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: kPrimaryColor.withOpacity(0.1),
+                                  color: theme.colorScheme.primary.withOpacity(
+                                    0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
                                   widget.experience,
-                                  style: TextStyle(
+                                  style: theme.textTheme.bodySmall?.copyWith(
                                     fontSize: 12,
-                                    color: kPrimaryColor,
+                                    color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -340,14 +354,15 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.1),
+                                  color: theme.colorScheme.secondary
+                                      .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
                                   widget.tag,
-                                  style: const TextStyle(
+                                  style: theme.textTheme.bodySmall?.copyWith(
                                     fontSize: 12,
-                                    color: Colors.green,
+                                    color: theme.colorScheme.secondary,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -366,29 +381,29 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                     ? widget.rating.toStringAsFixed(1)
                                     : "N/A",
                                 "Rating",
-                                Colors.amber,
+                                theme.colorScheme.secondary,
                               ),
                               Container(
                                 height: 40,
                                 width: 1,
-                                color: Colors.grey[300],
+                                color: theme.dividerColor,
                               ),
                               _buildStatItem(
                                 Icons.reviews,
                                 widget.reviews.toString(),
                                 "Reviews",
-                                kPrimaryColor,
+                                theme.colorScheme.primary,
                               ),
                               Container(
                                 height: 40,
                                 width: 1,
-                                color: Colors.grey[300],
+                                color: theme.dividerColor,
                               ),
                               _buildStatItem(
                                 Icons.people,
                                 _formatFollowerCount(widget.followers),
                                 "Followers",
-                                Colors.purple,
+                                theme.colorScheme.tertiary,
                               ),
                             ],
                           ),
@@ -401,11 +416,11 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                               onPressed: isLoading ? null : _toggleFollow,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: isFollowing
-                                    ? Colors.grey[300]
-                                    : kPrimaryColor,
+                                    ? theme.dividerColor
+                                    : theme.colorScheme.primary,
                                 foregroundColor: isFollowing
-                                    ? Colors.black87
-                                    : Colors.white,
+                                    ? theme.textTheme.bodyLarge?.color
+                                    : theme.colorScheme.onPrimary,
                                 elevation: 0,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 16,
@@ -418,14 +433,16 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   if (isLoading)
-                                    const SizedBox(
+                                    SizedBox(
                                       width: 20,
                                       height: 20,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
-                                              Colors.white,
+                                              isFollowing
+                                                  ? Colors.black87
+                                                  : Colors.white,
                                             ),
                                       ),
                                     )
@@ -468,11 +485,11 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: theme.shadowColor.withOpacity(0.08),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),
@@ -484,14 +501,14 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                       Icons.email,
                       "Email",
                       widget.email,
-                      kPrimaryColor,
+                      theme.colorScheme.primary,
                     ),
                     const SizedBox(height: 16),
                     _buildContactItem(
                       Icons.phone,
                       "Phone",
                       widget.phone,
-                      Colors.green,
+                      theme.colorScheme.secondary,
                     ),
                     const SizedBox(height: 16),
                     _buildSocialLinks(),
@@ -511,7 +528,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: theme.shadowColor.withOpacity(0.08),
                         blurRadius: 15,
                         offset: const Offset(0, 5),
                       ),
@@ -523,7 +540,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                       player: YoutubePlayer(
                         controller: _controller!,
                         showVideoProgressIndicator: true,
-                        progressIndicatorColor: kPrimaryColor,
+                        progressIndicatorColor: theme.colorScheme.primary,
                       ),
                       builder: (context, player) => player,
                     ),
@@ -607,11 +624,11 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: theme.shadowColor.withOpacity(0.08),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),
@@ -619,9 +636,8 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 ),
                 child: Text(
                   widget.description,
-                  style: const TextStyle(
+                  style: theme.textTheme.bodyLarge?.copyWith(
                     fontSize: 16,
-                    color: Colors.black87,
                     height: 1.6,
                     fontWeight: FontWeight.w400,
                   ),
@@ -637,6 +653,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
   }
 
   Widget _buildModernSection(String title, String subtitle, Widget content) {
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
@@ -650,17 +667,16 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: theme.textTheme.headlineSmall?.copyWith(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
                     letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 14),
                 ),
               ],
             ),
@@ -680,6 +696,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
     String label,
     Color color,
   ) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         Container(
@@ -693,13 +710,12 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: theme.textTheme.bodyLarge?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: Colors.black87,
           ),
         ),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+        Text(label, style: theme.textTheme.bodySmall?.copyWith(fontSize: 12)),
       ],
     );
   }
@@ -710,6 +726,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
     String value,
     Color color,
   ) {
+    final theme = Theme.of(context);
     return Row(
       children: [
         Container(
@@ -727,17 +744,15 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
             children: [
               Text(
                 label,
-                style: TextStyle(
+                style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 12,
-                  color: Colors.grey[600],
                   fontWeight: FontWeight.w500,
                 ),
               ),
               Text(
                 value,
-                style: const TextStyle(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 14,
-                  color: Colors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -751,14 +766,14 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
   Widget _buildSocialLinks() {
     if (widget.socialLinks.isEmpty) return const SizedBox();
 
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Social Links",
-          style: TextStyle(
+          style: theme.textTheme.bodySmall?.copyWith(
             fontSize: 12,
-            color: Colors.grey[600],
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -766,17 +781,21 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
         Row(
           children: [
             if (widget.socialLinks.containsKey("twitter"))
-              _buildSocialButton(FontAwesomeIcons.twitter, Colors.blue, () {}),
+              _buildSocialButton(
+                FontAwesomeIcons.twitter,
+                theme.colorScheme.primary,
+                () {},
+              ),
             if (widget.socialLinks.containsKey("linkedin"))
               _buildSocialButton(
                 FontAwesomeIcons.linkedin,
-                Colors.blue[800]!,
+                theme.colorScheme.secondary,
                 () {},
               ),
             if (widget.socialLinks.containsKey("instagram"))
               _buildSocialButton(
                 FontAwesomeIcons.instagram,
-                Colors.purple,
+                theme.colorScheme.tertiary,
                 () {},
               ),
           ],
@@ -812,14 +831,15 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
     int oldPrice,
     String imageUrl,
   ) {
+    final theme = Theme.of(context);
     return Container(
       width: 280,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: theme.shadowColor.withOpacity(0.08),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -868,13 +888,13 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: kPrimaryColor,
+                      color: theme.colorScheme.primary,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       duration,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: theme.colorScheme.onPrimary,
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                       ),
@@ -894,10 +914,9 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
                       height: 1.3,
                     ),
                     maxLines: 2,
@@ -906,9 +925,8 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                   const SizedBox(height: 8),
                   Text(
                     description,
-                    style: TextStyle(
+                    style: theme.textTheme.bodySmall?.copyWith(
                       fontSize: 12,
-                      color: Colors.grey[600],
                       height: 1.4,
                     ),
                     maxLines: 2,
@@ -926,14 +944,13 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
-                              color: kPrimaryColor,
+                              color: theme.colorScheme.primary,
                             ),
                           ),
                           Text(
                             "₹$oldPrice",
-                            style: const TextStyle(
+                            style: theme.textTheme.bodySmall?.copyWith(
                               fontSize: 12,
-                              color: Colors.grey,
                               decoration: TextDecoration.lineThrough,
                             ),
                           ),
@@ -958,8 +975,8 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimaryColor,
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -997,14 +1014,15 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
     String fee,
     String imageUrl,
   ) {
+    final theme = Theme.of(context);
     return Container(
       width: 280,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: theme.shadowColor.withOpacity(0.08),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -1053,13 +1071,13 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.orange,
+                      color: theme.colorScheme.secondary,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
+                    child: Text(
                       "TEST SERIES",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: theme.colorScheme.onSecondary,
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1075,13 +1093,13 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: kPrimaryColor,
+                      color: theme.colorScheme.primary,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       "$totalTests Tests",
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: theme.colorScheme.onPrimary,
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                       ),

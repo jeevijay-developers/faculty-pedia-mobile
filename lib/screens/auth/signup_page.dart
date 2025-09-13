@@ -50,8 +50,10 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
@@ -84,9 +86,9 @@ class _SignupPageState extends State<SignupPage> {
                         Image.asset("assets/images/fp.png", height: 120),
                         const SizedBox(height: 16),
 
-                        const Text(
+                        Text(
                           "Create Account",
-                          style: TextStyle(
+                          style: theme.textTheme.headlineMedium?.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -94,7 +96,10 @@ class _SignupPageState extends State<SignupPage> {
                         const SizedBox(height: 8),
                         Text(
                           "Sign up to get started",
-                          style: TextStyle(color: Colors.grey[600]),
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.textTheme.bodyMedium?.color
+                                ?.withOpacity(0.6),
+                          ),
                         ),
                         const SizedBox(height: 24),
 

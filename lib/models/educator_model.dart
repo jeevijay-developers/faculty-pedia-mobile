@@ -29,39 +29,23 @@ class Educator {
 
   factory Educator.fromJson(Map<String, dynamic> json) {
     try {
-      // Enhanced name parsing logic
+      // Handle firstName/lastName from backend and combine them
+      String firstName = json['firstName']?.toString().trim() ?? '';
+      String lastName = json['lastName']?.toString().trim() ?? '';
       String name = '';
 
-      // First try to construct from firstName and lastName
-      final firstName = json['firstName']?.toString().trim();
-      final lastName = json['lastName']?.toString().trim();
-
-      if (firstName != null &&
-          firstName.isNotEmpty &&
-          lastName != null &&
-          lastName.isNotEmpty) {
-        name = '$firstName $lastName';
-      } else if (firstName != null && firstName.isNotEmpty) {
-        name = firstName;
-      } else if (lastName != null && lastName.isNotEmpty) {
-        name = lastName;
-      } else {
-        // Fallback to direct name field
-        name = json['name']?.toString().trim() ?? '';
-      }
-
-      // If still empty, try alternative fields
-      if (name.isEmpty) {
+      if (firstName.isNotEmpty && lastName.isNotEmpty) {
         name =
-            json['fullName']?.toString().trim() ??
-            json['username']?.toString().trim() ??
-            json['displayName']?.toString().trim() ??
-            'Unknown Educator';
+            '${firstName.substring(0, 1).toUpperCase()}${firstName.substring(1)} ${lastName.substring(0, 1).toUpperCase()}${lastName.substring(1)}';
+      } else if (firstName.isNotEmpty) {
+        name =
+            '${firstName.substring(0, 1).toUpperCase()}${firstName.substring(1)}';
+      } else if (lastName.isNotEmpty) {
+        name =
+            '${lastName.substring(0, 1).toUpperCase()}${lastName.substring(1)}';
+      } else {
+        name = 'Unknown Educator';
       }
-
-      print(
-        'Parsed educator name: "$name" from JSON: firstName="${firstName}", lastName="${lastName}", name="${json['name']}"',
-      ); // Debug
 
       return Educator(
         id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
@@ -81,9 +65,7 @@ class Educator {
         mobileNumber: json['mobileNumber']?.toString(),
       );
     } catch (e) {
-      print('Error parsing Educator from JSON: $e');
-      print('JSON data: $json');
-      rethrow;
+      throw Exception('Failed to parse Educator from JSON: $e');
     }
   }
 

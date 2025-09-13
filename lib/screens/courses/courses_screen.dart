@@ -103,23 +103,33 @@ class _CoursesPageState extends State<CoursesPage>
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       key: scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.cardColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: widget.preselectedCategory != null
-                ? Icon(Icons.arrow_back, color: kPrimaryColor, size: 16)
-                : FaIcon(FontAwesomeIcons.bars, color: kPrimaryColor, size: 16),
+                ? Icon(
+                    Icons.arrow_back,
+                    color: theme.colorScheme.primary,
+                    size: 16,
+                  )
+                : FaIcon(
+                    FontAwesomeIcons.bars,
+                    color: theme.colorScheme.primary,
+                    size: 16,
+                  ),
           ),
           onPressed: widget.preselectedCategory != null
               ? () => Navigator.pop(context)
@@ -134,9 +144,13 @@ class _CoursesPageState extends State<CoursesPage>
                   decoration: InputDecoration(
                     hintText: 'Search courses...',
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                        0.5,
+                      ),
+                    ),
                   ),
-                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16),
                   onChanged: (value) {
                     setState(() {
                       _searchQuery = value;
@@ -156,7 +170,7 @@ class _CoursesPageState extends State<CoursesPage>
               ),
               child: Icon(
                 _isSearchExpanded ? Icons.close : Icons.search,
-                color: kPrimaryColor,
+                color: primary,
                 size: 20,
               ),
             ),
@@ -203,10 +217,9 @@ class _CoursesPageState extends State<CoursesPage>
                         children: [
                           Text(
                             "Explore Courses",
-                            style: TextStyle(
+                            style: theme.textTheme.headlineLarge?.copyWith(
                               fontSize: 28,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
                               letterSpacing: -0.5,
                             ),
                           ),
@@ -214,9 +227,10 @@ class _CoursesPageState extends State<CoursesPage>
                           Text(
                             "Discover the perfect course to advance your learning journey",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 16,
-                              color: Colors.grey[600],
+                              color: theme.textTheme.bodyMedium?.color
+                                  ?.withOpacity(0.6),
                               height: 1.4,
                             ),
                           ),
@@ -243,19 +257,19 @@ class _CoursesPageState extends State<CoursesPage>
                               category,
                               style: TextStyle(
                                 color: isSelected
-                                    ? Colors.white
-                                    : kPrimaryColor,
+                                    ? theme.colorScheme.onPrimary
+                                    : primary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
                             ),
                             selected: isSelected,
-                            selectedColor: kPrimaryColor,
-                            backgroundColor: Colors.white,
+                            selectedColor: primary,
+                            backgroundColor: theme.cardColor,
                             side: BorderSide(
                               color: isSelected
-                                  ? kPrimaryColor
-                                  : Colors.grey[300]!,
+                                  ? primary
+                                  : Theme.of(context).dividerColor,
                             ),
                             onSelected: (bool selected) {
                               setState(() {

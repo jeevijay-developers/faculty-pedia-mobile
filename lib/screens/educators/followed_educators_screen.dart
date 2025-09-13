@@ -30,6 +30,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
 
   Future<void> _loadFollowedEducators() async {
     try {
+      if (!mounted) return;
       setState(() {
         isLoading = true;
         error = null;
@@ -40,6 +41,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
       final userId = prefs.getString('userId');
 
       if (token == null || userId == null) {
+        if (!mounted) return;
         setState(() {
           error = 'Authentication required';
           isLoading = false;
@@ -66,6 +68,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
           print('Educator $i: ${educatorsData[i]}');
         }
 
+        if (!mounted) return;
         setState(() {
           followedEducators = educatorsData
               .map((json) => Educator.fromJson(json))
@@ -77,6 +80,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
           'Failed to load followed educators. Status: ${response.statusCode}',
         );
         print('Response body: ${response.body}');
+        if (!mounted) return;
         setState(() {
           error =
               'Failed to load followed educators. Status: ${response.statusCode}';
@@ -85,6 +89,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
       }
     } catch (e) {
       print('Error loading followed educators: $e');
+      if (!mounted) return;
       setState(() {
         error = 'Network error: $e';
         isLoading = false;
@@ -114,43 +119,49 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
       );
 
       if (response.statusCode == 200) {
+        if (!mounted) return;
         setState(() {
           followedEducators.removeAt(index);
         });
         SnackBarUtils.showSuccess(context, 'Educator unfollowed successfully');
       } else {
+        if (!mounted) return;
         SnackBarUtils.showError(context, 'Failed to unfollow educator');
       }
     } catch (e) {
+      if (!mounted) return;
       SnackBarUtils.showError(context, 'Error: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        shadowColor: Colors.black.withOpacity(0.1),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        elevation: theme.appBarTheme.elevation ?? 0,
+        shadowColor: theme.brightness == Brightness.dark
+            ? Colors.transparent
+            : Colors.black.withOpacity(0.1),
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  kPrimaryColor.withOpacity(0.1),
-                  Colors.blue.withOpacity(0.05),
-                ],
-              ),
+              color: theme.colorScheme.primary.withOpacity(0.06),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: kPrimaryColor.withOpacity(0.2),
+                color: theme.colorScheme.primary.withOpacity(0.18),
                 width: 1,
               ),
             ),
-            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 18),
+            child: Icon(
+              Icons.arrow_back,
+              color: theme.colorScheme.primary,
+              size: 18,
+            ),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -160,16 +171,19 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: theme.colorScheme.primary.withOpacity(0.06),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.favorite, color: kPrimaryColor, size: 16),
+              child: Icon(
+                Icons.favorite,
+                color: theme.colorScheme.primary,
+                size: 16,
+              ),
             ),
             const SizedBox(width: 8),
             Text(
               'Following',
-              style: TextStyle(
-                color: Colors.grey[800],
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -182,11 +196,15 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
             margin: const EdgeInsets.only(right: 16),
             child: TextButton.icon(
               onPressed: () => _loadFollowedEducators(),
-              icon: Icon(Icons.refresh, color: kPrimaryColor, size: 16),
+              icon: Icon(
+                Icons.refresh,
+                color: theme.colorScheme.primary,
+                size: 16,
+              ),
               label: Text(
                 'Refresh',
-                style: TextStyle(
-                  color: kPrimaryColor,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.primary,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -197,16 +215,18 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadFollowedEducators,
-        color: kPrimaryColor,
+        color: theme.colorScheme.primary,
         child: _buildBody(),
       ),
     );
   }
 
   Widget _buildBody() {
+    final theme = Theme.of(context);
+
     if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: kPrimaryColor),
+      return Center(
+        child: CircularProgressIndicator(color: theme.colorScheme.primary),
       );
     }
 
@@ -215,18 +235,21 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
+            Icon(Icons.error_outline, size: 64, color: theme.dividerColor),
             const SizedBox(height: 16),
             Text(
               error!,
-              style: TextStyle(color: Colors.grey[600], fontSize: 16),
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.dividerColor,
+                fontSize: 16,
+              ),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadFollowedEducators,
               style: ElevatedButton.styleFrom(
-                backgroundColor: kPrimaryColor,
-                foregroundColor: Colors.white,
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
               ),
               child: const Text('Retry'),
             ),
@@ -244,28 +267,29 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: theme.colorScheme.primary.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.people_outline,
                 size: 60,
-                color: kPrimaryColor.withOpacity(0.6),
+                color: theme.colorScheme.primary.withOpacity(0.6),
               ),
             ),
             const SizedBox(height: 24),
             Text(
               'No Following Yet',
-              style: TextStyle(
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey[800],
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Follow educators to see them here',
-              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.dividerColor,
+              ),
             ),
             const SizedBox(height: 24),
             GestureDetector(
@@ -277,12 +301,15 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                 ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [kPrimaryColor, kPrimaryColor.withBlue(255)],
+                    colors: [
+                      theme.colorScheme.primary,
+                      theme.colorScheme.primary.withBlue(255),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
-                      color: kPrimaryColor.withOpacity(0.3),
+                      color: theme.colorScheme.primary.withOpacity(0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -290,13 +317,17 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.search, color: Colors.white, size: 18),
-                    SizedBox(width: 8),
+                  children: [
+                    Icon(
+                      Icons.search,
+                      color: theme.colorScheme.onPrimary,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
                     Text(
                       'Explore Educators',
-                      style: TextStyle(
-                        color: Colors.white,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onPrimary,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -321,18 +352,16 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
   }
 
   Widget _buildEducatorCard(Educator educator, int index) {
+    final theme = Theme.of(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.white, Colors.grey.shade50],
-        ),
+        color: theme.cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: theme.shadowColor.withOpacity(0.08),
             blurRadius: 25,
             offset: const Offset(0, 10),
             spreadRadius: -5,
@@ -353,15 +382,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        kPrimaryColor.withOpacity(0.1),
-                        Colors.blue.shade100.withOpacity(0.3),
-                        Colors.purple.shade50.withOpacity(0.2),
-                      ],
-                    ),
+                    color: theme.colorScheme.surface,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -377,10 +398,13 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                             height: 70,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 3),
+                              border: Border.all(
+                                color: theme.cardColor,
+                                width: 3,
+                              ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: theme.shadowColor.withOpacity(0.1),
                                   blurRadius: 10,
                                   offset: const Offset(0, 5),
                                 ),
@@ -409,7 +433,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                                 color: Colors.green,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white,
+                                  color: theme.cardColor,
                                   width: 2,
                                 ),
                               ),
@@ -430,12 +454,14 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    educator.name,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
+                                    educator.name.isNotEmpty
+                                        ? educator.name
+                                        : 'Unknown Educator',
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -443,7 +469,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                                 const SizedBox(width: 4),
                                 Icon(
                                   Icons.verified,
-                                  color: kPrimaryColor,
+                                  color: theme.colorScheme.primary,
                                   size: 16,
                                 ),
                               ],
@@ -458,23 +484,22 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    kPrimaryColor.withOpacity(0.1),
-                                    Colors.purple.withOpacity(0.1),
-                                  ],
+                                color: theme.colorScheme.primary.withOpacity(
+                                  0.08,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: kPrimaryColor.withOpacity(0.3),
+                                  color: theme.colorScheme.primary.withOpacity(
+                                    0.28,
+                                  ),
                                   width: 1,
                                 ),
                               ),
                               child: Text(
                                 educator.specialization ?? educator.subject,
-                                style: TextStyle(
+                                style: theme.textTheme.bodySmall?.copyWith(
                                   fontSize: 12,
-                                  color: kPrimaryColor,
+                                  color: theme.colorScheme.primary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -491,18 +516,20 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.green.shade50,
+                                  color: theme.colorScheme.secondary
+                                      .withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: Colors.green.shade200,
+                                    color: theme.colorScheme.secondary
+                                        .withOpacity(0.28),
                                     width: 0.5,
                                   ),
                                 ),
                                 child: Text(
                                   educator.experience!,
-                                  style: TextStyle(
+                                  style: theme.textTheme.bodySmall?.copyWith(
                                     fontSize: 10,
-                                    color: Colors.green.shade700,
+                                    color: theme.colorScheme.secondary,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -514,11 +541,11 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                       // Unfollow Button - Modern design
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: theme.cardColor,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.red.withOpacity(0.1),
+                              color: theme.shadowColor.withOpacity(0.06),
                               blurRadius: 5,
                               offset: const Offset(0, 2),
                             ),
@@ -528,7 +555,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                           onPressed: () => _showUnfollowDialog(educator, index),
                           icon: Icon(
                             Icons.person_remove_outlined,
-                            color: Colors.red[400],
+                            color: theme.colorScheme.error,
                             size: 20,
                           ),
                           constraints: const BoxConstraints(

@@ -59,6 +59,8 @@ class _CustomDrawerState extends State<CustomDrawer>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         print("Auth state changed: ${state.runtimeType}");
@@ -86,17 +88,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                 ),
                 child: Drawer(
                   child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFFFBFDFF),
-                          Color(0xFFF7FAFF),
-                          Color(0xFFF2F6FB),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                    ),
+                    color: theme.scaffoldBackgroundColor,
                     child: Column(
                       children: [
                         // Enhanced Header with decorative elements
@@ -104,18 +96,10 @@ class _CustomDrawerState extends State<CustomDrawer>
                           width: double.infinity,
                           padding: const EdgeInsets.fromLTRB(24, 40, 24, 32),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                kPrimaryColor.withOpacity(0.08),
-                                Colors.white.withOpacity(0.95),
-                                Colors.white,
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                            color: theme.cardColor,
                             boxShadow: [
                               BoxShadow(
-                                color: kPrimaryColor.withOpacity(0.05),
+                                color: theme.shadowColor.withOpacity(0.05),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
@@ -130,16 +114,11 @@ class _CustomDrawerState extends State<CustomDrawer>
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          kPrimaryColor.withOpacity(0.1),
-                                          kPrimaryColor.withOpacity(0.05),
-                                        ],
-                                      ),
+                                      color: theme.colorScheme.surface,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: kPrimaryColor.withOpacity(
-                                            0.15,
+                                          color: theme.shadowColor.withOpacity(
+                                            0.08,
                                           ),
                                           blurRadius: 15,
                                           offset: const Offset(0, 8),
@@ -150,14 +129,13 @@ class _CustomDrawerState extends State<CustomDrawer>
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                          color: Colors.white,
+                                          color: theme.colorScheme.surface,
                                           width: 3,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                              0.08,
-                                            ),
+                                            color: theme.shadowColor
+                                                .withOpacity(0.06),
                                             blurRadius: 8,
                                             offset: const Offset(0, 4),
                                           ),
@@ -165,7 +143,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                                       ),
                                       child: CircleAvatar(
                                         radius: 42,
-                                        backgroundColor: Colors.white,
+                                        backgroundColor: theme.cardColor,
                                         backgroundImage: const AssetImage(
                                           'assets/images/fp.png',
                                         ),
@@ -180,10 +158,10 @@ class _CustomDrawerState extends State<CustomDrawer>
                                       width: 16,
                                       height: 16,
                                       decoration: BoxDecoration(
-                                        color: Colors.green,
+                                        color: theme.colorScheme.secondary,
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                          color: Colors.white,
+                                          color: theme.cardColor,
                                           width: 2,
                                         ),
                                       ),
@@ -195,8 +173,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                               // Name and email with better typography
                               Text(
                                 _name,
-                                style: const TextStyle(
-                                  color: Colors.black87,
+                                style: theme.textTheme.titleLarge?.copyWith(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 0.5,
@@ -210,13 +187,15 @@ class _CustomDrawerState extends State<CustomDrawer>
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: kPrimaryColor.withOpacity(0.08),
+                                    color: theme.colorScheme.primary
+                                        .withOpacity(0.08),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     _email,
-                                    style: TextStyle(
-                                      color: kPrimaryColor.withOpacity(0.8),
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.primary
+                                          .withOpacity(0.85),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -226,11 +205,13 @@ class _CustomDrawerState extends State<CustomDrawer>
                               // Edit profile button
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: theme.cardColor,
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: theme.shadowColor.withOpacity(
+                                        0.04,
+                                      ),
                                       blurRadius: 6,
                                       offset: const Offset(0, 2),
                                     ),
@@ -255,16 +236,18 @@ class _CustomDrawerState extends State<CustomDrawer>
                                           Icon(
                                             Icons.edit_rounded,
                                             size: 16,
-                                            color: kPrimaryColor,
+                                            color: theme.colorScheme.primary,
                                           ),
                                           const SizedBox(width: 6),
                                           Text(
                                             'Edit Profile',
-                                            style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
+                                                  color:
+                                                      theme.colorScheme.primary,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                           ),
                                         ],
                                       ),
@@ -281,6 +264,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                         // Enhanced Menu Items with staggered animation
                         Expanded(
                           child: ListView(
+                            physics: const BouncingScrollPhysics(),
                             padding: const EdgeInsets.symmetric(
                               vertical: 8,
                               horizontal: 16,
@@ -388,7 +372,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                                 9,
                                 () => Navigator.pushNamed(
                                   context,
-                                  AppRouter.help,
+                                  AppRouter.settings,
                                 ),
                               ),
                               _buildEnhancedCardItem(
@@ -413,12 +397,18 @@ class _CustomDrawerState extends State<CustomDrawer>
                               borderRadius: BorderRadius.circular(16),
                               gradient: LinearGradient(
                                 colors: [
-                                  Colors.red.shade50,
-                                  Colors.red.shade100.withOpacity(0.3),
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.error.withOpacity(0.06),
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.error.withOpacity(0.12),
                                 ],
                               ),
                               border: Border.all(
-                                color: Colors.red.shade200,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.error.withOpacity(0.2),
                                 width: 1,
                               ),
                             ),
@@ -439,14 +429,18 @@ class _CustomDrawerState extends State<CustomDrawer>
                                     children: [
                                       Icon(
                                         Icons.logout_rounded,
-                                        color: Colors.red.shade600,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.error,
                                         size: 20,
                                       ),
                                       const SizedBox(width: 12),
                                       Text(
                                         'Logout',
                                         style: TextStyle(
-                                          color: Colors.red.shade700,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.error,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: 0.5,
@@ -481,15 +475,18 @@ class _CustomDrawerState extends State<CustomDrawer>
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        final delay = index * 0.1;
+        final theme = Theme.of(context);
+        // Limit the delay to prevent scroll-based fade issues
+        final delay = (index * 0.05).clamp(0.0, 0.5);
         final animationValue = Curves.easeOutCubic.transform(
           (_animationController.value - delay).clamp(0.0, 1.0),
         );
 
         return Transform.translate(
-          offset: Offset(0, (1 - animationValue) * 50),
+          offset: Offset(0, (1 - animationValue) * 30),
           child: Opacity(
-            opacity: animationValue,
+            // Ensure minimum opacity to prevent complete fade out
+            opacity: animationValue.clamp(0.8, 1.0),
             child: Container(
               margin: const EdgeInsets.only(bottom: 4),
               child: Material(
@@ -507,10 +504,14 @@ class _CustomDrawerState extends State<CustomDrawer>
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: kPrimaryColor.withOpacity(0.12),
+                            color: theme.colorScheme.primary.withOpacity(0.12),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Icon(icon, color: kPrimaryColor, size: 20),
+                          child: Icon(
+                            icon,
+                            color: theme.colorScheme.primary,
+                            size: 20,
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -519,8 +520,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                             children: [
                               Text(
                                 title,
-                                style: const TextStyle(
-                                  color: Colors.black87,
+                                style: theme.textTheme.titleMedium?.copyWith(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.2,
@@ -529,8 +529,8 @@ class _CustomDrawerState extends State<CustomDrawer>
                               const SizedBox(height: 2),
                               Text(
                                 subtitle,
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.dividerColor.withOpacity(0.9),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -540,7 +540,7 @@ class _CustomDrawerState extends State<CustomDrawer>
                         ),
                         Icon(
                           Icons.chevron_right_rounded,
-                          color: Colors.grey.shade400,
+                          color: theme.dividerColor,
                           size: 18,
                         ),
                       ],
@@ -566,32 +566,44 @@ class _CustomDrawerState extends State<CustomDrawer>
           ),
           title: Row(
             children: [
-              Icon(Icons.logout_rounded, color: Colors.red.shade600, size: 24),
+              Icon(
+                Icons.logout_rounded,
+                color: Theme.of(context).colorScheme.error,
+                size: 24,
+              ),
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 'Confirm Logout',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
               ),
             ],
           ),
-          content: const Text(
+          content: Text(
             'Are you sure you want to logout from your account?',
-            style: TextStyle(fontSize: 14, color: Colors.black54),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.color?.withOpacity(0.8),
+              fontSize: 14,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
                 'Cancel',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).dividerColor.withOpacity(0.9),
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade600,
+                backgroundColor: Theme.of(context).colorScheme.error,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

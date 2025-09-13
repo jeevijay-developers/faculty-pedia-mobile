@@ -18,23 +18,24 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       key: scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.cardColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: FaIcon(
               FontAwesomeIcons.bars,
-              color: kPrimaryColor,
+              color: theme.colorScheme.primary,
               size: 16,
             ),
           ),
@@ -52,12 +53,12 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 Icons.notifications_outlined,
-                color: kPrimaryColor,
+                color: theme.colorScheme.primary,
                 size: 20,
               ),
             ),
@@ -77,7 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
+                  colors: [
+                    theme.cardColor,
+                    theme.colorScheme.primary.withOpacity(0.05),
+                  ],
                 ),
               ),
               child: Padding(
@@ -86,10 +90,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     Text(
                       "Choose Your Exam",
-                      style: TextStyle(
+                      style: theme.textTheme.headlineMedium?.copyWith(
                         fontSize: 28,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -97,9 +100,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     Text(
                       "Select your target exam and get access to specialized courses",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: theme.textTheme.bodyLarge?.copyWith(
                         fontSize: 16,
-                        color: Colors.grey[600],
                         height: 1.4,
                       ),
                     ),
@@ -125,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: "assets/images/iit-logo.png",
                     title: "IIT JEE",
                     subtitle: 'Indian Institute of Technology',
-                    color: Colors.orange,
+                    color: theme.colorScheme.secondary,
                   ),
                   const SizedBox(height: 16),
                   _buildExamCard(
@@ -140,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: "assets/images/neet-logo.png",
                     title: "NEET",
                     subtitle: 'National Eligibility cum Entrance Test',
-                    color: Colors.green,
+                    color: theme.colorScheme.tertiary,
                   ),
                   const SizedBox(height: 16),
                   _buildExamCard(
@@ -153,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: "assets/images/cbse-logo.png",
                     title: "CBSE",
                     subtitle: 'Central Board of Secondary Education',
-                    color: Colors.blue,
+                    color: theme.colorScheme.primary,
                   ),
                 ],
               ),
@@ -164,17 +166,16 @@ class _MyHomePageState extends State<MyHomePage> {
             // Features Section
             Container(
               width: double.infinity,
-              color: Colors.white,
+              color: theme.cardColor,
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
                     Text(
                       "Why Choose Faculty Pedia",
-                      style: TextStyle(
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -182,9 +183,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     Text(
                       "Comprehensive learning features for academic excellence",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: theme.textTheme.bodyLarge?.copyWith(
                         fontSize: 16,
-                        color: Colors.grey[600],
                         height: 1.4,
                       ),
                     ),
@@ -204,14 +204,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [kPrimaryColor, kPrimaryColor.withOpacity(0.8)],
+                    colors: [
+                      theme.colorScheme.primary,
+                      theme.colorScheme.primary.withOpacity(0.8),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: kPrimaryColor.withOpacity(0.3),
+                      color: theme.colorScheme.primary.withOpacity(0.3),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
                     ),
@@ -226,12 +229,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: theme.colorScheme.onPrimary.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.school,
-                            color: Colors.white,
+                            color: theme.colorScheme.onPrimary,
                             size: 24,
                           ),
                         ),
@@ -240,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Text(
                             "Become an Educator",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: theme.colorScheme.onPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 22,
                               letterSpacing: -0.5,
@@ -253,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Text(
                       "Share your expertise, inspire learners, and earn for your impact. Join our growing network of passionate educators!",
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: theme.colorScheme.onPrimary.withOpacity(0.9),
                         fontSize: 16,
                         height: 1.5,
                       ),
@@ -263,8 +266,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: kPrimaryColor,
+                          backgroundColor: theme.colorScheme.onPrimary,
+                          foregroundColor: theme.colorScheme.primary,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
@@ -301,16 +304,17 @@ class _MyHomePageState extends State<MyHomePage> {
     required String subtitle,
     required Color color,
   }) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 120,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: theme.shadowColor.withOpacity(0.08),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -339,11 +343,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: theme.shadowColor.withOpacity(0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -360,19 +364,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: [
                           Text(
                             title,
-                            style: TextStyle(
+                            style: theme.textTheme.headlineSmall?.copyWith(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
                               letterSpacing: -0.5,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             subtitle,
-                            style: TextStyle(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               fontSize: 14,
-                              color: Colors.grey[600],
                               height: 1.3,
                             ),
                           ),
@@ -402,42 +404,43 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildFeatureGrid() {
+    final theme = Theme.of(context);
     final features = [
       {
         'icon': Icons.video_library_outlined,
         'title': 'Online Classes',
         'subtitle': 'Interactive classes anytime, anywhere',
-        'color': Colors.blue,
+        'color': theme.colorScheme.primary,
       },
       {
         'icon': Icons.person_outline,
         'title': '1-on-1 Sessions',
         'subtitle': 'Personalized learning experience',
-        'color': Colors.green,
+        'color': theme.colorScheme.secondary,
       },
       {
         'icon': Icons.groups_outlined,
         'title': 'Webinars',
         'subtitle': 'Expert discussions and sessions',
-        'color': Colors.orange,
+        'color': theme.colorScheme.tertiary,
       },
       {
         'icon': Icons.library_books_outlined,
         'title': 'Study Material',
         'subtitle': 'High-quality notes and resources',
-        'color': Colors.purple,
+        'color': theme.colorScheme.primary,
       },
       {
         'icon': Icons.quiz_outlined,
         'title': 'Online Tests',
         'subtitle': 'Real-time tests and analytics',
-        'color': Colors.red,
+        'color': theme.colorScheme.secondary,
       },
       {
         'icon': Icons.analytics_outlined,
         'title': 'Progress Tracking',
         'subtitle': 'Monitor your learning journey',
-        'color': Colors.teal,
+        'color': theme.colorScheme.tertiary,
       },
     ];
 
@@ -455,9 +458,9 @@ class _MyHomePageState extends State<MyHomePage> {
         final feature = features[index];
         return Container(
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: theme.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: theme.dividerColor),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -479,19 +482,17 @@ class _MyHomePageState extends State<MyHomePage> {
               Text(
                 feature['title'] as String,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 feature['subtitle'] as String,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 12,
-                  color: Colors.grey[600],
                   height: 1.3,
                 ),
               ),

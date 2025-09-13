@@ -158,6 +158,8 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BlocBuilder<EducatorBloc, EducatorState>(
       builder: (context, state) {
         // Get educators list from state
@@ -205,23 +207,23 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
         }).toList();
 
         return Scaffold(
-          backgroundColor: Colors.grey[50],
+          backgroundColor: theme.scaffoldBackgroundColor,
           key: scaffoldKey,
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: theme.appBarTheme.backgroundColor,
             elevation: 0,
             leading: IconButton(
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: kPrimaryColor.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   widget.preselectedCategory != null
                       ? Icons.arrow_back
                       : Icons.menu,
-                  color: kPrimaryColor,
+                  color: theme.colorScheme.primary,
                   size: 16,
                 ),
               ),
@@ -238,12 +240,9 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                       decoration: InputDecoration(
                         hintText: 'Search educators...',
                         border: InputBorder.none,
-                        hintStyle: TextStyle(color: Colors.grey[500]),
+                        hintStyle: TextStyle(color: theme.dividerColor),
                       ),
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16,
-                      ),
+                      style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16),
                       onChanged: (value) {
                         setState(() {
                           _searchQuery = value;
@@ -261,12 +260,12 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                 icon: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withOpacity(0.1),
+                    color: theme.colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     _isSearchExpanded ? Icons.close : Icons.search,
-                    color: kPrimaryColor,
+                    color: theme.colorScheme.primary,
                     size: 20,
                   ),
                 ),

@@ -6,10 +6,13 @@ import 'package:facultypedia/screens/blogs/bloc/blog_bloc.dart';
 import 'package:facultypedia/screens/blogs/repository/blog_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:facultypedia/config/theme_controller.dart';
 
-void main() {
+Future<void> main() async {
   final authRepository = AuthRepository();
   WidgetsFlutterBinding.ensureInitialized();
+  // Load saved theme before running the app so initial theme is correct
+  await ThemeController.loadTheme();
   runApp(
     MultiBlocProvider(
       providers: [

@@ -39,27 +39,27 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       key: scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.cardColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.menu, color: kPrimaryColor, size: 16),
+            child: Icon(Icons.menu, color: theme.colorScheme.primary, size: 16),
           ),
           onPressed: () => scaffoldKey.currentState?.openDrawer(),
         ),
-        title: const Text(
+        title: Text(
           "My Profile",
-          style: TextStyle(
-            color: Colors.black87,
+          style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w600,
             fontSize: 18,
           ),
@@ -70,10 +70,14 @@ class _ProfilePageState extends State<ProfilePage> {
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: theme.colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.settings, color: kPrimaryColor, size: 20),
+              child: Icon(
+                Icons.settings,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
             ),
             onPressed: () {},
           ),
@@ -97,7 +101,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
+                        colors: [
+                          theme.cardColor,
+                          theme.colorScheme.primary.withOpacity(0.05),
+                        ],
                       ),
                     ),
                     child: Padding(
@@ -106,10 +113,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         children: [
                           Text(
                             "👤 My Profile",
-                            style: TextStyle(
+                            style: theme.textTheme.headlineMedium?.copyWith(
                               fontSize: 28,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
                               letterSpacing: -0.5,
                             ),
                           ),
@@ -117,9 +123,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           Text(
                             "Manage your account information and preferences",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 16,
-                              color: Colors.grey[600],
                               height: 1.4,
                             ),
                           ),
@@ -128,11 +133,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           // Profile Avatar Card
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: theme.cardColor,
                               borderRadius: BorderRadius.circular(24),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.08),
+                                  color: theme.shadowColor.withOpacity(0.08),
                                   blurRadius: 15,
                                   offset: const Offset(0, 5),
                                 ),
@@ -148,14 +153,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                          color: kPrimaryColor.withOpacity(0.2),
+                                          color: theme.colorScheme.primary
+                                              .withOpacity(0.2),
                                           width: 3,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: kPrimaryColor.withOpacity(
-                                              0.2,
-                                            ),
+                                            color: theme.colorScheme.primary
+                                                .withOpacity(0.2),
                                             blurRadius: 20,
                                             offset: const Offset(0, 8),
                                           ),
@@ -163,11 +168,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                       child: CircleAvatar(
                                         radius: 60,
-                                        backgroundColor: Colors.white,
+                                        backgroundColor: theme.cardColor,
                                         child: Icon(
                                           Icons.person,
                                           size: 60,
-                                          color: kPrimaryColor,
+                                          color: theme.colorScheme.primary,
                                         ),
                                       ),
                                     ),
@@ -177,16 +182,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                       child: Container(
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
-                                          color: kPrimaryColor,
+                                          color: theme.colorScheme.primary,
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                            color: Colors.white,
+                                            color: theme.cardColor,
                                             width: 2,
                                           ),
                                         ),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.verified,
-                                          color: Colors.white,
+                                          color: theme.colorScheme.onPrimary,
                                           size: 16,
                                         ),
                                       ),
@@ -198,12 +203,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 // User Name
                                 Text(
                                   name ?? "User Name",
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black87,
-                                    letterSpacing: -0.5,
-                                  ),
+                                  style: theme.textTheme.headlineSmall
+                                      ?.copyWith(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: -0.5,
+                                      ),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 8),
@@ -215,14 +220,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                     vertical: 8,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: kPrimaryColor.withOpacity(0.1),
+                                    color: theme.colorScheme.primary
+                                        .withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     "ID: ${userId ?? 'N/A'}",
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: kPrimaryColor,
+                                      color: theme.colorScheme.primary,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -247,21 +253,21 @@ class _ProfilePageState extends State<ProfilePage> {
                             "Full Name",
                             name ?? "Not provided",
                             Icons.person_outline,
-                            kPrimaryColor,
+                            theme.colorScheme.primary,
                           ),
                           const SizedBox(height: 16),
                           _buildInfoCard(
                             "Email Address",
                             email ?? "Not provided",
                             Icons.email_outlined,
-                            Colors.green,
+                            Colors.purple,
                           ),
                           const SizedBox(height: 16),
                           _buildInfoCard(
                             "Mobile Number",
                             mobile ?? "Not provided",
                             Icons.phone_outlined,
-                            Colors.orange,
+                            theme.colorScheme.tertiary,
                           ),
                         ],
                       ),
@@ -417,14 +423,15 @@ class _ProfilePageState extends State<ProfilePage> {
     IconData icon,
     Color color,
   ) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: theme.shadowColor.withOpacity(0.08),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -447,18 +454,16 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: 12,
-                    color: Colors.grey[600],
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: theme.textTheme.bodyLarge?.copyWith(
                     fontSize: 16,
-                    color: Colors.black87,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

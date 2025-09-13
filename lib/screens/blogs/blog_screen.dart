@@ -69,12 +69,18 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return FutureBuilder<String>(
       future: _getToken(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Scaffold(
-            body: const Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: CircularProgressIndicator(
+                color: theme.colorScheme.primary,
+              ),
+            ),
           );
         }
 
@@ -84,18 +90,22 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
           create: (context) =>
               BlogBloc(repository: repository)..add(FetchBlogs()),
           child: Scaffold(
-            backgroundColor: Colors.grey[50],
+            backgroundColor: theme.scaffoldBackgroundColor,
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: theme.appBarTheme.backgroundColor,
               elevation: 0,
               leading: IconButton(
                 icon: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withOpacity(0.1),
+                    color: theme.colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 16),
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: theme.colorScheme.primary,
+                    size: 16,
+                  ),
                 ),
                 onPressed: () {
                   if (Navigator.of(context).canPop()) {
@@ -114,10 +124,9 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                         decoration: InputDecoration(
                           hintText: 'Search educational articles...',
                           border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.grey[500]),
+                          hintStyle: TextStyle(color: theme.dividerColor),
                         ),
-                        style: const TextStyle(
-                          color: Colors.black87,
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           fontSize: 16,
                         ),
                         onChanged: (value) {
@@ -137,12 +146,12 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: kPrimaryColor.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       _isSearchExpanded ? Icons.close : Icons.search,
-                      color: kPrimaryColor,
+                      color: theme.colorScheme.primary,
                       size: 20,
                     ),
                   ),
@@ -165,7 +174,10 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
+                        colors: [
+                          theme.cardColor,
+                          theme.colorScheme.primary.withOpacity(0.05),
+                        ],
                       ),
                     ),
                     child: Padding(
@@ -174,10 +186,9 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                         children: [
                           Text(
                             "📚 Educational Blogs",
-                            style: TextStyle(
+                            style: theme.textTheme.headlineMedium?.copyWith(
                               fontSize: 28,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
                               letterSpacing: -0.5,
                             ),
                           ),
@@ -185,9 +196,9 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                           Text(
                             "Discover insights, tips, and knowledge from expert educators",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 16,
-                              color: Colors.grey[600],
+                              color: theme.dividerColor,
                               height: 1.4,
                             ),
                           ),
@@ -203,7 +214,7 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                           return Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                kPrimaryColor,
+                                theme.colorScheme.primary,
                               ),
                             ),
                           );
@@ -219,32 +230,33 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                     width: 120,
                                     height: 120,
                                     decoration: BoxDecoration(
-                                      color: kPrimaryColor.withOpacity(0.1),
+                                      color: theme.colorScheme.primary
+                                          .withOpacity(0.1),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
                                       Icons.article_outlined,
                                       size: 60,
-                                      color: kPrimaryColor,
+                                      color: theme.colorScheme.primary,
                                     ),
                                   ),
                                   const SizedBox(height: 32),
                                   Text(
                                     "No Articles Available",
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black87,
-                                      letterSpacing: -0.5,
-                                    ),
+                                    style: theme.textTheme.headlineSmall
+                                        ?.copyWith(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: -0.5,
+                                        ),
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
                                     "Check back soon for educational content and expert insights",
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: theme.textTheme.bodyLarge?.copyWith(
                                       fontSize: 16,
-                                      color: Colors.grey[600],
+                                      color: theme.dividerColor,
                                       height: 1.4,
                                     ),
                                   ),
@@ -253,14 +265,17 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         colors: [
-                                          kPrimaryColor,
-                                          kPrimaryColor.withOpacity(0.8),
+                                          theme.colorScheme.primary,
+                                          theme.colorScheme.primary.withOpacity(
+                                            0.8,
+                                          ),
                                         ],
                                       ),
                                       borderRadius: BorderRadius.circular(25),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: kPrimaryColor.withOpacity(0.3),
+                                          color: theme.colorScheme.primary
+                                              .withOpacity(0.3),
                                           blurRadius: 12,
                                           offset: const Offset(0, 6),
                                         ),
@@ -272,16 +287,18 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                           FetchBlogs(),
                                         );
                                       },
-                                      icon: const Icon(
+                                      icon: Icon(
                                         Icons.refresh,
-                                        color: Colors.white,
+                                        color: theme.colorScheme.onPrimary,
                                       ),
-                                      label: const Text(
+                                      label: Text(
                                         'Refresh',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                              color:
+                                                  theme.colorScheme.onPrimary,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                       ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.transparent,
@@ -324,43 +341,47 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                     width: 120,
                                     height: 120,
                                     decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.1),
+                                      color: theme.dividerColor.withOpacity(
+                                        0.1,
+                                      ),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
                                       Icons.search_off,
                                       size: 60,
-                                      color: Colors.grey[500],
+                                      color: theme.dividerColor,
                                     ),
                                   ),
                                   const SizedBox(height: 32),
                                   Text(
                                     "No Articles Found",
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black87,
-                                      letterSpacing: -0.5,
-                                    ),
+                                    style: theme.textTheme.headlineSmall
+                                        ?.copyWith(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: -0.5,
+                                        ),
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
                                     'Try searching for "$_searchQuery" with different keywords',
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    style: theme.textTheme.bodyLarge?.copyWith(
                                       fontSize: 16,
-                                      color: Colors.grey[600],
+                                      color: theme.dividerColor,
                                       height: 1.4,
                                     ),
                                   ),
                                   const SizedBox(height: 40),
                                   Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[600],
+                                      color: theme.dividerColor,
                                       borderRadius: BorderRadius.circular(25),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.grey.withOpacity(0.3),
+                                          color: theme.shadowColor.withOpacity(
+                                            0.3,
+                                          ),
                                           blurRadius: 12,
                                           offset: const Offset(0, 6),
                                         ),
@@ -373,16 +394,18 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                           _searchQuery = '';
                                         });
                                       },
-                                      icon: const Icon(
+                                      icon: Icon(
                                         Icons.clear,
-                                        color: Colors.white,
+                                        color: theme.colorScheme.onSurface,
                                       ),
-                                      label: const Text(
+                                      label: Text(
                                         'Clear Search',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                              color:
+                                                  theme.colorScheme.onSurface,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                       ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.transparent,
@@ -422,32 +445,34 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                   width: 120,
                                   height: 120,
                                   decoration: BoxDecoration(
-                                    color: Colors.red.withOpacity(0.1),
+                                    color: theme.colorScheme.error.withOpacity(
+                                      0.1,
+                                    ),
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.error_outline,
                                     size: 60,
-                                    color: Colors.red,
+                                    color: theme.colorScheme.error,
                                   ),
                                 ),
                                 const SizedBox(height: 32),
                                 Text(
                                   "Something Went Wrong",
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black87,
-                                    letterSpacing: -0.5,
-                                  ),
+                                  style: theme.textTheme.headlineSmall
+                                      ?.copyWith(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: -0.5,
+                                      ),
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
                                   state.message,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: theme.textTheme.bodyLarge?.copyWith(
                                     fontSize: 16,
-                                    color: Colors.grey[600],
+                                    color: theme.dividerColor,
                                     height: 1.4,
                                   ),
                                 ),
@@ -456,14 +481,17 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        kPrimaryColor,
-                                        kPrimaryColor.withOpacity(0.8),
+                                        theme.colorScheme.primary,
+                                        theme.colorScheme.primary.withOpacity(
+                                          0.8,
+                                        ),
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(25),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: kPrimaryColor.withOpacity(0.3),
+                                        color: theme.colorScheme.primary
+                                            .withOpacity(0.3),
                                         blurRadius: 12,
                                         offset: const Offset(0, 6),
                                       ),
@@ -475,16 +503,17 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                         FetchBlogs(),
                                       );
                                     },
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.refresh,
-                                      color: Colors.white,
+                                      color: theme.colorScheme.onPrimary,
                                     ),
-                                    label: const Text(
+                                    label: Text(
                                       'Try Again',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: theme.colorScheme.onPrimary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.transparent,
@@ -517,14 +546,16 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildEnhancedBlogCard(Blog blog, int index) {
+    final theme = Theme.of(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: theme.shadowColor.withOpacity(0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -565,11 +596,11 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: kPrimaryColor,
+                          color: theme.colorScheme.primary,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: theme.shadowColor.withOpacity(0.2),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -577,8 +608,8 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                         ),
                         child: Text(
                           blog.category.toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onPrimary,
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.8,
@@ -596,22 +627,22 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                         vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
+                        color: theme.shadowColor.withOpacity(0.7),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.access_time,
-                            color: Colors.white,
+                            color: theme.colorScheme.onSurface,
                             size: 12,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             _calculateReadingTime(blog.shortContent),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -631,10 +662,9 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                     // Title
                     Text(
                       blog.title,
-                      style: TextStyle(
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         height: 1.3,
                         letterSpacing: -0.3,
                       ),
@@ -647,9 +677,9 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                       blog.shortContent,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: 14,
-                        color: Colors.grey[600],
+                        color: theme.dividerColor,
                         height: 1.5,
                       ),
                     ),
@@ -661,13 +691,13 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: kPrimaryColor.withOpacity(0.1),
+                            color: theme.colorScheme.primary.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.person_outline,
                             size: 18,
-                            color: kPrimaryColor,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -679,18 +709,17 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                 blog.author.isNotEmpty
                                     ? blog.author
                                     : 'Anonymous',
-                                style: const TextStyle(
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'Author',
-                                style: TextStyle(
+                                style: theme.textTheme.bodySmall?.copyWith(
                                   fontSize: 11,
-                                  color: Colors.grey[500],
+                                  color: theme.dividerColor,
                                 ),
                               ),
                             ],
@@ -701,14 +730,16 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                kPrimaryColor,
-                                kPrimaryColor.withOpacity(0.8),
+                                theme.colorScheme.primary,
+                                theme.colorScheme.primary.withOpacity(0.8),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: kPrimaryColor.withOpacity(0.25),
+                                color: theme.colorScheme.primary.withOpacity(
+                                  0.25,
+                                ),
                                 blurRadius: 8,
                                 offset: const Offset(0, 3),
                               ),
@@ -722,19 +753,19 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text(
+                                Text(
                                   "Read",
-                                  style: TextStyle(
-                                    color: Colors.white,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onPrimary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 const SizedBox(width: 4),
-                                const Icon(
+                                Icon(
                                   Icons.arrow_forward_ios,
                                   size: 10,
-                                  color: Colors.white,
+                                  color: theme.colorScheme.onPrimary,
                                 ),
                               ],
                             ),
@@ -757,13 +788,16 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                                   vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: kPrimaryColor.withOpacity(0.08),
+                                  color: theme.colorScheme.primary.withOpacity(
+                                    0.08,
+                                  ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
                                   '#$tag',
-                                  style: TextStyle(
-                                    color: kPrimaryColor.withOpacity(0.8),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.primary
+                                        .withOpacity(0.8),
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
                                   ),

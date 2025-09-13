@@ -39,8 +39,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
@@ -75,9 +76,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       ),
                       const SizedBox(height: 16),
 
-                      const Text(
+                      Text(
                         "Welcome Back",
-                        style: TextStyle(
+                        style: theme.textTheme.headlineMedium?.copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
@@ -85,7 +86,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       const SizedBox(height: 8),
                       Text(
                         "Login to continue",
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                            0.6,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 24),
 

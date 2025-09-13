@@ -130,22 +130,24 @@ class _WebinarsScreenState extends State<WebinarsScreen>
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
 
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       drawer: const CustomDrawer(),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.cardColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.menu, color: kPrimaryColor, size: 20),
+            child: Icon(Icons.menu, color: primary, size: 20),
           ),
           onPressed: () => scaffoldKey.currentState?.openDrawer(),
         ),
@@ -158,9 +160,13 @@ class _WebinarsScreenState extends State<WebinarsScreen>
                   decoration: InputDecoration(
                     hintText: 'Search webinars...',
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                        0.5,
+                      ),
+                    ),
                   ),
-                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16),
                   onChanged: (value) {
                     setState(() {
                       _searchQuery = value;
@@ -168,10 +174,9 @@ class _WebinarsScreenState extends State<WebinarsScreen>
                   },
                 ),
               )
-            : const Text(
+            : Text(
                 "Webinars",
-                style: TextStyle(
-                  color: Colors.black87,
+                style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
                 ),
@@ -187,7 +192,7 @@ class _WebinarsScreenState extends State<WebinarsScreen>
               ),
               child: Icon(
                 _isSearchExpanded ? Icons.close : Icons.search,
-                color: kPrimaryColor,
+                color: primary,
                 size: 20,
               ),
             ),
@@ -229,36 +234,37 @@ class _WebinarsScreenState extends State<WebinarsScreen>
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: kPrimaryColor.withOpacity(0.2),
+                          color: theme.colorScheme.primary.withOpacity(0.2),
                         ),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.video,
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         size: 40,
                       ),
                     ),
                     const SizedBox(height: 20),
 
                     // Welcome Text
-                    const Text(
+                    Text(
                       "Live Learning Sessions",
-                      style: TextStyle(
+                      style: theme.textTheme.headlineLarge?.copyWith(
                         fontSize: 28,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       "Join interactive webinars with expert educators",
-                      style: TextStyle(
+                      style: theme.textTheme.bodyLarge?.copyWith(
                         fontSize: 16,
-                        color: Colors.grey[600],
+                        color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                          0.6,
+                        ),
                         height: 1.4,
                       ),
                       textAlign: TextAlign.center,
@@ -299,11 +305,14 @@ class _WebinarsScreenState extends State<WebinarsScreen>
           // TODO: Implement schedule webinar functionality
           _showScheduleDialog(context);
         },
-        backgroundColor: kPrimaryColor,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
+        backgroundColor: theme.colorScheme.primary,
+        icon: Icon(Icons.add, color: theme.colorScheme.onPrimary),
+        label: Text(
           "Schedule",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.onPrimary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
@@ -324,17 +333,21 @@ class _WebinarsScreenState extends State<WebinarsScreen>
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
                     letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontSize: 14,
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                  ),
                 ),
               ],
             ),
