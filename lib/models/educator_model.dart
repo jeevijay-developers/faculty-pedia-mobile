@@ -10,6 +10,7 @@ class Educator {
   final int? totalFollowers;
   final EducatorImage? image;
   final List<String>? courses;
+  final String? mobileNumber;
 
   Educator({
     required this.id,
@@ -23,25 +24,53 @@ class Educator {
     this.totalFollowers,
     this.image,
     this.courses,
+    this.mobileNumber,
   });
 
   factory Educator.fromJson(Map<String, dynamic> json) {
     try {
-      // Combine firstName and lastName for name
+      // Enhanced name parsing logic
       String name = '';
-      if (json['firstName'] != null && json['lastName'] != null) {
-        name = '${json['firstName']} ${json['lastName']}';
+
+      // First try to construct from firstName and lastName
+      final firstName = json['firstName']?.toString().trim();
+      final lastName = json['lastName']?.toString().trim();
+
+      if (firstName != null &&
+          firstName.isNotEmpty &&
+          lastName != null &&
+          lastName.isNotEmpty) {
+        name = '$firstName $lastName';
+      } else if (firstName != null && firstName.isNotEmpty) {
+        name = firstName;
+      } else if (lastName != null && lastName.isNotEmpty) {
+        name = lastName;
       } else {
-        name = json['name']?.toString() ?? '';
+        // Fallback to direct name field
+        name = json['name']?.toString().trim() ?? '';
       }
 
+      // If still empty, try alternative fields
+      if (name.isEmpty) {
+        name =
+            json['fullName']?.toString().trim() ??
+            json['username']?.toString().trim() ??
+            json['displayName']?.toString().trim() ??
+            'Unknown Educator';
+      }
+
+      print(
+        'Parsed educator name: "$name" from JSON: firstName="${firstName}", lastName="${lastName}", name="${json['name']}"',
+      ); // Debug
+
       return Educator(
-        id: json['_id']?.toString() ?? '',
+        id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
         name: name,
         email: json['email']?.toString() ?? '',
-        subject: json['subject']?.toString() ?? '',
+        subject:
+            json['subject']?.toString() ?? json['subjects']?.toString() ?? '',
         specialization: json['specialization']?.toString(),
-        bio: json['bio']?.toString(),
+        bio: json['bio']?.toString() ?? json['description']?.toString(),
         experience: _parseExperience(json['workExperience']),
         rating: _parseDouble(json['rating']),
         totalFollowers: _parseFollowersCount(json['followers']),
@@ -49,6 +78,7 @@ class Educator {
             ? EducatorImage.fromJson(json['image'])
             : null,
         courses: _parseCourses(json['courses']),
+        mobileNumber: json['mobileNumber']?.toString(),
       );
     } catch (e) {
       print('Error parsing Educator from JSON: $e');
@@ -123,6 +153,7 @@ class Educator {
       'totalFollowers': totalFollowers,
       'image': image?.toJson(),
       'courses': courses,
+      'mobileNumber': mobileNumber,
     };
   }
 }
