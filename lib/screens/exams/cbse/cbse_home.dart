@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -7,8 +8,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:facultypedia/screens/courses/course_details_page.dart';
 import 'package:facultypedia/screens/educators/educator_profile_page.dart';
 import 'package:facultypedia/router/router.dart';
-
-const Color kPrimaryColor = Color(0xFF4A90E2);
 
 class CBSEHome extends StatefulWidget {
   const CBSEHome({super.key});
@@ -46,7 +45,6 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
     );
     final data = json.decode(response);
 
-    // 🔑 Pick only the CBSE category from JSON
     final cbseCategory = (data['categories'] as List).firstWhere(
       (cat) => cat['title'] == "Courses for CBSE",
       orElse: () => null,
@@ -55,7 +53,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
     if (cbseCategory != null) {
       setState(() {
         allCourses = cbseCategory['courses'];
-        filteredCourses = allCourses; // default: show all
+        filteredCourses = allCourses;
       });
     }
   }
@@ -70,21 +68,18 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
   void _applyFilters() {
     List<dynamic> filtered = allCourses;
 
-    // Filter by class
     if (selectedClass != null && selectedClass != "All") {
       filtered = filtered.where((course) {
         return course['title'].toString().contains(selectedClass!);
       }).toList();
     }
 
-    // Filter by search query
     if (_searchQuery.isNotEmpty) {
       filtered = filtered.where((course) {
         final title = course['title']?.toString().toLowerCase() ?? '';
         final description =
             course['description']?.toString().toLowerCase() ?? '';
         final query = _searchQuery.toLowerCase();
-
         return title.contains(query) || description.contains(query);
       }).toList();
     }
@@ -104,21 +99,23 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       key: scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 16),
+            child: Icon(Icons.arrow_back, color: primaryColor, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -131,9 +128,9 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                   decoration: InputDecoration(
                     hintText: 'Search CBSE courses...',
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    hintStyle: TextStyle(color: theme.hintColor),
                   ),
-                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  style: theme.textTheme.bodyLarge,
                   onChanged: (value) {
                     setState(() {
                       _searchQuery = value;
@@ -142,19 +139,19 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                   },
                 ),
               )
-            : Container(height: 40, child: Image.asset("assets/images/fp.png")),
+            : SizedBox(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
         actions: [
           IconButton(
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 _isSearchExpanded ? Icons.close : Icons.search,
-                color: kPrimaryColor,
+                color: primaryColor,
                 size: 20,
               ),
             ),
@@ -186,7 +183,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
+                  colors: [theme.cardColor, primaryColor.withOpacity(0.05)],
                 ),
               ),
               child: Padding(
@@ -195,10 +192,8 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                   children: [
                     Text(
                       "📚 CBSE / NEET",
-                      style: TextStyle(
-                        fontSize: 28,
+                      style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -206,9 +201,8 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                     Text(
                       "Excellence in CBSE curriculum and NEET preparation",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.hintColor,
                         height: 1.4,
                       ),
                     ),
@@ -221,11 +215,11 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
             Container(
               margin: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: theme.shadowColor.withOpacity(0.08),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -238,10 +232,8 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                   children: [
                     Text(
                       "Select Your Class",
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -250,16 +242,6 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                         labelText: "Choose class to filter courses",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: kPrimaryColor.withOpacity(0.3),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: kPrimaryColor,
-                            width: 2,
-                          ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -267,40 +249,24 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                         ),
                       ),
                       value: selectedClass,
-                      items: [
-                        const DropdownMenuItem(
-                          value: "All",
-                          child: Text("All Classes"),
-                        ),
-                        const DropdownMenuItem(
-                          value: "Class 6",
-                          child: Text("Class 6"),
-                        ),
-                        const DropdownMenuItem(
-                          value: "Class 7",
-                          child: Text("Class 7"),
-                        ),
-                        const DropdownMenuItem(
-                          value: "Class 8",
-                          child: Text("Class 8"),
-                        ),
-                        const DropdownMenuItem(
-                          value: "Class 9",
-                          child: Text("Class 9"),
-                        ),
-                        const DropdownMenuItem(
-                          value: "Class 10",
-                          child: Text("Class 10"),
-                        ),
-                        const DropdownMenuItem(
-                          value: "Class 11",
-                          child: Text("Class 11"),
-                        ),
-                        const DropdownMenuItem(
-                          value: "Class 12",
-                          child: Text("Class 12"),
-                        ),
-                      ],
+                      items:
+                          [
+                                "All",
+                                "Class 6",
+                                "Class 7",
+                                "Class 8",
+                                "Class 9",
+                                "Class 10",
+                                "Class 11",
+                                "Class 12",
+                              ]
+                              .map(
+                                (label) => DropdownMenuItem(
+                                  value: label,
+                                  child: Text(label),
+                                ),
+                              )
+                              .toList(),
                       onChanged: filterByClass,
                     ),
                   ],
@@ -310,6 +276,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
 
             // Featured Educators Section
             _buildModernSection(
+              theme,
               "Featured Educators",
               "Expert teachers for CBSE and NEET preparation",
               CarouselSlider(
@@ -326,6 +293,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                   Container(
                     margin: const EdgeInsets.only(right: 16, left: 4),
                     child: _buildModernEducatorCard(
+                      theme,
                       "Dr. Priya Sharma",
                       "Biology",
                       "PhD, Biology",
@@ -351,7 +319,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                               youtubeUrl: "https://www.youtube.com/",
                               email: "priya.sharma@example.com",
                               phone: "123-456-7890",
-                              socialLinks: {
+                              socialLinks: const {
                                 "LinkedIn":
                                     "https://www.linkedin.com/in/priya-sharma",
                                 "Twitter": "https://twitter.com/priya_sharma",
@@ -365,6 +333,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                   Container(
                     margin: const EdgeInsets.only(right: 16, left: 4),
                     child: _buildModernEducatorCard(
+                      theme,
                       "Prof. Amit Kumar",
                       "Mathematics",
                       "M.Sc, Mathematics",
@@ -390,7 +359,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                               youtubeUrl: "https://www.youtube.com/",
                               email: "amit.kumar@example.com",
                               phone: "987-654-3210",
-                              socialLinks: {
+                              socialLinks: const {
                                 "LinkedIn":
                                     "https://www.linkedin.com/in/amit-kumar",
                                 "Twitter": "https://twitter.com/amit_kumar",
@@ -414,19 +383,19 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
 
             // Courses Section
             _buildModernSection(
+              theme,
               selectedClass != null && selectedClass != "All"
                   ? "$selectedClass Courses"
                   : "CBSE Courses",
               "${filteredCourses.length} courses available",
               filteredCourses.isEmpty
-                  ? Container(
+                  ? SizedBox(
                       height: 200,
                       child: Center(
                         child: Text(
                           "No courses found for the selected class",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.hintColor,
                           ),
                         ),
                       ),
@@ -443,7 +412,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                       items: filteredCourses.map((course) {
                         return Container(
                           margin: const EdgeInsets.only(right: 16, left: 4),
-                          child: _buildModernCourseCard(context, course),
+                          child: _buildModernCourseCard(context, course, theme),
                         );
                       }).toList(),
                     ),
@@ -463,8 +432,8 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
     );
   }
 
-  // Modern Section Builder
   Widget _buildModernSection(
+    ThemeData theme,
     String title,
     String subtitle,
     Widget content, {
@@ -475,7 +444,6 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -487,49 +455,43 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                     children: [
                       Text(
                         title,
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: Colors.black87,
                           letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.hintColor,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: kPrimaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: TextButton.icon(
-                    onPressed: onViewAllPressed,
-                    icon: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14,
-                      color: kPrimaryColor,
+                if (onViewAllPressed != null)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    label: Text(
-                      "View All",
-                      style: TextStyle(
-                        color: kPrimaryColor,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                    child: TextButton.icon(
+                      onPressed: onViewAllPressed,
+                      icon: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: theme.colorScheme.primary,
                       ),
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+                      label: Text(
+                        "View All",
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -540,8 +502,8 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
     );
   }
 
-  // Modern Educator Card
   Widget _buildModernEducatorCard(
+    ThemeData theme,
     String name,
     String subject,
     String education,
@@ -555,11 +517,11 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: theme.shadowColor.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -568,7 +530,6 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Educator Image
             Container(
               height: 140,
               decoration: BoxDecoration(
@@ -608,14 +569,13 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         subject,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -624,8 +584,6 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                 ],
               ),
             ),
-
-            // Educator Content
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -634,10 +592,8 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         height: 1.3,
                       ),
                       maxLines: 1,
@@ -646,19 +602,16 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                     const SizedBox(height: 4),
                     Text(
                       education,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.hintColor,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       specialization,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.4,
+                        color: theme.hintColor,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -669,33 +622,14 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                       children: [
                         Text(
                           "$experience experience",
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: kPrimaryColor,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                         ElevatedButton(
                           onPressed: onTap,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            "View Profile",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          child: const Text("View Profile"),
                         ),
                       ],
                     ),
@@ -709,10 +643,10 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
     );
   }
 
-  // Modern Course Card (same as courses screen)
   Widget _buildModernCourseCard(
     BuildContext context,
     Map<String, dynamic> course,
+    ThemeData theme,
   ) {
     return GestureDetector(
       onTap: () {
@@ -735,11 +669,11 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: theme.shadowColor.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -748,7 +682,6 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Course Image
             Container(
               height: 180,
               decoration: BoxDecoration(
@@ -785,12 +718,12 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        color: theme.cardColor.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.bookmark_border,
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         size: 20,
                       ),
                     ),
@@ -804,14 +737,13 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         course["durationText"],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -820,8 +752,6 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                 ],
               ),
             ),
-
-            // Course Content
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -830,10 +760,8 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                   children: [
                     Text(
                       course["title"],
-                      style: const TextStyle(
-                        fontSize: 18,
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         height: 1.3,
                       ),
                       maxLines: 2,
@@ -844,21 +772,20 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                       children: [
                         CircleAvatar(
                           radius: 12,
-                          backgroundColor: kPrimaryColor.withOpacity(0.1),
+                          backgroundColor: theme.colorScheme.primary
+                              .withOpacity(0.1),
                           child: Icon(
                             Icons.person,
                             size: 14,
-                            color: kPrimaryColor,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             course["educatorName"],
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.hintColor,
                             ),
                           ),
                         ),
@@ -867,10 +794,9 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                     const SizedBox(height: 12),
                     Text(
                       course["description"],
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.4,
+                        color: theme.hintColor,
                       ),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
@@ -885,18 +811,16 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                             if (course["oldPrice"] != null)
                               Text(
                                 "₹${course["oldPrice"]}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[500],
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.hintColor,
                                   decoration: TextDecoration.lineThrough,
                                 ),
                               ),
                             Text(
                               "₹${course["price"]}",
-                              style: TextStyle(
-                                fontSize: 20,
+                              style: theme.textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: kPrimaryColor,
+                                color: theme.colorScheme.primary,
                               ),
                             ),
                           ],
@@ -919,25 +843,7 @@ class _CBSEHomeState extends State<CBSEHome> with TickerProviderStateMixin {
                               ),
                             );
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            "Enroll",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          child: const Text("Enroll"),
                         ),
                       ],
                     ),

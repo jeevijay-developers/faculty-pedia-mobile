@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../utils/snackbar_utils.dart';
-
-const Color kPrimaryColor = Color(0xFF4A90E2);
+import 'package:facultypedia/models/live_test.dart';
+import 'package:intl/intl.dart';
+import 'live_test_attempt_screen.dart';
 
 class LiveTestResultScreen extends StatelessWidget {
   final String testTitle;
@@ -16,7 +17,7 @@ class LiveTestResultScreen extends StatelessWidget {
   final Map<String, int?> selectedAnswers;
 
   const LiveTestResultScreen({
-    Key? key,
+    super.key,
     required this.testTitle,
     required this.marksObtained,
     required this.totalMarks,
@@ -27,46 +28,43 @@ class LiveTestResultScreen extends StatelessWidget {
     required this.skipped,
     required this.questions,
     required this.selectedAnswers,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     double percentage = totalMarks > 0 ? (marksObtained / totalMarks) * 100 : 0;
+    final primaryColor = theme.colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 16),
+            child: Icon(Icons.arrow_back, color: primaryColor, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Container(
-          height: 40,
-          child: Image.asset("assets/images/fp.png"),
-        ),
+        title: SizedBox(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
         actions: [
           IconButton(
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.share, color: kPrimaryColor, size: 16),
+              child: Icon(Icons.share, color: primaryColor, size: 16),
             ),
-            onPressed: () {
-              // TODO: Implement share functionality
-            },
+            onPressed: () {},
           ),
           const SizedBox(width: 8),
         ],
@@ -74,21 +72,22 @@ class LiveTestResultScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Hero Section - Result Summary
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [_getResultColor().withOpacity(0.1), Colors.white],
+                  colors: [
+                    _getResultColor(percentage).withOpacity(0.1),
+                    theme.scaffoldBackgroundColor,
+                  ],
                 ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    // Result Icon
                     Container(
                       width: 100,
                       height: 100,
@@ -98,57 +97,51 @@ class LiveTestResultScreen extends StatelessWidget {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            _getResultColor(),
-                            _getResultColor().withOpacity(0.7),
+                            _getResultColor(percentage),
+                            _getResultColor(percentage).withOpacity(0.7),
                           ],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: _getResultColor().withOpacity(0.3),
+                            color: _getResultColor(percentage).withOpacity(0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
                         ],
                       ),
                       child: Icon(
-                        _getResultIcon(),
+                        _getResultIcon(percentage),
                         color: Colors.white,
                         size: 50,
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // Result Title
                     Text(
-                      _getResultTitle(),
-                      style: TextStyle(
-                        fontSize: 24,
+                      _getResultTitle(percentage),
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey[800],
                       ),
                     ),
                     const SizedBox(height: 8),
-
-                    // Test Title
                     Text(
                       testTitle,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.hintColor,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
-
-                    // Score Display
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(25),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: theme.shadowColor.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -159,17 +152,15 @@ class LiveTestResultScreen extends StatelessWidget {
                         children: [
                           Text(
                             '$marksObtained',
-                            style: TextStyle(
-                              fontSize: 32,
+                            style: theme.textTheme.displaySmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: _getResultColor(),
+                              color: _getResultColor(percentage),
                             ),
                           ),
                           Text(
                             ' / $totalMarks',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.grey[600],
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              color: theme.hintColor,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -179,15 +170,16 @@ class LiveTestResultScreen extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: _getResultColor().withOpacity(0.1),
+                              color: _getResultColor(
+                                percentage,
+                              ).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               '${percentage.toStringAsFixed(1)}%',
-                              style: TextStyle(
-                                fontSize: 14,
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: _getResultColor(),
+                                color: _getResultColor(percentage),
                               ),
                             ),
                           ),
@@ -198,15 +190,13 @@ class LiveTestResultScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Statistics Cards
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  // Overall Statistics
                   Card(
                     elevation: 4,
+                    shadowColor: theme.shadowColor.withOpacity(0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -217,34 +207,35 @@ class LiveTestResultScreen extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.analytics, color: kPrimaryColor),
+                              Icon(
+                                Icons.analytics,
+                                color: theme.colorScheme.primary,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'Test Analysis',
-                                style: TextStyle(
-                                  fontSize: 18,
+                                style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 20),
-
-                          // Statistics Grid
                           Row(
                             children: [
                               Expanded(
                                 child: _buildStatCard(
+                                  theme,
                                   'Total Questions',
                                   totalQuestions.toString(),
                                   Icons.quiz,
-                                  kPrimaryColor,
+                                  theme.colorScheme.primary,
                                 ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: _buildStatCard(
+                                  theme,
                                   'Attempted',
                                   attempted.toString(),
                                   Icons.edit,
@@ -258,6 +249,7 @@ class LiveTestResultScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _buildStatCard(
+                                  theme,
                                   'Correct',
                                   correct.toString(),
                                   Icons.check_circle,
@@ -267,6 +259,7 @@ class LiveTestResultScreen extends StatelessWidget {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: _buildStatCard(
+                                  theme,
                                   'Wrong',
                                   wrong.toString(),
                                   Icons.cancel,
@@ -280,6 +273,7 @@ class LiveTestResultScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _buildStatCard(
+                                  theme,
                                   'Skipped',
                                   skipped.toString(),
                                   Icons.skip_next,
@@ -289,12 +283,13 @@ class LiveTestResultScreen extends StatelessWidget {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: _buildStatCard(
+                                  theme,
                                   'Accuracy',
                                   attempted > 0
                                       ? '${((correct / attempted) * 100).toStringAsFixed(1)}%'
                                       : '0%',
                                   Icons.track_changes,
-                                  kPrimaryColor,
+                                  theme.colorScheme.primary,
                                 ),
                               ),
                             ],
@@ -303,12 +298,10 @@ class LiveTestResultScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  // Detailed Question Analysis
                   Card(
                     elevation: 4,
+                    shadowColor: theme.shadowColor.withOpacity(0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -319,21 +312,20 @@ class LiveTestResultScreen extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.list_alt, color: kPrimaryColor),
+                              Icon(
+                                Icons.list_alt,
+                                color: theme.colorScheme.primary,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'Question-wise Analysis',
-                                style: TextStyle(
-                                  fontSize: 18,
+                                style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 16),
-
-                          // Questions List
                           ...questions.asMap().entries.map((entry) {
                             int index = entry.key;
                             var question = entry.value;
@@ -345,6 +337,7 @@ class LiveTestResultScreen extends StatelessWidget {
                             bool isAttempted = selectedAnswer != null;
 
                             return _buildQuestionAnalysis(
+                              theme,
                               index + 1,
                               question,
                               selectedAnswer,
@@ -357,12 +350,8 @@ class LiveTestResultScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 30),
-
-                  // Action Buttons
-                  _buildActionButtons(context),
-
+                  _buildActionButtons(context, theme),
                   const SizedBox(height: 20),
                 ],
               ),
@@ -374,6 +363,7 @@ class LiveTestResultScreen extends StatelessWidget {
   }
 
   Widget _buildStatCard(
+    ThemeData theme,
     String label,
     String value,
     IconData icon,
@@ -392,8 +382,7 @@ class LiveTestResultScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 20,
+            style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -401,7 +390,7 @@ class LiveTestResultScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
             textAlign: TextAlign.center,
           ),
         ],
@@ -410,6 +399,7 @@ class LiveTestResultScreen extends StatelessWidget {
   }
 
   Widget _buildQuestionAnalysis(
+    ThemeData theme,
     int questionNumber,
     Map<String, dynamic> question,
     int? selectedAnswer,
@@ -464,10 +454,7 @@ class LiveTestResultScreen extends StatelessWidget {
               Expanded(
                 child: Text(
                   question['question'],
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: theme.textTheme.bodyLarge,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -476,8 +463,6 @@ class LiveTestResultScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-
-          // Answer Information
           Row(
             children: [
               Expanded(
@@ -486,10 +471,8 @@ class LiveTestResultScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Your Answer:',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.hintColor,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -497,8 +480,7 @@ class LiveTestResultScreen extends StatelessWidget {
                       isAttempted
                           ? '${String.fromCharCode(65 + selectedAnswer!)} - ${question['options'][selectedAnswer]}'
                           : 'Not Attempted',
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: isAttempted ? statusColor : Colors.orange,
                         fontWeight: FontWeight.w600,
                       ),
@@ -509,7 +491,6 @@ class LiveTestResultScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-
           Row(
             children: [
               Expanded(
@@ -518,17 +499,14 @@ class LiveTestResultScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Correct Answer:',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.hintColor,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '${String.fromCharCode(65 + correctAnswer)} - ${question['options'][correctAnswer]}',
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: Colors.green,
                         fontWeight: FontWeight.w600,
                       ),
@@ -543,47 +521,18 @@ class LiveTestResultScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(BuildContext context, ThemeData theme) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: 56,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [kPrimaryColor, kPrimaryColor.withOpacity(0.8)],
-            ),
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: kPrimaryColor.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
           child: ElevatedButton.icon(
             onPressed: () {
               Navigator.popUntil(context, (route) => route.isFirst);
             },
-            icon: const Icon(Icons.home, color: Colors.white),
-            label: const Text(
-              'Back to Home',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-            ),
+            icon: const Icon(Icons.home),
+            label: const Text('Back to Home'),
           ),
         ),
         const SizedBox(height: 12),
@@ -592,45 +541,23 @@ class LiveTestResultScreen extends StatelessWidget {
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () {
-                  // TODO: Implement retry functionality
                   SnackBarUtils.showInfo(
                     context,
                     'Retry functionality coming soon!',
                   );
                 },
-                icon: Icon(Icons.refresh, color: kPrimaryColor),
-                label: Text(
-                  'Retry Test',
-                  style: TextStyle(color: kPrimaryColor),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: kPrimaryColor),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry Test'),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () {
-                  // TODO: Implement save results functionality
                   SnackBarUtils.showSuccess(context, 'Results saved!');
                 },
-                icon: Icon(Icons.save, color: kPrimaryColor),
-                label: Text(
-                  'Save Results',
-                  style: TextStyle(color: kPrimaryColor),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: kPrimaryColor),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
+                icon: const Icon(Icons.save),
+                label: const Text('Save Results'),
               ),
             ),
           ],
@@ -639,24 +566,21 @@ class LiveTestResultScreen extends StatelessWidget {
     );
   }
 
-  Color _getResultColor() {
-    double percentage = totalMarks > 0 ? (marksObtained / totalMarks) * 100 : 0;
+  Color _getResultColor(double percentage) {
     if (percentage >= 80) return Colors.green;
     if (percentage >= 60) return Colors.blue;
     if (percentage >= 40) return Colors.orange;
     return Colors.red;
   }
 
-  IconData _getResultIcon() {
-    double percentage = totalMarks > 0 ? (marksObtained / totalMarks) * 100 : 0;
+  IconData _getResultIcon(double percentage) {
     if (percentage >= 80) return Icons.emoji_events;
     if (percentage >= 60) return Icons.thumb_up;
     if (percentage >= 40) return Icons.trending_up;
     return Icons.trending_down;
   }
 
-  String _getResultTitle() {
-    double percentage = totalMarks > 0 ? (marksObtained / totalMarks) * 100 : 0;
+  String _getResultTitle(double percentage) {
     if (percentage >= 80) return 'Excellent Performance!';
     if (percentage >= 60) return 'Good Job!';
     if (percentage >= 40) return 'Keep Practicing!';

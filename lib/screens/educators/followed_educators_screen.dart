@@ -7,13 +7,11 @@ import '../../utils/snackbar_utils.dart';
 import '../../utils/constants.dart';
 import 'educator_profile_page.dart';
 
-const Color kPrimaryColor = Color(0xFF4A90E2);
-
 class FollowedEducatorsScreen extends StatefulWidget {
-  const FollowedEducatorsScreen({Key? key}) : super(key: key);
+  const FollowedEducatorsScreen({super.key});
 
   @override
-  _FollowedEducatorsScreenState createState() =>
+  State<FollowedEducatorsScreen> createState() =>
       _FollowedEducatorsScreenState();
 }
 
@@ -59,14 +57,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print('Followed educators API response: $data'); // Debug log
         final List<dynamic> educatorsData = data['followedEducators'] ?? [];
-        print('Educators data count: ${educatorsData.length}'); // Debug log
-
-        // Debug each educator
-        for (int i = 0; i < educatorsData.length; i++) {
-          print('Educator $i: ${educatorsData[i]}');
-        }
 
         if (!mounted) return;
         setState(() {
@@ -76,10 +67,6 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
           isLoading = false;
         });
       } else {
-        print(
-          'Failed to load followed educators. Status: ${response.statusCode}',
-        );
-        print('Response body: ${response.body}');
         if (!mounted) return;
         setState(() {
           error =
@@ -88,7 +75,6 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
         });
       }
     } catch (e) {
-      print('Error loading followed educators: $e');
       if (!mounted) return;
       setState(() {
         error = 'Network error: $e';
@@ -143,9 +129,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
       appBar: AppBar(
         backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: theme.appBarTheme.elevation ?? 0,
-        shadowColor: theme.brightness == Brightness.dark
-            ? Colors.transparent
-            : Colors.black.withOpacity(0.1),
+        shadowColor: theme.shadowColor.withOpacity(0.1),
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
@@ -184,7 +168,6 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
             Text(
               'Following',
               style: theme.textTheme.titleLarge?.copyWith(
-                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -205,7 +188,6 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                 'Refresh',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.primary,
-                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -235,22 +217,18 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: theme.dividerColor),
+            Icon(Icons.error_outline, size: 64, color: theme.hintColor),
             const SizedBox(height: 16),
             Text(
               error!,
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.dividerColor,
-                fontSize: 16,
+                color: theme.hintColor,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadFollowedEducators,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
-              ),
               child: const Text('Retry'),
             ),
           ],
@@ -279,16 +257,15 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
             const SizedBox(height: 24),
             Text(
               'No Following Yet',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontSize: 20,
+              style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Follow educators to see them here',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.dividerColor,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.hintColor,
               ),
             ),
             const SizedBox(height: 24),
@@ -303,7 +280,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                   gradient: LinearGradient(
                     colors: [
                       theme.colorScheme.primary,
-                      theme.colorScheme.primary.withBlue(255),
+                      theme.colorScheme.primary.withOpacity(0.8),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(25),
@@ -328,7 +305,6 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                       'Explore Educators',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onPrimary,
-                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -374,299 +350,242 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
         child: InkWell(
           onTap: () => _navigateToProfile(educator),
           borderRadius: BorderRadius.circular(20),
-          child: Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-            child: Column(
-              children: [
-                // Header section with profile and unfollow
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
-                  child: Row(
-                    children: [
-                      // Enhanced Profile Image
-                      Stack(
-                        children: [
-                          Container(
-                            width: 70,
-                            height: 70,
+                ),
+                child: Row(
+                  children: [
+                    Stack(
+                      children: [
+                        Container(
+                          width: 70,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: theme.cardColor,
+                              width: 3,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: theme.shadowColor.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: ClipOval(
+                            child: educator.image?.url != null
+                                ? Image.network(
+                                    educator.image!.url!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            _buildDefaultAvatar(theme),
+                                  )
+                                : _buildDefaultAvatar(theme),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 2,
+                          right: 2,
+                          child: Container(
+                            width: 18,
+                            height: 18,
                             decoration: BoxDecoration(
+                              color: Colors.green,
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: theme.cardColor,
-                                width: 3,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: theme.shadowColor.withOpacity(0.1),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 5),
-                                ),
-                              ],
-                            ),
-                            child: ClipOval(
-                              child: educator.image?.url != null
-                                  ? Image.network(
-                                      educator.image!.url!,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              _buildDefaultAvatar(),
-                                    )
-                                  : _buildDefaultAvatar(),
-                            ),
-                          ),
-                          // Online indicator
-                          Positioned(
-                            bottom: 2,
-                            right: 2,
-                            child: Container(
-                              width: 18,
-                              height: 18,
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: theme.cardColor,
-                                  width: 2,
-                                ),
+                                width: 2,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(width: 16),
-
-                      // Educator Info
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Name with verified badge
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    educator.name.isNotEmpty
-                                        ? educator.name
-                                        : 'Unknown Educator',
-                                    style: theme.textTheme.titleMedium
-                                        ?.copyWith(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.verified,
-                                  color: theme.colorScheme.primary,
-                                  size: 16,
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 4),
-
-                            // Subject with modern chip design
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withOpacity(
-                                  0.08,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: theme.colorScheme.primary.withOpacity(
-                                    0.28,
-                                  ),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Text(
-                                educator.specialization ?? educator.subject,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  fontSize: 12,
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 6),
-
-                            // Experience badge
-                            if (educator.experience != null &&
-                                educator.experience!.isNotEmpty)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.secondary
-                                      .withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: theme.colorScheme.secondary
-                                        .withOpacity(0.28),
-                                    width: 0.5,
-                                  ),
-                                ),
-                                child: Text(
-                                  educator.experience!,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    fontSize: 10,
-                                    color: theme.colorScheme.secondary,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-
-                      // Unfollow Button - Modern design
-                      Container(
-                        decoration: BoxDecoration(
-                          color: theme.cardColor,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: theme.shadowColor.withOpacity(0.06),
-                              blurRadius: 5,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: IconButton(
-                          onPressed: () => _showUnfollowDialog(educator, index),
-                          icon: Icon(
-                            Icons.person_remove_outlined,
-                            color: theme.colorScheme.error,
-                            size: 20,
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 40,
-                            minHeight: 40,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Content Section
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Bio section
-                      if (educator.bio != null && educator.bio!.isNotEmpty) ...[
-                        Text(
-                          educator.bio!,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[700],
-                            height: 1.4,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 16),
                       ],
-
-                      // Stats Row with modern design
-                      Row(
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Rating
-                          if (educator.rating != null &&
-                              educator.rating! > 0) ...[
-                            _buildStatChip(
-                              Icons.star,
-                              educator.rating!.toStringAsFixed(1),
-                              Colors.amber,
-                              Colors.amber.shade50,
-                            ),
-                            const SizedBox(width: 12),
-                          ],
-
-                          // Followers
-                          if (educator.totalFollowers != null &&
-                              educator.totalFollowers! > 0) ...[
-                            _buildStatChip(
-                              Icons.people,
-                              '${_formatFollowerCount(educator.totalFollowers!)}',
-                              Colors.purple,
-                              Colors.purple.shade50,
-                            ),
-                            const SizedBox(width: 12),
-                          ],
-
-                          const Spacer(),
-
-                          // View Profile Button
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  kPrimaryColor,
-                                  kPrimaryColor.withBlue(255),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: kPrimaryColor.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Text(
-                                  "View Profile",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  educator.name.isNotEmpty
+                                      ? educator.name
+                                      : 'Unknown Educator',
+                                  style: theme.textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                SizedBox(width: 4),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.white,
-                                  size: 12,
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.verified,
+                                color: theme.colorScheme.primary,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary.withOpacity(
+                                0.08,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: theme.colorScheme.primary.withOpacity(
+                                  0.28,
                                 ),
-                              ],
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              educator.specialization ?? educator.subject,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: theme.cardColor,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.shadowColor.withOpacity(0.06),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        onPressed: () => _showUnfollowDialog(educator, index),
+                        icon: Icon(
+                          Icons.person_remove_outlined,
+                          color: theme.colorScheme.error,
+                          size: 20,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 40,
+                          minHeight: 40,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (educator.bio != null && educator.bio!.isNotEmpty) ...[
+                      Text(
+                        educator.bio!,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          height: 1.4,
+                          color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                            0.7,
+                          ),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    Row(
+                      children: [
+                        if (educator.rating != null &&
+                            educator.rating! > 0) ...[
+                          _buildStatChip(
+                            theme,
+                            Icons.star,
+                            educator.rating!.toStringAsFixed(1),
+                            Colors.amber,
+                          ),
+                          const SizedBox(width: 12),
+                        ],
+                        if (educator.totalFollowers != null &&
+                            educator.totalFollowers! > 0) ...[
+                          _buildStatChip(
+                            theme,
+                            Icons.people,
+                            '${_formatFollowerCount(educator.totalFollowers!)}',
+                            Colors.purple,
+                          ),
+                          const SizedBox(width: 12),
+                        ],
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary,
+                                theme.colorScheme.primary.withOpacity(0.8),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: theme.colorScheme.primary.withOpacity(
+                                  0.3,
+                                ),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "View Profile",
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: theme.colorScheme.onPrimary,
+                                size: 12,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -674,24 +593,34 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
   }
 
   void _showUnfollowDialog(Educator educator, int index) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Unfollow Educator'),
-          content: Text('Are you sure you want to unfollow ${educator.name}?'),
+          backgroundColor: theme.cardColor,
+          title: Text('Unfollow Educator', style: theme.textTheme.titleLarge),
+          content: Text(
+            'Are you sure you want to unfollow ${educator.name}?',
+            style: theme.textTheme.bodyLarge,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: theme.colorScheme.primary),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 _unfollowEducator(educator.id, index);
               },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Unfollow'),
+              child: Text(
+                'Unfollow',
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
             ),
           ],
         );
@@ -709,45 +638,47 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
     }
   }
 
-  Widget _buildDefaultAvatar() {
+  Widget _buildDefaultAvatar(ThemeData theme) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [kPrimaryColor, kPrimaryColor.withBlue(255)],
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.primary.withOpacity(0.8),
+          ],
         ),
       ),
-      child: const Center(
-        child: Icon(Icons.person, color: Colors.white, size: 30),
+      child: Center(
+        child: Icon(Icons.person, color: theme.colorScheme.onPrimary, size: 30),
       ),
     );
   }
 
   Widget _buildStatChip(
+    ThemeData theme,
     IconData icon,
     String text,
-    Color iconColor,
-    Color backgroundColor,
+    Color color,
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: iconColor.withOpacity(0.3), width: 0.5),
+        border: Border.all(color: color.withOpacity(0.3), width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: iconColor, size: 14),
+          Icon(icon, color: color, size: 14),
           const SizedBox(width: 4),
           Text(
             text,
-            style: TextStyle(
-              fontSize: 12,
+            style: theme.textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: iconColor.withOpacity(0.8),
+              color: color,
             ),
           ),
         ],
@@ -756,11 +687,6 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
   }
 
   void _navigateToProfile(Educator educator) {
-    print('Navigating to profile for educator: ${educator.name}'); // Debug
-    print('Educator ID: ${educator.id}'); // Debug
-    print('Educator email: ${educator.email}'); // Debug
-    print('Educator mobileNumber: ${educator.mobileNumber}'); // Debug
-
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -769,17 +695,17 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
           name: educator.name.isNotEmpty ? educator.name : 'Unknown Educator',
           subject: educator.subject,
           description: educator.bio ?? 'No description available',
-          education: 'N/A', // Not available in the model
+          education: 'N/A',
           experience: educator.experience ?? 'N/A',
           rating: educator.rating ?? 0.0,
-          reviews: 0, // Not available in the model
+          reviews: 0,
           followers: educator.totalFollowers ?? 0,
           tag: educator.specialization ?? educator.subject,
           imageUrl: educator.image?.url ?? 'https://placehold.co/150.png',
-          youtubeUrl: 'N/A', // Not available in the model
+          youtubeUrl: 'N/A',
           email: educator.email,
           phone: educator.mobileNumber ?? 'N/A',
-          socialLinks: {}, // Not available in the model
+          socialLinks: const {},
         ),
       ),
     );

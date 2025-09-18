@@ -10,8 +10,6 @@ import 'package:intl/intl.dart';
 
 import 'live_test_series_detail_screen.dart';
 
-const Color kPrimaryColor = Color(0xFF4A90E2);
-
 class LiveTestSeriesListScreen extends StatefulWidget {
   const LiveTestSeriesListScreen({super.key});
 
@@ -32,9 +30,11 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
       _bloc = LiveTestBloc(repository: repository);
       _bloc!.add(FetchLiveTestSeries());
     }
-    setState(() {
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -45,32 +45,36 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 16),
+            child: Icon(
+              Icons.arrow_back,
+              color: theme.colorScheme.primary,
+              size: 16,
+            ),
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Container(
-          height: 40,
-          child: Image.asset("assets/images/fp.png"),
-        ),
+        title: SizedBox(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
       ),
       body: _loading || _bloc == null
           ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  theme.colorScheme.primary,
+                ),
               ),
             )
           : BlocProvider.value(
@@ -78,7 +82,6 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Hero Section
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -86,8 +89,8 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.white,
-                            kPrimaryColor.withOpacity(0.05),
+                            theme.cardColor,
+                            theme.colorScheme.primary.withOpacity(0.05),
                           ],
                         ),
                       ),
@@ -95,23 +98,24 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
-                            Icon(Icons.quiz, size: 60, color: kPrimaryColor),
+                            Icon(
+                              Icons.quiz,
+                              size: 60,
+                              color: theme.colorScheme.primary,
+                            ),
                             const SizedBox(height: 16),
                             Text(
                               'Live Test Series',
-                              style: TextStyle(
-                                fontSize: 28,
+                              style: theme.textTheme.headlineMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey[800],
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'Practice with real-time tests and improve your performance',
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: theme.hintColor,
                               ),
                             ),
                           ],
@@ -125,7 +129,7 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                             padding: const EdgeInsets.all(50),
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                kPrimaryColor,
+                                theme.colorScheme.primary,
                               ),
                             ),
                           );
@@ -138,24 +142,17 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                                   Icon(
                                     Icons.quiz_outlined,
                                     size: 80,
-                                    color: Colors.grey[400],
+                                    color: theme.hintColor,
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
                                     'No Test Series Available',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey[600],
-                                    ),
+                                    style: theme.textTheme.headlineSmall,
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'Check back later for new test series',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey[500],
-                                    ),
+                                    style: theme.textTheme.bodyLarge,
                                   ),
                                 ],
                               ),
@@ -170,7 +167,11 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                               itemCount: state.testSeries.length,
                               itemBuilder: (context, index) {
                                 final series = state.testSeries[index];
-                                return _buildTestSeriesCard(context, series);
+                                return _buildTestSeriesCard(
+                                  context,
+                                  series,
+                                  theme,
+                                );
                               },
                             ),
                           );
@@ -182,25 +183,18 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                                 Icon(
                                   Icons.error_outline,
                                   size: 80,
-                                  color: Colors.red[400],
+                                  color: theme.colorScheme.error,
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
                                   'Oops! Something went wrong',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey[700],
-                                  ),
+                                  style: theme.textTheme.headlineSmall,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   state.message,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                  ),
+                                  style: theme.textTheme.bodyLarge,
                                 ),
                                 const SizedBox(height: 24),
                                 ElevatedButton.icon(
@@ -209,17 +203,6 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                                   },
                                   icon: const Icon(Icons.refresh),
                                   label: const Text('Try Again'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: kPrimaryColor,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24,
-                                      vertical: 12,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
                                 ),
                               ],
                             ),
@@ -235,12 +218,16 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
     );
   }
 
-  Widget _buildTestSeriesCard(BuildContext context, LiveTestSeries series) {
+  Widget _buildTestSeriesCard(
+    BuildContext context,
+    LiveTestSeries series,
+    ThemeData theme,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: Card(
         elevation: 8,
-        shadowColor: Colors.black26,
+        shadowColor: theme.shadowColor.withOpacity(0.1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: InkWell(
           onTap: () {
@@ -255,15 +242,10 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
-              ),
+              color: theme.cardColor,
             ),
             child: Column(
               children: [
-                // Header Section
                 Container(
                   padding: const EdgeInsets.all(20),
                   child: Row(
@@ -276,22 +258,22 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              kPrimaryColor,
-                              kPrimaryColor.withOpacity(0.7),
+                              theme.colorScheme.primary,
+                              theme.colorScheme.primary.withOpacity(0.7),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(15),
                           boxShadow: [
                             BoxShadow(
-                              color: kPrimaryColor.withOpacity(0.3),
+                              color: theme.colorScheme.primary.withOpacity(0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.quiz,
-                          color: Colors.white,
+                          color: theme.colorScheme.onPrimary,
                           size: 30,
                         ),
                       ),
@@ -302,10 +284,8 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                           children: [
                             Text(
                               series.title,
-                              style: TextStyle(
-                                fontSize: 20,
+                              style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey[800],
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -315,14 +295,15 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: kPrimaryColor.withOpacity(0.1),
+                                color: theme.colorScheme.primary.withOpacity(
+                                  0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
                                 'Test Series',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: kPrimaryColor,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.primary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -333,7 +314,6 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                     ],
                   ),
                 ),
-                // Content Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
@@ -341,35 +321,35 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                     children: [
                       Text(
                         series.descriptionShort,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.hintColor,
                           height: 1.4,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 16),
-                      // Stats Row
                       Row(
                         children: [
                           Expanded(
                             child: _buildStatItem(
+                              theme,
                               Icons.schedule,
                               'Start Date',
                               DateFormat(
                                 'MMM dd',
                               ).format(series.startDate.toLocal()),
-                              kPrimaryColor,
+                              theme.colorScheme.primary,
                             ),
                           ),
                           Container(
-                            height: 30,
                             width: 1,
-                            color: Colors.grey[300],
+                            height: 30,
+                            color: theme.dividerColor,
                           ),
                           Expanded(
                             child: _buildStatItem(
+                              theme,
                               Icons.assessment,
                               'Tests',
                               'Available',
@@ -381,41 +361,25 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                     ],
                   ),
                 ),
-                // Action Section
                 Container(
                   padding: const EdgeInsets.all(20),
                   child: Row(
                     children: [
                       Expanded(
-                        child: Container(
+                        child: SizedBox(
                           height: 50,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                kPrimaryColor,
-                                kPrimaryColor.withOpacity(0.8),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
-                              BoxShadow(
-                                color: kPrimaryColor.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Start Test Series',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => LiveTestSeriesDetailScreen(
+                                    series: series,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text('Start Test Series'),
                           ),
                         ),
                       ),
@@ -424,13 +388,13 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
                         width: 50,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
+                          color: theme.dividerColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(25),
-                          border: Border.all(color: Colors.grey[300]!),
+                          border: Border.all(color: theme.dividerColor),
                         ),
                         child: Icon(
                           Icons.bookmark_outline,
-                          color: Colors.grey[600],
+                          color: theme.hintColor,
                           size: 20,
                         ),
                       ),
@@ -446,6 +410,7 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
   }
 
   Widget _buildStatItem(
+    ThemeData theme,
     IconData icon,
     String label,
     String value,
@@ -460,10 +425,8 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
             const SizedBox(width: 4),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.hintColor,
               ),
             ),
           ],
@@ -471,8 +434,7 @@ class _LiveTestSeriesListScreenState extends State<LiveTestSeriesListScreen> {
         const SizedBox(height: 4),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 14,
+          style: theme.textTheme.bodyLarge?.copyWith(
             color: color,
             fontWeight: FontWeight.bold,
           ),

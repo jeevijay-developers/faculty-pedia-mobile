@@ -1,8 +1,7 @@
 import 'package:facultypedia/components/courses/course_overview.dart';
 import 'package:facultypedia/components/cards/test_series_card.dart';
+import 'package:facultypedia/router/router.dart';
 import 'package:flutter/material.dart';
-
-const Color kPrimaryColor = Color(0xFF4A90E2);
 
 class CourseDetailsPage extends StatelessWidget {
   final String title;
@@ -62,25 +61,19 @@ class CourseDetailsPage extends StatelessWidget {
             ),
           ],
         ),
-
-        // ✅ Enhanced bottom enroll bar
-        bottomNavigationBar: _bottomEnrollBar(context),
-
+        bottomNavigationBar: _bottomEnrollBar(context, theme),
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            // Hero image section
-            SliverToBoxAdapter(child: _buildHeroSection(context)),
-            // Course info card
+            SliverToBoxAdapter(child: _buildHeroSection(context, theme)),
             SliverToBoxAdapter(
               child: Transform.translate(
                 offset: const Offset(0, -20),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: _buildCourseInfoCard(context),
+                  child: _buildCourseInfoCard(context, theme),
                 ),
               ),
             ),
-            // Tab bar
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverTabBarDelegate(
@@ -104,6 +97,7 @@ class CourseDetailsPage extends StatelessWidget {
                     Tab(text: "Tests"),
                   ],
                 ),
+                theme: theme,
               ),
             ),
           ],
@@ -111,12 +105,9 @@ class CourseDetailsPage extends StatelessWidget {
             color: theme.scaffoldBackgroundColor,
             child: TabBarView(
               children: [
-                // Overview Tab
-                _buildOverviewTab(),
-                // Classes Tab
-                _buildClassesTab(),
-                // Tests Tab
-                _buildTestsTab(),
+                _buildOverviewTab(theme),
+                _buildClassesTab(theme),
+                _buildTestsTab(theme),
               ],
             ),
           ),
@@ -125,7 +116,7 @@ class CourseDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroSection(BuildContext context) {
+  Widget _buildHeroSection(BuildContext context, ThemeData theme) {
     return Container(
       height: 300,
       decoration: BoxDecoration(
@@ -140,83 +131,76 @@ class CourseDetailsPage extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-              Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              Colors.black.withOpacity(0.3),
+              Colors.black.withOpacity(0.7),
             ],
           ),
         ),
         child: SafeArea(
-          child: Container(
-            height: 220, // Fixed height to prevent overflow
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    durationText,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                      fontWeight: FontWeight.w600,
                     ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Flexible(
+                  child: Text(
+                    title,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
                     ),
-                    child: Text(
-                      durationText,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 16,
+                      backgroundColor: Colors.white.withOpacity(0.2),
+                      child: const Icon(
+                        Icons.person,
+                        size: 18,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                            height: 1.2,
-                          ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                        child: Icon(
-                          Icons.person,
-                          size: 18,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "by $educatorName",
+                        style: const TextStyle(
                           color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          "by $educatorName",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -224,14 +208,14 @@ class CourseDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCourseInfoCard(BuildContext context) {
+  Widget _buildCourseInfoCard(BuildContext context, ThemeData theme) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: theme.shadowColor.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -241,7 +225,6 @@ class CourseDetailsPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Tags
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -252,108 +235,48 @@ class CourseDetailsPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-
           Text(
             description,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[700],
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.hintColor,
               height: 1.5,
             ),
           ),
           const SizedBox(height: 24),
-
-          // Stats Row
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStat("Duration", "20 weeks", Icons.schedule),
+                _buildStat(theme, "Duration", "20 weeks", Icons.schedule),
                 const SizedBox(width: 20),
-                _buildStat("Classes", "2", Icons.video_library),
+                _buildStat(theme, "Classes", "2", Icons.video_library),
                 const SizedBox(width: 20),
-                _buildStat("Per Class", "2h", Icons.timer),
+                _buildStat(theme, "Per Class", "2h", Icons.timer),
                 const SizedBox(width: 20),
-                _buildStat("Seats", "60", Icons.people),
+                _buildStat(theme, "Seats", "60", Icons.people),
               ],
             ),
-          ),
-          const SizedBox(height: 24),
-
-          // Info Grid
-          Row(
-            children: [
-              Expanded(
-                child: _buildInfoCard(
-                  icon: Icons.currency_rupee,
-                  title: "Course Fee",
-                  value: "₹${price.toStringAsFixed(0)}",
-                  subtitle: "₹${oldPrice.toStringAsFixed(0)}",
-                  color: Colors.green.shade50,
-                  iconColor: Colors.green,
-                  valueColor: Colors.green,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildInfoCard(
-                  icon: Icons.calendar_today,
-                  title: "Timeline",
-                  value: "Sep 1, 2025",
-                  subtitle: "to Jan 20, 2026",
-                  color: Colors.blue.shade50,
-                  iconColor: kPrimaryColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildInfoCard(
-                  icon: Icons.people,
-                  title: "Enrollment",
-                  value: "0/60",
-                  subtitle: "Students",
-                  color: Colors.purple.shade50,
-                  iconColor: Colors.purple,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildInfoCard(
-                  icon: Icons.star,
-                  title: "Rating",
-                  value: "4.8",
-                  subtitle: "Based on 120 reviews",
-                  color: Colors.orange.shade50,
-                  iconColor: Colors.orange,
-                ),
-              ),
-            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildOverviewTab() {
+  Widget _buildOverviewTab(ThemeData theme) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Course Overview Section
           Container(
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: theme.shadowColor.withOpacity(0.06),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -362,32 +285,26 @@ class CourseDetailsPage extends StatelessWidget {
             child: CourseOverview(description: description),
           ),
           const SizedBox(height: 32),
-
-          // Course Features Section
-          _buildCourseFeaturesSection(),
+          _buildCourseFeaturesSection(theme),
           const SizedBox(height: 32),
-
-          // What You'll Learn Section
-          _buildWhatYoullLearnSection(),
+          _buildWhatYoullLearnSection(theme),
           const SizedBox(height: 32),
-
-          // Prerequisites Section
-          _buildPrerequisitesSection(),
+          _buildPrerequisitesSection(theme),
           const SizedBox(height: 20),
         ],
       ),
     );
   }
 
-  Widget _buildCourseFeaturesSection() {
+  Widget _buildCourseFeaturesSection(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: theme.shadowColor.withOpacity(0.06),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -401,46 +318,48 @@ class CourseDetailsPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4A90E2).withOpacity(0.1),
+                  color: theme.colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.star_rounded,
-                  color: Color(0xFF4A90E2),
+                  color: theme.colorScheme.primary,
                   size: 24,
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 "Course Features",
-                style: TextStyle(
-                  fontSize: 20,
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1A1A1A),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 24),
           _buildFeatureItem(
+            theme,
             icon: Icons.video_library_rounded,
             title: "HD Video Lectures",
             description: "High-quality recorded sessions",
           ),
           const SizedBox(height: 20),
           _buildFeatureItem(
+            theme,
             icon: Icons.quiz_rounded,
             title: "Practice Tests",
             description: "Regular assessments and quizzes",
           ),
           const SizedBox(height: 20),
           _buildFeatureItem(
+            theme,
             icon: Icons.support_agent_rounded,
             title: "24/7 Support",
             description: "Get help whenever you need",
           ),
           const SizedBox(height: 20),
           _buildFeatureItem(
+            theme,
             icon: Icons.workspace_premium_rounded,
             title: "Certificate",
             description: "Course completion certificate",
@@ -450,15 +369,15 @@ class CourseDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildWhatYoullLearnSection() {
+  Widget _buildWhatYoullLearnSection(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: theme.shadowColor.withOpacity(0.06),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -482,36 +401,34 @@ class CourseDetailsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 "What You'll Learn",
-                style: TextStyle(
-                  fontSize: 20,
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1A1A1A),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          _buildLearningItem("Master fundamental concepts of Physics"),
-          _buildLearningItem("Solve complex numerical problems"),
-          _buildLearningItem("Understand real-world applications"),
-          _buildLearningItem("Prepare for competitive exams"),
-          _buildLearningItem("Build strong conceptual foundation"),
+          _buildLearningItem(theme, "Master fundamental concepts of Physics"),
+          _buildLearningItem(theme, "Solve complex numerical problems"),
+          _buildLearningItem(theme, "Understand real-world applications"),
+          _buildLearningItem(theme, "Prepare for competitive exams"),
+          _buildLearningItem(theme, "Build strong conceptual foundation"),
         ],
       ),
     );
   }
 
-  Widget _buildPrerequisitesSection() {
+  Widget _buildPrerequisitesSection(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: theme.shadowColor.withOpacity(0.06),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -535,26 +452,25 @@ class CourseDetailsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 "Prerequisites",
-                style: TextStyle(
-                  fontSize: 20,
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1A1A1A),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          _buildPrerequisiteItem("Basic Mathematics knowledge"),
-          _buildPrerequisiteItem("High school level Physics"),
-          _buildPrerequisiteItem("Eagerness to learn and practice"),
+          _buildPrerequisiteItem(theme, "Basic Mathematics knowledge"),
+          _buildPrerequisiteItem(theme, "High school level Physics"),
+          _buildPrerequisiteItem(theme, "Eagerness to learn and practice"),
         ],
       ),
     );
   }
 
-  Widget _buildFeatureItem({
+  Widget _buildFeatureItem(
+    ThemeData theme, {
     required IconData icon,
     required String title,
     required String description,
@@ -564,10 +480,10 @@ class CourseDetailsPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: const Color(0xFF4A90E2).withOpacity(0.1),
+            color: theme.colorScheme.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, color: const Color(0xFF4A90E2), size: 20),
+          child: Icon(icon, color: theme.colorScheme.primary, size: 20),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -576,16 +492,16 @@ class CourseDetailsPage extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A1A),
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 description,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.hintColor,
+                ),
               ),
             ],
           ),
@@ -594,7 +510,7 @@ class CourseDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLearningItem(String text) {
+  Widget _buildLearningItem(ThemeData theme, String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -613,11 +529,7 @@ class CourseDetailsPage extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                fontSize: 15,
-                color: Color(0xFF1A1A1A),
-                height: 1.4,
-              ),
+              style: theme.textTheme.bodyLarge?.copyWith(height: 1.4),
             ),
           ),
         ],
@@ -625,7 +537,7 @@ class CourseDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPrerequisiteItem(String text) {
+  Widget _buildPrerequisiteItem(ThemeData theme, String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -644,11 +556,7 @@ class CourseDetailsPage extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                fontSize: 15,
-                color: Color(0xFF1A1A1A),
-                height: 1.4,
-              ),
+              style: theme.textTheme.bodyLarge?.copyWith(height: 1.4),
             ),
           ),
         ],
@@ -656,11 +564,12 @@ class CourseDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildClassesTab() {
+  Widget _buildClassesTab(ThemeData theme) {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       children: [
         _buildEnhancedClassCard(
+          theme: theme,
           title: "Laws of Motion",
           topic: "Mechanics",
           date: DateTime(2025, 9, 1),
@@ -671,6 +580,7 @@ class CourseDetailsPage extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         _buildEnhancedClassCard(
+          theme: theme,
           title: "Work, Energy and Power",
           topic: "Work-Energy",
           date: DateTime(2025, 9, 8),
@@ -679,23 +589,22 @@ class CourseDetailsPage extends StatelessWidget {
           subject: "Physics",
           durationMinutes: 120,
         ),
-        const SizedBox(height: 24),
       ],
     );
   }
 
-  Widget _buildTestsTab() {
+  Widget _buildTestsTab(ThemeData theme) {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       children: [
         Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.06),
+                color: theme.shadowColor.withOpacity(0.06),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -719,12 +628,10 @@ class CourseDetailsPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Text(
+                  Text(
                     "Course Tests",
-                    style: TextStyle(
-                      fontSize: 20,
+                    style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A1A1A),
                     ),
                   ),
                 ],
@@ -732,10 +639,8 @@ class CourseDetailsPage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 "Practice tests and assessments for this course",
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 15,
-                  height: 1.4,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.hintColor,
                 ),
               ),
               const SizedBox(height: 24),
@@ -758,6 +663,7 @@ class CourseDetailsPage extends StatelessWidget {
   }
 
   Widget _buildEnhancedClassCard({
+    required ThemeData theme,
     required String title,
     required String topic,
     required DateTime date,
@@ -768,11 +674,11 @@ class CourseDetailsPage extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: theme.shadowColor.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -790,12 +696,12 @@ class CourseDetailsPage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.play_circle_filled,
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         size: 24,
                       ),
                     ),
@@ -806,10 +712,8 @@ class CourseDetailsPage extends StatelessWidget {
                         children: [
                           Text(
                             title,
-                            style: const TextStyle(
-                              fontSize: 18,
+                            style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -817,10 +721,8 @@ class CourseDetailsPage extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             topic,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.hintColor,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -834,15 +736,13 @@ class CourseDetailsPage extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.green.shade50,
+                        color: Colors.green.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         "${durationMinutes}min",
-                        style: TextStyle(
-                          color: Colors.green.shade700,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.green,
                         ),
                       ),
                     ),
@@ -851,10 +751,8 @@ class CourseDetailsPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                    height: 1.4,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.hintColor,
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -867,15 +765,13 @@ class CourseDetailsPage extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.schedule, size: 16, color: Colors.grey[600]),
+                        Icon(Icons.schedule, size: 16, color: theme.hintColor),
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
                             timeRange,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.hintColor,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -888,15 +784,13 @@ class CourseDetailsPage extends StatelessWidget {
                         Icon(
                           Icons.calendar_today,
                           size: 16,
-                          color: Colors.grey[600],
+                          color: theme.hintColor,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           "${date.day}/${date.month}/${date.year}",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.hintColor,
                           ),
                         ),
                       ],
@@ -909,7 +803,7 @@ class CourseDetailsPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: theme.scaffoldBackgroundColor,
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
@@ -923,19 +817,8 @@ class CourseDetailsPage extends StatelessWidget {
                     width: 80,
                     child: OutlinedButton.icon(
                       onPressed: () {},
-                      icon: Icon(Icons.file_download, size: 16),
+                      icon: const Icon(Icons.file_download, size: 16),
                       label: const Text("PPT"),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: kPrimaryColor,
-                        side: BorderSide(color: kPrimaryColor),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 12,
-                        ),
-                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -943,19 +826,8 @@ class CourseDetailsPage extends StatelessWidget {
                     width: 80,
                     child: OutlinedButton.icon(
                       onPressed: () {},
-                      icon: Icon(Icons.picture_as_pdf, size: 16),
+                      icon: const Icon(Icons.picture_as_pdf, size: 16),
                       label: const Text("PDF"),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: kPrimaryColor,
-                        side: BorderSide(color: kPrimaryColor),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 12,
-                        ),
-                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -963,20 +835,8 @@ class CourseDetailsPage extends StatelessWidget {
                     width: 120,
                     child: ElevatedButton.icon(
                       onPressed: () {},
-                      icon: Icon(Icons.video_call, size: 16),
+                      icon: const Icon(Icons.video_call, size: 16),
                       label: const Text("Join Class"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: kPrimaryColor,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 12,
-                        ),
-                      ),
                     ),
                   ),
                 ],
@@ -1006,7 +866,12 @@ class CourseDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStat(String title, String value, IconData icon) {
+  Widget _buildStat(
+    ThemeData theme,
+    String title,
+    String value,
+    IconData icon,
+  ) {
     return SizedBox(
       width: 80,
       child: Column(
@@ -1014,18 +879,16 @@ class CourseDetailsPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: kPrimaryColor, size: 20),
+            child: Icon(icon, color: theme.colorScheme.primary, size: 20),
           ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
-              color: Colors.black87,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -1034,11 +897,7 @@ class CourseDetailsPage extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -1049,6 +908,7 @@ class CourseDetailsPage extends StatelessWidget {
   }
 
   Widget _buildInfoCard({
+    required ThemeData theme,
     required IconData icon,
     required String title,
     required String value,
@@ -1060,7 +920,9 @@ class CourseDetailsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color,
+        color: color.withOpacity(
+          theme.brightness == Brightness.dark ? 0.2 : 1.0,
+        ),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -1071,21 +933,16 @@ class CourseDetailsPage extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w500,
-            ),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 16,
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
-              color: valueColor ?? Colors.black87,
+              color: valueColor ?? theme.textTheme.bodyLarge?.color,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -1094,7 +951,9 @@ class CourseDetailsPage extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               subtitle,
-              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.hintColor,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -1104,15 +963,14 @@ class CourseDetailsPage extends StatelessWidget {
     );
   }
 
-  // ============ Enhanced Bottom Enroll Bar ============
-  Widget _bottomEnrollBar(BuildContext context) {
+  Widget _bottomEnrollBar(BuildContext context, ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: theme.shadowColor.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -1128,10 +986,8 @@ class CourseDetailsPage extends StatelessWidget {
                 children: [
                   Text(
                     "Total Price",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.hintColor,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -1139,20 +995,17 @@ class CourseDetailsPage extends StatelessWidget {
                     children: [
                       Text(
                         "₹${price.toStringAsFixed(0)}",
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: kPrimaryColor,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                       const SizedBox(width: 12),
                       Text(
                         "₹${oldPrice.toStringAsFixed(0)}",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[500],
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.hintColor,
                           decoration: TextDecoration.lineThrough,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -1163,60 +1016,17 @@ class CourseDetailsPage extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimaryColor,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
                 onPressed: () {
-                  // Show enrollment success dialog
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      title: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
-                              size: 24,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text("Enrollment Successful!"),
-                        ],
-                      ),
-                      content: Text(
-                        "You have successfully enrolled in $title. You will receive a confirmation email shortly.",
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text(
-                            "OK",
-                            style: TextStyle(color: kPrimaryColor),
-                          ),
-                        ),
-                      ],
-                    ),
+                  AppRouter.navigateToPayment(
+                    context,
+                    itemTitle: title,
+                    itemDescription:
+                        'Complete course with certification and lifetime access',
+                    amount: price.toDouble(),
+                    imageUrl: imageUrl,
                   );
                 },
-                child: const Text(
-                  "Enroll Now",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                ),
+                child: const Text("Enroll Now"),
               ),
             ),
           ],
@@ -1226,11 +1036,10 @@ class CourseDetailsPage extends StatelessWidget {
   }
 }
 
-// Custom Sliver Delegate for TabBar
-// Custom Sliver Delegate for TabBar
 class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar tabBar;
-  _SliverTabBarDelegate(this.tabBar);
+  final ThemeData theme;
+  _SliverTabBarDelegate(this.tabBar, {required this.theme});
 
   @override
   double get minExtent => tabBar.preferredSize.height + 10;
@@ -1245,14 +1054,14 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Material(
-      color: Colors.grey[50],
+      color: theme.scaffoldBackgroundColor,
       child: Container(
         padding: const EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
-          color: Colors.grey[50],
+          color: theme.scaffoldBackgroundColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: theme.shadowColor.withOpacity(0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -1265,6 +1074,6 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _SliverTabBarDelegate oldDelegate) {
-    return oldDelegate.tabBar != tabBar;
+    return oldDelegate.tabBar != tabBar || oldDelegate.theme != theme;
   }
 }

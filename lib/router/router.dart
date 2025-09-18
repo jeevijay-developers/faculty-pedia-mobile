@@ -3,7 +3,8 @@ import 'package:facultypedia/screens/profile/profile_screen.dart';
 import 'package:facultypedia/screens/splash/splash_screen.dart';
 import 'package:facultypedia/screens/webinars/webinars_screen.dart';
 import 'package:facultypedia/screens/test_series/test_series_screen.dart';
-                                                                                                                                                                                                                                                                          import 'package:facultypedia/screens/settings/settings_screen.dart';
+import 'package:facultypedia/screens/payment/payment_screen.dart';
+import 'package:facultypedia/screens/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:facultypedia/screens/auth/login_page.dart';
 import 'package:facultypedia/screens/auth/signup_page.dart';
@@ -31,6 +32,27 @@ class AppRouter {
   static const String updateProfile = '/updateProfile';
   static const String blog = '/blog';
   static const String followedEducators = '/followedEducators';
+  static const String payment = '/payment';
+
+  // Helper method for payment navigation
+  static Future<void> navigateToPayment(
+    BuildContext context, {
+    required String itemTitle,
+    required String itemDescription,
+    required double amount,
+    String? imageUrl,
+  }) async {
+    await Navigator.pushNamed(
+      context,
+      payment,
+      arguments: {
+        'itemTitle': itemTitle,
+        'itemDescription': itemDescription,
+        'amount': amount,
+        'imageUrl': imageUrl,
+      },
+    );
+  }
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -83,7 +105,20 @@ class AppRouter {
       case blog:
         return MaterialPageRoute(builder: (_) => const BlogScreen());
       case followedEducators:
-        return MaterialPageRoute(builder: (_) => const FollowedEducatorsScreen());
+        return MaterialPageRoute(
+          builder: (_) => const FollowedEducatorsScreen(),
+        );
+      case payment:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => PaymentScreen(
+            itemTitle: args?['itemTitle'] ?? 'Course Enrollment',
+            itemDescription:
+                args?['itemDescription'] ?? 'Course enrollment fee',
+            amount: args?['amount'] ?? 0.0,
+            imageUrl: args?['imageUrl'],
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) =>

@@ -7,8 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../utils/constants.dart';
 
-const Color kPrimaryColor = Color(0xFF4A90E2);
-
 class EducatorProfilePage extends StatefulWidget {
   final String id;
   final String name;
@@ -143,7 +141,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
             content: Text(
               isFollowing ? 'Following educator!' : 'Unfollowed educator',
             ),
-            backgroundColor: kPrimaryColor,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
       } else {
@@ -195,9 +193,8 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
         ),
         title: Text(
           widget.name,
-          style: theme.textTheme.titleMedium?.copyWith(
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            fontSize: 18,
           ),
         ),
         centerTitle: true,
@@ -305,9 +302,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                           Text(
                             widget.name,
                             style: theme.textTheme.headlineSmall?.copyWith(
-                              fontSize: 24,
                               fontWeight: FontWeight.w700,
-                              letterSpacing: -0.5,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -315,8 +310,8 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                           Text(
                             widget.education,
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              fontSize: 16,
-                              color: theme.dividerColor,
+                              color: theme.textTheme.bodyMedium?.color
+                                  ?.withOpacity(0.7),
                               fontWeight: FontWeight.w500,
                             ),
                             textAlign: TextAlign.center,
@@ -341,7 +336,6 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                 child: Text(
                                   widget.experience,
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    fontSize: 12,
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -354,15 +348,13 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.secondary
-                                      .withOpacity(0.1),
+                                  color: Colors.orange.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
                                   widget.tag,
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    fontSize: 12,
-                                    color: theme.colorScheme.secondary,
+                                    color: Colors.orange,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -381,7 +373,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                     ? widget.rating.toStringAsFixed(1)
                                     : "N/A",
                                 "Rating",
-                                theme.colorScheme.secondary,
+                                Colors.amber,
                               ),
                               Container(
                                 height: 40,
@@ -403,7 +395,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                 Icons.people,
                                 _formatFollowerCount(widget.followers),
                                 "Followers",
-                                theme.colorScheme.tertiary,
+                                Colors.green,
                               ),
                             ],
                           ),
@@ -441,8 +433,12 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
                                               isFollowing
-                                                  ? Colors.black87
-                                                  : Colors.white,
+                                                  ? theme
+                                                            .textTheme
+                                                            .bodyLarge
+                                                            ?.color ??
+                                                        Colors.white
+                                                  : theme.colorScheme.onPrimary,
                                             ),
                                       ),
                                     )
@@ -508,10 +504,12 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                       Icons.phone,
                       "Phone",
                       widget.phone,
-                      theme.colorScheme.secondary,
+                      Colors.green,
                     ),
-                    const SizedBox(height: 16),
-                    _buildSocialLinks(),
+                    if (widget.socialLinks.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      _buildSocialLinks(),
+                    ],
                   ],
                 ),
               ),
@@ -637,7 +635,6 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 child: Text(
                   widget.description,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontSize: 16,
                     height: 1.6,
                     fontWeight: FontWeight.w400,
                   ),
@@ -668,15 +665,15 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 Text(
                   title,
                   style: theme.textTheme.headlineSmall?.copyWith(
-                    fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 14),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  ),
                 ),
               ],
             ),
@@ -707,15 +704,20 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
           ),
           child: Icon(icon, color: color, size: 20),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         Text(
           value,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontSize: 16,
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
-        Text(label, style: theme.textTheme.bodySmall?.copyWith(fontSize: 12)),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+          ),
+        ),
       ],
     );
   }
@@ -737,22 +739,21 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
           ),
           child: Icon(icon, color: color, size: 20),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                 ),
               ),
+              const SizedBox(height: 2),
               Text(
                 value,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontSize: 14,
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -764,38 +765,31 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
   }
 
   Widget _buildSocialLinks() {
-    if (widget.socialLinks.isEmpty) return const SizedBox();
-
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Social Links",
-          style: theme.textTheme.bodySmall?.copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
           ),
         ),
         const SizedBox(height: 8),
         Row(
           children: [
             if (widget.socialLinks.containsKey("twitter"))
-              _buildSocialButton(
-                FontAwesomeIcons.twitter,
-                theme.colorScheme.primary,
-                () {},
-              ),
+              _buildSocialButton(FontAwesomeIcons.twitter, Colors.blue, () {}),
             if (widget.socialLinks.containsKey("linkedin"))
               _buildSocialButton(
                 FontAwesomeIcons.linkedin,
-                theme.colorScheme.secondary,
+                Colors.blue[800]!,
                 () {},
               ),
             if (widget.socialLinks.containsKey("instagram"))
               _buildSocialButton(
                 FontAwesomeIcons.instagram,
-                theme.colorScheme.tertiary,
+                Colors.pink,
                 () {},
               ),
           ],
@@ -811,12 +805,12 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: color, size: 18),
+          child: Icon(icon, color: color, size: 20),
         ),
       ),
     );
@@ -914,8 +908,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 children: [
                   Text(
                     title,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: 16,
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       height: 1.3,
                     ),
@@ -926,8 +919,8 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: 12,
                       height: 1.4,
+                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -941,8 +934,7 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                         children: [
                           Text(
                             "₹$price",
-                            style: TextStyle(
-                              fontSize: 18,
+                            style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: theme.colorScheme.primary,
                             ),
@@ -950,8 +942,9 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                           Text(
                             "₹$oldPrice",
                             style: theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 12,
                               decoration: TextDecoration.lineThrough,
+                              color: theme.textTheme.bodySmall?.color
+                                  ?.withOpacity(0.5),
                             ),
                           ),
                         ],
@@ -1071,13 +1064,13 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.secondary,
+                      color: Colors.orange,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       "TEST SERIES",
                       style: TextStyle(
-                        color: theme.colorScheme.onSecondary,
+                        color: theme.colorScheme.onPrimary,
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1119,10 +1112,8 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
                       height: 1.3,
                     ),
                     maxLines: 2,
@@ -1135,14 +1126,14 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: kPrimaryColor.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       subject,
                       style: TextStyle(
                         fontSize: 10,
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1153,17 +1144,16 @@ class _EducatorProfilePageState extends State<EducatorProfilePage> {
                     children: [
                       Text(
                         "₹$fee",
-                        style: TextStyle(
-                          fontSize: 18,
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: kPrimaryColor,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimaryColor,
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,

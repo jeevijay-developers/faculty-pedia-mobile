@@ -3,48 +3,44 @@ import 'package:facultypedia/models/live_test.dart';
 import 'package:intl/intl.dart';
 import 'live_test_attempt_screen.dart';
 
-const Color kPrimaryColor = Color(0xFF4A90E2);
-
 class LiveTestDetailScreen extends StatelessWidget {
   final LiveTest test;
-  const LiveTestDetailScreen({Key? key, required this.test}) : super(key: key);
+  const LiveTestDetailScreen({super.key, required this.test});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 16),
+            child: Icon(Icons.arrow_back, color: primaryColor, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Container(
-          height: 40,
-          child: Image.asset("assets/images/fp.png"),
-        ),
+        title: SizedBox(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
         actions: [
           IconButton(
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.share, color: kPrimaryColor, size: 16),
+              child: Icon(Icons.share, color: primaryColor, size: 16),
             ),
-            onPressed: () {
-              // TODO: Implement share functionality
-            },
+            onPressed: () {},
           ),
           const SizedBox(width: 8),
         ],
@@ -53,7 +49,6 @@ class LiveTestDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hero Section with Image
             Container(
               width: double.infinity,
               height: 250,
@@ -61,7 +56,10 @@ class LiveTestDetailScreen extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [kPrimaryColor.withOpacity(0.1), Colors.white],
+                  colors: [
+                    primaryColor.withOpacity(0.1),
+                    theme.scaffoldBackgroundColor,
+                  ],
                 ),
               ),
               child: test.imageUrl.isNotEmpty
@@ -75,7 +73,7 @@ class LiveTestDetailScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black26,
+                                color: theme.shadowColor.withOpacity(0.2),
                                 blurRadius: 10,
                                 offset: const Offset(0, 5),
                               ),
@@ -87,23 +85,20 @@ class LiveTestDetailScreen extends StatelessWidget {
                               test.imageUrl,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                return _buildPlaceholderImage();
+                                return _buildPlaceholderImage(theme);
                               },
                             ),
                           ),
                         ),
                       ],
                     )
-                  : _buildPlaceholderImage(),
+                  : _buildPlaceholderImage(theme),
             ),
-
-            // Content Section
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title Section
                   Row(
                     children: [
                       Container(
@@ -113,22 +108,22 @@ class LiveTestDetailScreen extends StatelessWidget {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              kPrimaryColor,
-                              kPrimaryColor.withOpacity(0.7),
+                              primaryColor,
+                              primaryColor.withOpacity(0.7),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(15),
                           boxShadow: [
                             BoxShadow(
-                              color: kPrimaryColor.withOpacity(0.3),
+                              color: primaryColor.withOpacity(0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.quiz_rounded,
-                          color: Colors.white,
+                          color: theme.colorScheme.onPrimary,
                           size: 28,
                         ),
                       ),
@@ -139,10 +134,8 @@ class LiveTestDetailScreen extends StatelessWidget {
                           children: [
                             Text(
                               test.title,
-                              style: TextStyle(
-                                fontSize: 24,
+                              style: theme.textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey[800],
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -152,14 +145,13 @@ class LiveTestDetailScreen extends StatelessWidget {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: kPrimaryColor.withOpacity(0.1),
+                                color: primaryColor.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Text(
                                 test.subject,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: kPrimaryColor,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: primaryColor,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -169,12 +161,10 @@ class LiveTestDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 24),
-
-                  // Description Card
                   Card(
                     elevation: 4,
+                    shadowColor: theme.shadowColor.withOpacity(0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -185,14 +175,12 @@ class LiveTestDetailScreen extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.description, color: kPrimaryColor),
+                              Icon(Icons.description, color: primaryColor),
                               const SizedBox(width: 8),
                               Text(
                                 'Description',
-                                style: TextStyle(
-                                  fontSize: 18,
+                                style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
                                 ),
                               ),
                             ],
@@ -200,41 +188,27 @@ class LiveTestDetailScreen extends StatelessWidget {
                           const SizedBox(height: 12),
                           Text(
                             test.descriptionShort,
-                            style: const TextStyle(
-                              fontSize: 16,
+                            style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
-                              height: 1.4,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             test.descriptionLong,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                              height: 1.5,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.hintColor,
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  // Test Details Grid
-                  _buildTestDetailsGrid(),
-
+                  _buildTestDetailsGrid(theme),
                   const SizedBox(height: 20),
-
-                  // Marking Scheme Card
-                  _buildMarkingSchemeCard(),
-
+                  _buildMarkingSchemeCard(theme),
                   const SizedBox(height: 30),
-
-                  // Action Buttons
-                  _buildActionButtons(context),
-
+                  _buildActionButtons(context, theme),
                   const SizedBox(height: 20),
                 ],
               ),
@@ -245,7 +219,7 @@ class LiveTestDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaceholderImage() {
+  Widget _buildPlaceholderImage(ThemeData theme) {
     return Container(
       margin: const EdgeInsets.all(20),
       height: 200,
@@ -254,8 +228,8 @@ class LiveTestDetailScreen extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            kPrimaryColor.withOpacity(0.1),
-            kPrimaryColor.withOpacity(0.05),
+            theme.colorScheme.primary.withOpacity(0.1),
+            theme.colorScheme.primary.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -267,15 +241,14 @@ class LiveTestDetailScreen extends StatelessWidget {
             Icon(
               Icons.quiz_outlined,
               size: 60,
-              color: kPrimaryColor.withOpacity(0.5),
+              color: theme.colorScheme.primary.withOpacity(0.5),
             ),
             const SizedBox(height: 12),
             Text(
               'Live Test',
-              style: TextStyle(
-                fontSize: 18,
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: kPrimaryColor,
+                color: theme.colorScheme.primary,
               ),
             ),
           ],
@@ -284,9 +257,10 @@ class LiveTestDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTestDetailsGrid() {
+  Widget _buildTestDetailsGrid(ThemeData theme) {
     return Card(
       elevation: 4,
+      shadowColor: theme.shadowColor.withOpacity(0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -295,14 +269,12 @@ class LiveTestDetailScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline, color: kPrimaryColor),
+                Icon(Icons.info_outline, color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   'Test Information',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
                   ),
                 ),
               ],
@@ -312,6 +284,7 @@ class LiveTestDetailScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildDetailItem(
+                    theme,
                     Icons.schedule,
                     'Start Time',
                     DateFormat(
@@ -319,9 +292,10 @@ class LiveTestDetailScreen extends StatelessWidget {
                     ).format(test.startDate.toLocal()),
                   ),
                 ),
-                Container(width: 1, height: 50, color: Colors.grey[300]),
+                Container(width: 1, height: 50, color: theme.dividerColor),
                 Expanded(
                   child: _buildDetailItem(
+                    theme,
                     Icons.timer,
                     'Duration',
                     '${test.duration} minutes',
@@ -330,9 +304,10 @@ class LiveTestDetailScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Divider(color: Colors.grey[300]),
+            Divider(color: theme.dividerColor),
             const SizedBox(height: 16),
             _buildDetailItem(
+              theme,
               Icons.assessment,
               'Marking Type',
               test.markingType,
@@ -343,7 +318,7 @@ class LiveTestDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMarkingSchemeCard() {
+  Widget _buildMarkingSchemeCard(ThemeData theme) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -354,14 +329,12 @@ class LiveTestDetailScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.grade, color: kPrimaryColor),
+                Icon(Icons.grade, color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   'Marking Scheme',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
                   ),
                 ),
               ],
@@ -371,6 +344,7 @@ class LiveTestDetailScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildMarkingItem(
+                    theme,
                     Icons.add_circle,
                     'Positive Marks',
                     '${test.positiveMarks ?? '-'}',
@@ -380,6 +354,7 @@ class LiveTestDetailScreen extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildMarkingItem(
+                    theme,
                     Icons.remove_circle,
                     'Negative Marks',
                     '${test.negativeMarks ?? '-'}',
@@ -394,27 +369,12 @@ class LiveTestDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(BuildContext context, ThemeData theme) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: 56,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [kPrimaryColor, kPrimaryColor.withOpacity(0.8)],
-            ),
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: kPrimaryColor.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
           child: ElevatedButton(
             onPressed: () {
               Navigator.push(
@@ -427,18 +387,9 @@ class LiveTestDetailScreen extends StatelessWidget {
                 ),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-            ),
-            child: const Text(
+            child: Text(
               'Start Live Test',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -449,38 +400,17 @@ class LiveTestDetailScreen extends StatelessWidget {
           children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () {
-                  // TODO: Implement bookmark functionality
-                },
-                icon: Icon(Icons.bookmark_outline, color: kPrimaryColor),
-                label: Text('Bookmark', style: TextStyle(color: kPrimaryColor)),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: kPrimaryColor),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
+                onPressed: () {},
+                icon: const Icon(Icons.bookmark_outline),
+                label: const Text('Bookmark'),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () {
-                  // TODO: Implement reminder functionality
-                },
-                icon: Icon(Icons.notifications_outlined, color: kPrimaryColor),
-                label: Text(
-                  'Set Reminder',
-                  style: TextStyle(color: kPrimaryColor),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: kPrimaryColor),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
+                onPressed: () {},
+                icon: const Icon(Icons.notifications_outlined),
+                label: const Text('Set Reminder'),
               ),
             ),
           ],
@@ -489,25 +419,24 @@ class LiveTestDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailItem(IconData icon, String label, String value) {
+  Widget _buildDetailItem(
+    ThemeData theme,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Column(
       children: [
-        Icon(icon, color: kPrimaryColor, size: 24),
+        Icon(icon, color: theme.colorScheme.primary, size: 24),
         const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
+          style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[800],
+          style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,
@@ -517,6 +446,7 @@ class LiveTestDetailScreen extends StatelessWidget {
   }
 
   Widget _buildMarkingItem(
+    ThemeData theme,
     IconData icon,
     String label,
     String value,
@@ -535,18 +465,13 @@ class LiveTestDetailScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 16,
+            style: theme.textTheme.titleMedium?.copyWith(
               color: color,
               fontWeight: FontWeight.bold,
             ),

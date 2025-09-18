@@ -1,3 +1,5 @@
+// lib/screens/courses/courses_screen.dart
+
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
@@ -6,8 +8,6 @@ import 'package:facultypedia/components/custom_drawer.dart';
 import 'package:facultypedia/screens/courses/course_details_page.dart';
 import 'package:facultypedia/router/router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-const Color kPrimaryColor = Color(0xFF4A90E2);
 
 class CoursesPage extends StatefulWidget {
   final String? preselectedCategory;
@@ -48,7 +48,6 @@ class _CoursesPageState extends State<CoursesPage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
-    // Set preselected category if provided
     if (widget.preselectedCategory != null &&
         categoryFilters.contains(widget.preselectedCategory)) {
       selectedCategory = widget.preselectedCategory!;
@@ -70,7 +69,6 @@ class _CoursesPageState extends State<CoursesPage>
   List<dynamic> get _filteredCategories {
     var filtered = categories;
 
-    // Filter by selected category
     if (selectedCategory != "All") {
       filtered = filtered.where((category) {
         final title = category["title"]?.toString().toLowerCase() ?? '';
@@ -79,7 +77,6 @@ class _CoursesPageState extends State<CoursesPage>
       }).toList();
     }
 
-    // Filter by search query
     if (_searchQuery.isNotEmpty) {
       filtered = filtered.where((category) {
         final title = category["title"]?.toString().toLowerCase() ?? '';
@@ -165,7 +162,7 @@ class _CoursesPageState extends State<CoursesPage>
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -195,7 +192,7 @@ class _CoursesPageState extends State<CoursesPage>
       body: categories.isEmpty
           ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(primary),
               ),
             )
           : SingleChildScrollView(
@@ -208,7 +205,7 @@ class _CoursesPageState extends State<CoursesPage>
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
+                        colors: [theme.cardColor, primary.withOpacity(0.05)],
                       ),
                     ),
                     child: Padding(
@@ -267,9 +264,7 @@ class _CoursesPageState extends State<CoursesPage>
                             selectedColor: primary,
                             backgroundColor: theme.cardColor,
                             side: BorderSide(
-                              color: isSelected
-                                  ? primary
-                                  : Theme.of(context).dividerColor,
+                              color: isSelected ? primary : theme.dividerColor,
                             ),
                             onSelected: (bool selected) {
                               setState(() {
@@ -298,6 +293,8 @@ class _CoursesPageState extends State<CoursesPage>
     BuildContext context,
     Map<String, dynamic> category,
   ) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
@@ -315,24 +312,25 @@ class _CoursesPageState extends State<CoursesPage>
                     children: [
                       Text(
                         category["title"],
-                        style: TextStyle(
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black87,
                           letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         "${(category["courses"] as List).length} courses available",
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withOpacity(0.1),
+                    color: primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextButton.icon(
@@ -369,12 +367,12 @@ class _CoursesPageState extends State<CoursesPage>
                     icon: Icon(
                       Icons.arrow_forward_ios,
                       size: 14,
-                      color: kPrimaryColor,
+                      color: primary,
                     ),
                     label: Text(
                       "View All",
                       style: TextStyle(
-                        color: kPrimaryColor,
+                        color: primary,
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                       ),
@@ -418,6 +416,8 @@ class _CoursesPageState extends State<CoursesPage>
     BuildContext context,
     Map<String, dynamic> course,
   ) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -439,11 +439,11 @@ class _CoursesPageState extends State<CoursesPage>
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: theme.shadowColor.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -489,12 +489,12 @@ class _CoursesPageState extends State<CoursesPage>
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        color: theme.cardColor.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.bookmark_border,
-                        color: kPrimaryColor,
+                        color: primary,
                         size: 20,
                       ),
                     ),
@@ -508,13 +508,13 @@ class _CoursesPageState extends State<CoursesPage>
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor,
+                        color: primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         course["durationText"],
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onPrimary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -534,10 +534,9 @@ class _CoursesPageState extends State<CoursesPage>
                   children: [
                     Text(
                       course["title"],
-                      style: const TextStyle(
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         height: 1.3,
                       ),
                       maxLines: 2,
@@ -548,20 +547,15 @@ class _CoursesPageState extends State<CoursesPage>
                       children: [
                         CircleAvatar(
                           radius: 12,
-                          backgroundColor: kPrimaryColor.withOpacity(0.1),
-                          child: Icon(
-                            Icons.person,
-                            size: 14,
-                            color: kPrimaryColor,
-                          ),
+                          backgroundColor: primary.withOpacity(0.1),
+                          child: Icon(Icons.person, size: 14, color: primary),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             course["educatorName"],
-                            style: TextStyle(
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               fontSize: 14,
-                              color: Colors.grey[600],
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -571,9 +565,8 @@ class _CoursesPageState extends State<CoursesPage>
                     const SizedBox(height: 12),
                     Text(
                       course["description"],
-                      style: TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: 14,
-                        color: Colors.grey[600],
                         height: 1.4,
                       ),
                       maxLines: 3,
@@ -589,18 +582,17 @@ class _CoursesPageState extends State<CoursesPage>
                             if (course["oldPrice"] != null)
                               Text(
                                 "₹${course["oldPrice"]}",
-                                style: TextStyle(
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   fontSize: 14,
-                                  color: Colors.grey[500],
                                   decoration: TextDecoration.lineThrough,
                                 ),
                               ),
                             Text(
                               "₹${course["price"]}",
-                              style: TextStyle(
+                              style: theme.textTheme.headlineSmall?.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
-                                color: kPrimaryColor,
+                                color: primary,
                               ),
                             ),
                           ],
@@ -624,8 +616,8 @@ class _CoursesPageState extends State<CoursesPage>
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            foregroundColor: Colors.white,
+                            backgroundColor: primary,
+                            foregroundColor: theme.colorScheme.onPrimary,
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 20,

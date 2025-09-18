@@ -9,8 +9,6 @@ import 'bloc/educator_event.dart';
 import 'bloc/educator_state.dart';
 import 'repository/educator_repository.dart';
 
-const Color kPrimaryColor = Color(0xFF4A90E2);
-
 class EducatorsPage extends StatelessWidget {
   final String? preselectedCategory;
 
@@ -18,19 +16,33 @@ class EducatorsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return FutureBuilder<String?>(
       future: _getToken(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          return Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  theme.colorScheme.primary,
+                ),
+              ),
+            ),
           );
         }
 
         final token = snapshot.data;
         if (token == null) {
-          return const Scaffold(
-            body: Center(child: Text('Authentication required')),
+          return Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: Center(
+              child: Text(
+                'Authentication required',
+                style: theme.textTheme.bodyLarge,
+              ),
+            ),
           );
         }
 
@@ -83,6 +95,7 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
     "IIT-JEE",
     "CBSE",
   ];
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -91,7 +104,6 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
     super.dispose();
   }
 
-  // Map common category names to our internal categories
   String _mapCategoryName(String category) {
     switch (category.toLowerCase()) {
       case 'iit':
@@ -103,14 +115,11 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
     }
   }
 
-  // Auto-scroll to the selected category chip
   void _scrollToSelectedChip() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_chipsScrollController.hasClients) {
         final selectedIndex = categories.indexOf(selectedCategory);
         if (selectedIndex != -1) {
-          // Calculate approximate position of the chip
-          // Each chip is approximately 100-120 pixels wide with margins
           final chipWidth = 120.0;
           final targetPosition = selectedIndex * chipWidth;
           final maxScrollExtent =
@@ -141,28 +150,24 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
-    // Set preselected category if provided
     if (widget.preselectedCategory != null) {
-      // Map common category names to our internal categories
       String mappedCategory = _mapCategoryName(widget.preselectedCategory!);
       if (categories.contains(mappedCategory)) {
         selectedCategory = mappedCategory;
-        // Auto-scroll to the selected chip after the widget is built
         _scrollToSelectedChip();
       }
     }
 
-    // Load educators using BLoC
     context.read<EducatorBloc>().add(FetchEducators());
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
 
     return BlocBuilder<EducatorBloc, EducatorState>(
       builder: (context, state) {
-        // Get educators list from state
         List<Educator> educators = [];
         bool isLoading = false;
         String? error;
@@ -175,7 +180,6 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
           error = state.message;
         }
 
-        // 🔹 Filter educators based on selected category and search query
         final filteredEducators = educators.where((e) {
           bool categoryMatch = selectedCategory == "All";
 
@@ -184,7 +188,6 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
             String subjectLower = e.subject.toLowerCase();
             String? specializationLower = e.specialization?.toLowerCase();
 
-            // Check exact match or specific known mappings
             categoryMatch =
                 subjectLower == selectedLower ||
                 (selectedLower == "math" && subjectLower == "mathematics") ||
@@ -216,14 +219,14 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  color: primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   widget.preselectedCategory != null
                       ? Icons.arrow_back
                       : Icons.menu,
-                  color: theme.colorScheme.primary,
+                  color: primaryColor,
                   size: 16,
                 ),
               ),
@@ -240,9 +243,9 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                       decoration: InputDecoration(
                         hintText: 'Search educators...',
                         border: InputBorder.none,
-                        hintStyle: TextStyle(color: theme.dividerColor),
+                        hintStyle: TextStyle(color: theme.hintColor),
                       ),
-                      style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16),
+                      style: theme.textTheme.bodyLarge,
                       onChanged: (value) {
                         setState(() {
                           _searchQuery = value;
@@ -250,7 +253,7 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                       },
                     ),
                   )
-                : Container(
+                : SizedBox(
                     height: 40,
                     child: Image.asset("assets/images/fp.png"),
                   ),
@@ -260,12 +263,12 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                 icon: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    color: primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     _isSearchExpanded ? Icons.close : Icons.search,
-                    color: theme.colorScheme.primary,
+                    color: primaryColor,
                     size: 20,
                   ),
                 ),
@@ -289,375 +292,273 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
           drawer: widget.preselectedCategory != null
               ? null
               : const CustomDrawer(),
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.grey.shade50,
-                  Colors.white,
-                  Colors.grey.shade50,
-                ],
-              ),
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Enhanced Hero Section
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Colors.white,
-                          kPrimaryColor.withOpacity(0.08),
-                          kPrimaryColor.withOpacity(0.03),
-                        ],
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Enhanced Hero Section
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        theme.cardColor,
+                        primaryColor.withOpacity(0.08),
+                        primaryColor.withOpacity(0.03),
+                      ],
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 36),
+                    child: Column(
+                      children: [
+                        // Enhanced Title with Icon
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: primaryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(25),
+                            border: Border.all(
+                              color: primaryColor.withOpacity(0.2),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: primaryColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Icon(
+                                  Icons.school_rounded,
+                                  color: theme.colorScheme.onPrimary,
+                                  size: 16,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Expert Educators",
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Learn from the Best Minds",
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.displaySmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.8,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          constraints: const BoxConstraints(maxWidth: 280),
+                          child: Text(
+                            "Connect with industry experts and experienced educators who are passionate about sharing knowledge",
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              height: 1.5,
+                              color: theme.textTheme.bodyMedium?.color
+                                  ?.withOpacity(0.7),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Category Filter Section
+                _buildModernSection(
+                  "Subject Categories",
+                  "Filter educators by their expertise",
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    controller: _chipsScrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: categories.map((category) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 12.0),
+                            child: FilterChip(
+                              label: Text(category),
+                              selected: selectedCategory == category,
+                              onSelected: (selected) {
+                                if (selected) {
+                                  setState(() {
+                                    selectedCategory = category;
+                                  });
+                                }
+                              },
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 36),
-                      child: Column(
-                        children: [
-                          // Enhanced Title with Icon
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
+                  ),
+                ),
+
+                // Educators Grid Section
+                _buildModernSection(
+                  isLoading
+                      ? "Loading Educators..."
+                      : "${filteredEducators.length} Expert${filteredEducators.length != 1 ? 's' : ''} Available",
+                  selectedCategory == "All"
+                      ? "Discover all our professional educators"
+                      : "Specialists in $selectedCategory",
+                  isLoading
+                      ? SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: primaryColor,
                             ),
-                            decoration: BoxDecoration(
-                              color: kPrimaryColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(25),
-                              border: Border.all(
-                                color: kPrimaryColor.withOpacity(0.2),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                          ),
+                        )
+                      : error != null
+                      ? SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: kPrimaryColor,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: const Icon(
-                                    Icons.school_rounded,
-                                    color: Colors.white,
-                                    size: 16,
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: Colors.red[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  "Error loading educators",
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color: Colors.red[600],
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(height: 4),
                                 Text(
-                                  "Expert Educators",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: kPrimaryColor,
-                                    letterSpacing: 0.3,
-                                  ),
+                                  error,
+                                  style: theme.textTheme.bodyMedium,
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () => context
+                                      .read<EducatorBloc>()
+                                      .add(FetchEducators()),
+                                  child: const Text('Retry'),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            "Learn from the Best Minds",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black87,
-                              letterSpacing: -0.8,
-                              height: 1.2,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Container(
-                            constraints: const BoxConstraints(maxWidth: 280),
-                            child: Text(
-                              "Connect with industry experts and experienced educators who are passionate about sharing knowledge",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                                height: 1.5,
-                                letterSpacing: 0.1,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Category Filter Section
-                  _buildModernSection(
-                    "Subject Categories",
-                    "Filter educators by their expertise",
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      controller: _chipsScrollController,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          children: categories.map((category) {
-                            final isSelected = selectedCategory == category;
-                            return Container(
-                              margin: const EdgeInsets.only(right: 14),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedCategory = category;
-                                    });
-                                    // Reload educators for new category using BLoC
-                                    context.read<EducatorBloc>().add(
-                                      FetchEducators(),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(30),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24,
-                                      vertical: 14,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      gradient: isSelected
-                                          ? LinearGradient(
-                                              colors: [
-                                                kPrimaryColor,
-                                                kPrimaryColor.withBlue(255),
-                                              ],
-                                            )
-                                          : null,
-                                      color: isSelected ? null : Colors.white,
-                                      borderRadius: BorderRadius.circular(30),
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? Colors.transparent
-                                            : Colors.grey.withOpacity(0.15),
-                                        width: 1,
-                                      ),
-                                      boxShadow: isSelected
-                                          ? [
-                                              BoxShadow(
-                                                color: kPrimaryColor
-                                                    .withOpacity(0.25),
-                                                blurRadius: 8,
-                                                offset: const Offset(0, 3),
-                                                spreadRadius: 0,
-                                              ),
-                                            ]
-                                          : [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(
-                                                  0.04,
-                                                ),
-                                                blurRadius: 6,
-                                                offset: const Offset(0, 2),
-                                                spreadRadius: 0,
-                                              ),
-                                            ],
-                                    ),
-                                    child: Text(
-                                      category,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                        letterSpacing: 0.3,
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.black87,
-                                      ),
-                                    ),
-                                  ),
+                        )
+                      : filteredEducators.isEmpty
+                      ? SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 48,
+                                  color: theme.hintColor,
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Educators Grid Section
-                  _buildModernSection(
-                    isLoading
-                        ? "Loading Educators..."
-                        : "${filteredEducators.length} Expert${filteredEducators.length != 1 ? 's' : ''} Available",
-                    selectedCategory == "All"
-                        ? "Discover all our professional educators"
-                        : "Specialists in $selectedCategory",
-                    isLoading
-                        ? Container(
-                            height: 200,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: kPrimaryColor,
-                              ),
-                            ),
-                          )
-                        : error != null
-                        ? Container(
-                            height: 200,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.error_outline,
-                                    size: 48,
-                                    color: Colors.red[400],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    "Error loading educators",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.red[600],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    error,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[500],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ElevatedButton(
-                                    onPressed: () => context
-                                        .read<EducatorBloc>()
-                                        .add(FetchEducators()),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: kPrimaryColor,
-                                    ),
-                                    child: Text(
-                                      'Retry',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : filteredEducators.isEmpty
-                        ? Container(
-                            height: 200,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.search_off,
-                                    size: 48,
-                                    color: Colors.grey[400],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    "No educators found",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "Try selecting a different category",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[500],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    childAspectRatio: 0.78,
-                                    crossAxisSpacing: 14,
-                                    mainAxisSpacing: 14,
-                                  ),
-                              itemCount: filteredEducators.length,
-                              itemBuilder: (context, index) {
-                                final educator = filteredEducators[index];
-                                // Use subject if available, otherwise use specialization, otherwise use "General"
-                                String displaySubject =
-                                    educator.subject.isNotEmpty
-                                    ? educator.subject
-                                    : (educator.specialization?.isNotEmpty ==
-                                              true
-                                          ? educator.specialization!
-                                          : "General");
-
-                                return _buildModernEducatorCard(
-                                  educator.name,
-                                  displaySubject,
-                                  educator.experience ?? 'N/A',
-                                  educator.experience ?? 'N/A',
-                                  educator.bio ?? 'No description available',
-                                  educator.image?.url ??
-                                      'https://placehold.co/150.png',
-                                  educator.rating ?? 0.0,
-                                  0, // reviews - not in model
-                                  () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            EducatorProfilePage(
-                                              id: educator.id,
-                                              name: educator.name,
-                                              subject: displaySubject,
-                                              description:
-                                                  educator.bio ??
-                                                  'No description available',
-                                              education: 'N/A', // not in model
-                                              experience:
-                                                  educator.experience ?? 'N/A',
-                                              rating: educator.rating ?? 0.0,
-                                              reviews: 0, // not in model
-                                              followers:
-                                                  educator.totalFollowers ?? 0,
-                                              tag: displaySubject,
-                                              imageUrl:
-                                                  educator.image?.url ??
-                                                  'https://placehold.co/150.png',
-                                              youtubeUrl: 'N/A', // not in model
-                                              email: educator.email,
-                                              phone: 'N/A', // not in model
-                                              socialLinks: {}, // not in model
-                                            ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
+                                const SizedBox(height: 16),
+                                Text(
+                                  "No educators found",
+                                  style: theme.textTheme.titleMedium,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  "Try selecting a different category",
+                                  style: theme.textTheme.bodyMedium,
+                                ),
+                              ],
                             ),
                           ),
-                  ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.78,
+                                  crossAxisSpacing: 14,
+                                  mainAxisSpacing: 14,
+                                ),
+                            itemCount: filteredEducators.length,
+                            itemBuilder: (context, index) {
+                              final educator = filteredEducators[index];
+                              String displaySubject =
+                                  educator.subject.isNotEmpty
+                                  ? educator.subject
+                                  : (educator.specialization?.isNotEmpty == true
+                                        ? educator.specialization!
+                                        : "General");
 
-                  const SizedBox(height: 32),
-                ],
-              ),
+                              return _buildModernEducatorCard(
+                                theme,
+                                educator.name,
+                                displaySubject,
+                                educator.experience ?? 'N/A',
+                                educator.experience ?? 'N/A',
+                                educator.bio ?? 'No description available',
+                                educator.image?.url ??
+                                    'https://placehold.co/150.png',
+                                educator.rating ?? 0.0,
+                                0, // reviews - not in model
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EducatorProfilePage(
+                                        id: educator.id,
+                                        name: educator.name,
+                                        subject: displaySubject,
+                                        description:
+                                            educator.bio ??
+                                            'No description available',
+                                        education: 'N/A', // not in model
+                                        experience:
+                                            educator.experience ?? 'N/A',
+                                        rating: educator.rating ?? 0.0,
+                                        reviews: 0, // not in model
+                                        followers: educator.totalFollowers ?? 0,
+                                        tag: displaySubject,
+                                        imageUrl:
+                                            educator.image?.url ??
+                                            'https://placehold.co/150.png',
+                                        youtubeUrl: 'N/A', // not in model
+                                        email: educator.email,
+                                        phone: 'N/A', // not in model
+                                        socialLinks: {}, // not in model
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                ),
+              ],
             ),
           ),
         );
@@ -666,12 +567,12 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
   }
 
   Widget _buildModernSection(String title, String subtitle, Widget content) {
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Modern Section Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -683,9 +584,7 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                       width: 4,
                       height: 24,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [kPrimaryColor, kPrimaryColor.withBlue(255)],
-                        ),
+                        color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -693,10 +592,8 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                     Expanded(
                       child: Text(
                         title,
-                        style: const TextStyle(
-                          fontSize: 24,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: Colors.black87,
                           letterSpacing: -0.8,
                         ),
                       ),
@@ -708,10 +605,10 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                   padding: const EdgeInsets.only(left: 16),
                   child: Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey.shade600,
-                      height: 1.4,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                        0.7,
+                      ),
                     ),
                   ),
                 ),
@@ -719,8 +616,6 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
             ),
           ),
           const SizedBox(height: 20),
-
-          // Section Content
           content,
         ],
       ),
@@ -728,6 +623,7 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
   }
 
   Widget _buildModernEducatorCard(
+    ThemeData theme,
     String name,
     String subject,
     String education,
@@ -741,14 +637,10 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.white, Colors.grey.shade50],
-        ),
+        color: theme.cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: theme.shadowColor.withOpacity(0.08),
             blurRadius: 25,
             offset: const Offset(0, 10),
             spreadRadius: -5,
@@ -765,7 +657,6 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
             borderRadius: BorderRadius.circular(20),
             child: Column(
               children: [
-                // Modern Profile Section - Made flexible
                 Container(
                   width: double.infinity,
                   constraints: const BoxConstraints(
@@ -777,48 +668,20 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        kPrimaryColor.withOpacity(0.1),
-                        Colors.blue.shade100.withOpacity(0.3),
-                        Colors.purple.shade50.withOpacity(0.2),
+                        theme.colorScheme.primary.withOpacity(0.1),
+                        theme.colorScheme.primary.withOpacity(0.2),
+                        theme.colorScheme.primary.withOpacity(0.05),
                       ],
                     ),
                   ),
                   child: Stack(
                     children: [
-                      // Decorative circles
-                      Positioned(
-                        top: -20,
-                        right: -20,
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: -10,
-                        left: -10,
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: kPrimaryColor.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-
-                      // Profile image and content - Made flexible
                       Padding(
                         padding: const EdgeInsets.all(12),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Profile Avatar
                             Container(
                               width: 60,
                               height: 60,
@@ -830,7 +693,7 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: theme.shadowColor.withOpacity(0.1),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
@@ -842,10 +705,10 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Container(
-                                      color: Colors.grey.shade200,
+                                      color: theme.dividerColor,
                                       child: Icon(
                                         Icons.person,
-                                        color: Colors.grey.shade400,
+                                        color: theme.hintColor,
                                         size: 30,
                                       ),
                                     );
@@ -854,8 +717,6 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                               ),
                             ),
                             const SizedBox(height: 6),
-
-                            // Name - Fixed overflow
                             Flexible(
                               child: Container(
                                 width: double.infinity,
@@ -864,10 +725,8 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                 ),
                                 child: Text(
                                   name,
-                                  style: const TextStyle(
-                                    fontSize: 14,
+                                  style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
                                     height: 1.2,
                                   ),
                                   maxLines: 2,
@@ -876,8 +735,6 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                 ),
                               ),
                             ),
-
-                            // Subject tag - Fixed overflow
                             if (subject.isNotEmpty)
                               Container(
                                 margin: const EdgeInsets.only(top: 4),
@@ -889,14 +746,13 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                   vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: kPrimaryColor,
+                                  color: theme.colorScheme.primary,
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Text(
                                   subject,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onPrimary,
                                     fontWeight: FontWeight.w600,
                                   ),
                                   maxLines: 1,
@@ -907,8 +763,6 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                           ],
                         ),
                       ),
-
-                      // Rating badge - only show if rating > 0
                       if (rating > 0)
                         Positioned(
                           top: 12,
@@ -919,11 +773,11 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: theme.cardColor,
                               borderRadius: BorderRadius.circular(15),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: theme.shadowColor.withOpacity(0.1),
                                   blurRadius: 5,
                                   offset: const Offset(0, 2),
                                 ),
@@ -940,10 +794,8 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                 const SizedBox(width: 2),
                                 Text(
                                   rating.toStringAsFixed(1),
-                                  style: const TextStyle(
-                                    fontSize: 12,
+                                  style: theme.textTheme.bodySmall?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
                                   ),
                                 ),
                               ],
@@ -953,41 +805,33 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                     ],
                   ),
                 ),
-
-                // Content Section - Fixed overflow issues
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Description - Better height management
                         Expanded(
                           flex: 2,
-                          child: Container(
+                          child: SizedBox(
                             width: double.infinity,
                             child: Text(
                               description,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade600,
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 height: 1.3,
+                                color: theme.textTheme.bodyMedium?.color
+                                    ?.withOpacity(0.7),
                               ),
                               maxLines: 4,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
-
-                        // Fixed height spacer
                         const SizedBox(height: 8),
-
-                        // Experience and Action Row - Fixed overflow
-                        Container(
+                        SizedBox(
                           height: 32,
                           child: Row(
                             children: [
-                              // Experience - Flexible width
                               if (experience.isNotEmpty && experience != 'N/A')
                                 Expanded(
                                   flex: 3,
@@ -997,7 +841,9 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.green.shade50,
+                                      color: Colors.green.shade50.withOpacity(
+                                        0.5,
+                                      ),
                                       borderRadius: BorderRadius.circular(6),
                                       border: Border.all(
                                         color: Colors.green.shade200,
@@ -1006,27 +852,23 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                     ),
                                     child: Text(
                                       experience,
-                                      style: TextStyle(
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.green.shade700,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.green.shade700,
+                                          ),
                                       textAlign: TextAlign.center,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
-
-                              // Spacing
                               SizedBox(
                                 width:
                                     experience.isNotEmpty && experience != 'N/A'
                                     ? 6
                                     : 0,
                               ),
-
-                              // View Profile Button - Fixed width
                               Container(
                                 height: 32,
                                 padding: const EdgeInsets.symmetric(
@@ -1034,26 +876,21 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      kPrimaryColor,
-                                      kPrimaryColor.withBlue(255),
-                                    ],
-                                  ),
+                                  color: theme.colorScheme.primary,
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: kPrimaryColor.withOpacity(0.2),
+                                      color: theme.colorScheme.primary
+                                          .withOpacity(0.2),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
                                     ),
                                   ],
                                 ),
-                                child: const Text(
+                                child: Text(
                                   "View",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onPrimary,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

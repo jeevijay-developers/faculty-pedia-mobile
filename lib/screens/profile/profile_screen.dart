@@ -3,8 +3,6 @@ import 'package:facultypedia/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const Color kPrimaryColor = Color(0xFF4A90E2);
-
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -28,13 +26,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadProfile() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      token = prefs.getString("token");
-      userId = prefs.getString("userId");
-      name = prefs.getString("name") ?? "User Name";
-      email = prefs.getString("email") ?? "example@email.com";
-      mobile = prefs.getString("mobile") ?? "0000000000";
-    });
+    if (mounted) {
+      setState(() {
+        token = prefs.getString("token");
+        userId = prefs.getString("userId");
+        name = prefs.getString("name") ?? "User Name";
+        email = prefs.getString("email") ?? "example@email.com";
+        mobile = prefs.getString("mobile") ?? "0000000000";
+      });
+    }
   }
 
   @override
@@ -44,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: theme.scaffoldBackgroundColor,
       key: scaffoldKey,
       appBar: AppBar(
-        backgroundColor: theme.cardColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
@@ -59,9 +59,8 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         title: Text(
           "My Profile",
-          style: theme.textTheme.headlineSmall?.copyWith(
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            fontSize: 18,
           ),
         ),
         centerTitle: true,
@@ -88,7 +87,9 @@ class _ProfilePageState extends State<ProfilePage> {
       body: token == null || userId == null
           ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  theme.colorScheme.primary,
+                ),
               ),
             )
           : SingleChildScrollView(
@@ -114,7 +115,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           Text(
                             "👤 My Profile",
                             style: theme.textTheme.headlineMedium?.copyWith(
-                              fontSize: 28,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.5,
                             ),
@@ -124,13 +124,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             "Manage your account information and preferences",
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              fontSize: 16,
+                              color: theme.hintColor,
                               height: 1.4,
                             ),
                           ),
                           const SizedBox(height: 32),
-
-                          // Profile Avatar Card
                           Container(
                             decoration: BoxDecoration(
                               color: theme.cardColor,
@@ -146,7 +144,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             padding: const EdgeInsets.all(32),
                             child: Column(
                               children: [
-                                // Profile Image
                                 Stack(
                                   children: [
                                     Container(
@@ -199,21 +196,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ],
                                 ),
                                 const SizedBox(height: 20),
-
-                                // User Name
                                 Text(
                                   name ?? "User Name",
                                   style: theme.textTheme.headlineSmall
-                                      ?.copyWith(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: -0.5,
-                                      ),
+                                      ?.copyWith(fontWeight: FontWeight.w700),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 8),
-
-                                // User ID Badge
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
@@ -243,6 +232,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   // Personal Information Section
                   _buildModernSection(
+                    theme,
                     "Personal Information",
                     "Your account details and contact information",
                     Padding(
@@ -250,6 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         children: [
                           _buildInfoCard(
+                            theme,
                             "Full Name",
                             name ?? "Not provided",
                             Icons.person_outline,
@@ -257,6 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 16),
                           _buildInfoCard(
+                            theme,
                             "Email Address",
                             email ?? "Not provided",
                             Icons.email_outlined,
@@ -264,10 +256,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 16),
                           _buildInfoCard(
+                            theme,
                             "Mobile Number",
                             mobile ?? "Not provided",
                             Icons.phone_outlined,
-                            theme.colorScheme.tertiary,
+                            Colors.orange,
                           ),
                         ],
                       ),
@@ -276,6 +269,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   // Account Actions Section
                   _buildModernSection(
+                    theme,
                     "Account Settings",
                     "Manage your account and preferences",
                     Padding(
@@ -283,10 +277,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         children: [
                           _buildActionCard(
+                            theme,
                             "Edit Profile",
                             "Update your personal information",
                             Icons.edit_outlined,
-                            kPrimaryColor,
+                            theme.colorScheme.primary,
                             () {
                               Navigator.pushNamed(
                                 context,
@@ -297,33 +292,30 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 16),
                           _buildActionCard(
+                            theme,
                             "Change Password",
                             "Update your account password",
                             Icons.lock_outline,
                             Colors.purple,
-                            () {
-                              // Navigate to change password
-                            },
+                            () {},
                           ),
                           const SizedBox(height: 16),
                           _buildActionCard(
+                            theme,
                             "Notification Settings",
                             "Manage your notification preferences",
                             Icons.notifications_outlined,
                             Colors.blue,
-                            () {
-                              // Navigate to notification settings
-                            },
+                            () {},
                           ),
                           const SizedBox(height: 16),
                           _buildActionCard(
+                            theme,
                             "Privacy Settings",
                             "Control your privacy and data settings",
                             Icons.privacy_tip_outlined,
                             Colors.indigo,
-                            () {
-                              // Navigate to privacy settings
-                            },
+                            () {},
                           ),
                         ],
                       ),
@@ -332,6 +324,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   // Support Section
                   _buildModernSection(
+                    theme,
                     "Support & Help",
                     "Get assistance and manage your account",
                     Padding(
@@ -339,32 +332,31 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         children: [
                           _buildActionCard(
+                            theme,
                             "Help Center",
                             "Find answers to common questions",
                             Icons.help_outline,
                             Colors.teal,
-                            () {
-                              // Navigate to help center
-                            },
+                            () {},
                           ),
                           const SizedBox(height: 16),
                           _buildActionCard(
+                            theme,
                             "Contact Support",
                             "Get in touch with our support team",
                             Icons.support_agent_outlined,
                             Colors.green,
-                            () {
-                              // Navigate to contact support
-                            },
+                            () {},
                           ),
                           const SizedBox(height: 16),
                           _buildActionCard(
+                            theme,
                             "Logout",
                             "Sign out of your account",
                             Icons.logout_outlined,
                             Colors.red,
                             () {
-                              _showLogoutDialog();
+                              _showLogoutDialog(theme);
                             },
                           ),
                         ],
@@ -379,13 +371,17 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildModernSection(String title, String subtitle, Widget content) {
+  Widget _buildModernSection(
+    ThemeData theme,
+    String title,
+    String subtitle,
+    Widget content,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -393,24 +389,22 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
                     letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.hintColor,
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
-
-          // Section Content
           content,
         ],
       ),
@@ -418,12 +412,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildInfoCard(
+    ThemeData theme,
     String label,
     String value,
     IconData icon,
     Color color,
   ) {
-    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -455,7 +449,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 Text(
                   label,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -463,7 +456,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 Text(
                   value,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -476,6 +468,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildActionCard(
+    ThemeData theme,
     String title,
     String subtitle,
     IconData icon,
@@ -488,11 +481,11 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: theme.shadowColor.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -515,42 +508,40 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.hintColor,
+                    ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16),
+            Icon(Icons.arrow_forward_ios, color: theme.hintColor, size: 16),
           ],
         ),
       ),
     );
   }
 
-  void _showLogoutDialog() {
+  void _showLogoutDialog(ThemeData theme) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: theme.cardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text(
-            "Logout",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-          ),
-          content: const Text(
+          title: Text("Logout", style: theme.textTheme.headlineSmall),
+          content: Text(
             "Are you sure you want to logout from your account?",
-            style: TextStyle(fontSize: 16),
+            style: theme.textTheme.bodyLarge,
           ),
           actions: [
             TextButton(
@@ -558,7 +549,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Text(
                 "Cancel",
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: theme.hintColor,
                   fontWeight: FontWeight.w600,
                 ),
               ),

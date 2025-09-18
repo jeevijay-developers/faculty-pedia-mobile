@@ -1,15 +1,14 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:facultypedia/screens/educators/educator_profile_page.dart';
+import 'package:facultypedia/router/router.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 // pages
 import 'package:facultypedia/screens/courses/course_details_page.dart';
-import 'package:facultypedia/router/router.dart';
-
-const Color kPrimaryColor = Color(0xFF4A90E2);
 
 class NeetHomePage extends StatefulWidget {
   const NeetHomePage({super.key});
@@ -46,7 +45,6 @@ class _NeetHomePageState extends State<NeetHomePage>
     );
     final data = await json.decode(response);
 
-    // ✅ Filter only "JEE Advanced" & "JEE Mains"
     final filtered = (data["categories"] as List).where((cat) {
       final title = cat["title"].toString().toLowerCase();
       return title.contains("neet");
@@ -80,21 +78,23 @@ class _NeetHomePageState extends State<NeetHomePage>
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       key: scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 16),
+            child: Icon(Icons.arrow_back, color: primaryColor, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -107,9 +107,9 @@ class _NeetHomePageState extends State<NeetHomePage>
                   decoration: InputDecoration(
                     hintText: 'Search NEET courses...',
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    hintStyle: TextStyle(color: theme.hintColor),
                   ),
-                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  style: theme.textTheme.bodyLarge,
                   onChanged: (value) {
                     setState(() {
                       _searchQuery = value;
@@ -117,19 +117,19 @@ class _NeetHomePageState extends State<NeetHomePage>
                   },
                 ),
               )
-            : Container(height: 40, child: Image.asset("assets/images/fp.png")),
+            : SizedBox(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
         actions: [
           IconButton(
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 _isSearchExpanded ? Icons.close : Icons.search,
-                color: kPrimaryColor,
+                color: primaryColor,
                 size: 20,
               ),
             ),
@@ -153,7 +153,7 @@ class _NeetHomePageState extends State<NeetHomePage>
       body: categories.isEmpty
           ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
               ),
             )
           : SingleChildScrollView(
@@ -166,7 +166,10 @@ class _NeetHomePageState extends State<NeetHomePage>
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
+                        colors: [
+                          theme.cardColor,
+                          primaryColor.withOpacity(0.05),
+                        ],
                       ),
                     ),
                     child: Padding(
@@ -175,10 +178,8 @@ class _NeetHomePageState extends State<NeetHomePage>
                         children: [
                           Text(
                             "🩺 NEET - UG",
-                            style: TextStyle(
-                              fontSize: 28,
+                            style: theme.textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
                               letterSpacing: -0.5,
                             ),
                           ),
@@ -186,9 +187,8 @@ class _NeetHomePageState extends State<NeetHomePage>
                           Text(
                             "Master NEET with expert guidance in Biology, Chemistry & Physics",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.hintColor,
                               height: 1.4,
                             ),
                           ),
@@ -199,6 +199,7 @@ class _NeetHomePageState extends State<NeetHomePage>
 
                   // Featured Educators Section
                   _buildModernSection(
+                    theme,
                     "Featured Educators",
                     "Top-rated instructors for NEET preparation",
                     CarouselSlider(
@@ -215,6 +216,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                         Container(
                           margin: const EdgeInsets.only(right: 16, left: 4),
                           child: _buildModernEducatorCard(
+                            theme,
                             "Dr. Ankur Gupta",
                             "Chemistry",
                             "PhD, Chemistry",
@@ -241,7 +243,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                                     youtubeUrl: "https://www.youtube.com/",
                                     email: "ankur.gupta@example.com",
                                     phone: "123-456-7890",
-                                    socialLinks: {
+                                    socialLinks: const {
                                       "LinkedIn":
                                           "https://www.linkedin.com/in/ankur-gupta",
                                       "Twitter":
@@ -256,6 +258,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                         Container(
                           margin: const EdgeInsets.only(right: 16, left: 4),
                           child: _buildModernEducatorCard(
+                            theme,
                             "Dr. Rajiv Mehta",
                             "Physics",
                             "PhD, Physics",
@@ -283,7 +286,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                                     youtubeUrl: "https://www.youtube.com/",
                                     email: "rajiv.mehta@example.com",
                                     phone: "987-654-3210",
-                                    socialLinks: {
+                                    socialLinks: const {
                                       "LinkedIn":
                                           "https://www.linkedin.com/in/rajiv-mehta",
                                       "Twitter":
@@ -308,11 +311,16 @@ class _NeetHomePageState extends State<NeetHomePage>
 
                   // Course Categories
                   ..._filteredCategories.map((category) {
-                    return _buildModernCategorySection(context, category);
+                    return _buildModernCategorySection(
+                      context,
+                      category,
+                      theme,
+                    );
                   }).toList(),
 
                   // Live Courses Section
                   _buildModernSection(
+                    theme,
                     "1 V 1 Live Course Classes",
                     "Personalized one-on-one learning sessions",
                     CarouselSlider(
@@ -328,6 +336,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                         Container(
                           margin: const EdgeInsets.only(right: 16, left: 4),
                           child: _buildModernLiveCard(
+                            theme,
                             'Physics Concepts Simplified',
                             "Dr Rajiv Mehta",
                             "Ph.D., Physics",
@@ -359,6 +368,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                         Container(
                           margin: const EdgeInsets.only(right: 16, left: 4),
                           child: _buildModernLiveCard(
+                            theme,
                             'Advanced Chemistry',
                             "Dr Ankur Gupta",
                             "Ph.D., Chemistry",
@@ -405,8 +415,8 @@ class _NeetHomePageState extends State<NeetHomePage>
     );
   }
 
-  // Modern Section Builder
   Widget _buildModernSection(
+    ThemeData theme,
     String title,
     String subtitle,
     Widget content, {
@@ -417,7 +427,6 @@ class _NeetHomePageState extends State<NeetHomePage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -429,49 +438,43 @@ class _NeetHomePageState extends State<NeetHomePage>
                     children: [
                       Text(
                         title,
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: Colors.black87,
                           letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.hintColor,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: kPrimaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: TextButton.icon(
-                    onPressed: onViewAllPressed,
-                    icon: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14,
-                      color: kPrimaryColor,
+                if (onViewAllPressed != null)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    label: Text(
-                      "View All",
-                      style: TextStyle(
-                        color: kPrimaryColor,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                    child: TextButton.icon(
+                      onPressed: onViewAllPressed,
+                      icon: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: theme.colorScheme.primary,
                       ),
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+                      label: Text(
+                        "View All",
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -482,8 +485,8 @@ class _NeetHomePageState extends State<NeetHomePage>
     );
   }
 
-  // Modern Educator Card
   Widget _buildModernEducatorCard(
+    ThemeData theme,
     String name,
     String subject,
     String education,
@@ -497,11 +500,11 @@ class _NeetHomePageState extends State<NeetHomePage>
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: theme.shadowColor.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -510,7 +513,6 @@ class _NeetHomePageState extends State<NeetHomePage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Educator Image
             Container(
               height: 140,
               decoration: BoxDecoration(
@@ -550,14 +552,13 @@ class _NeetHomePageState extends State<NeetHomePage>
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         subject,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -566,8 +567,6 @@ class _NeetHomePageState extends State<NeetHomePage>
                 ],
               ),
             ),
-
-            // Educator Content
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -576,10 +575,8 @@ class _NeetHomePageState extends State<NeetHomePage>
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         height: 1.3,
                       ),
                       maxLines: 1,
@@ -588,19 +585,16 @@ class _NeetHomePageState extends State<NeetHomePage>
                     const SizedBox(height: 4),
                     Text(
                       education,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.hintColor,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       specialization,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.4,
+                        color: theme.hintColor,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -611,33 +605,14 @@ class _NeetHomePageState extends State<NeetHomePage>
                       children: [
                         Text(
                           "$experience experience",
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: kPrimaryColor,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                         ElevatedButton(
                           onPressed: onTap,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            "View Profile",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          child: const Text("View Profile"),
                         ),
                       ],
                     ),
@@ -651,17 +626,16 @@ class _NeetHomePageState extends State<NeetHomePage>
     );
   }
 
-  // Modern Category Section (similar to courses screen)
   Widget _buildModernCategorySection(
     BuildContext context,
     Map<String, dynamic> category,
+    ThemeData theme,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Category Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -673,29 +647,29 @@ class _NeetHomePageState extends State<NeetHomePage>
                     children: [
                       Text(
                         category["title"],
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: Colors.black87,
                           letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         "${(category["courses"] as List).length} courses available",
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.hintColor,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withOpacity(0.1),
+                    color: theme.colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextButton.icon(
                     onPressed: () {
-                      // Navigate to courses category page with NEET category
+                      log("View All pressed");
                       Navigator.pushNamed(
                         context,
                         AppRouter.coursesCategory,
@@ -708,20 +682,13 @@ class _NeetHomePageState extends State<NeetHomePage>
                     icon: Icon(
                       Icons.arrow_forward_ios,
                       size: 14,
-                      color: kPrimaryColor,
+                      color: theme.colorScheme.primary,
                     ),
                     label: Text(
                       "View All",
-                      style: TextStyle(
-                        color: kPrimaryColor,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
                       ),
                     ),
                   ),
@@ -730,8 +697,6 @@ class _NeetHomePageState extends State<NeetHomePage>
             ),
           ),
           const SizedBox(height: 16),
-
-          // Course Cards Carousel
           CarouselSlider(
             options: CarouselOptions(
               height: 420,
@@ -744,7 +709,7 @@ class _NeetHomePageState extends State<NeetHomePage>
             items: (category["courses"] as List).map((course) {
               return Container(
                 margin: const EdgeInsets.only(right: 16, left: 4),
-                child: _buildModernCourseCard(context, course),
+                child: _buildModernCourseCard(context, course, theme),
               );
             }).toList(),
           ),
@@ -753,10 +718,10 @@ class _NeetHomePageState extends State<NeetHomePage>
     );
   }
 
-  // Modern Course Card (same as courses screen)
   Widget _buildModernCourseCard(
     BuildContext context,
     Map<String, dynamic> course,
+    ThemeData theme,
   ) {
     return GestureDetector(
       onTap: () {
@@ -779,11 +744,11 @@ class _NeetHomePageState extends State<NeetHomePage>
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: theme.shadowColor.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -792,7 +757,6 @@ class _NeetHomePageState extends State<NeetHomePage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Course Image
             Container(
               height: 180,
               decoration: BoxDecoration(
@@ -829,12 +793,12 @@ class _NeetHomePageState extends State<NeetHomePage>
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        color: theme.cardColor.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.bookmark_border,
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         size: 20,
                       ),
                     ),
@@ -848,14 +812,13 @@ class _NeetHomePageState extends State<NeetHomePage>
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         course["durationText"],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -864,8 +827,6 @@ class _NeetHomePageState extends State<NeetHomePage>
                 ],
               ),
             ),
-
-            // Course Content
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(20),
@@ -874,10 +835,8 @@ class _NeetHomePageState extends State<NeetHomePage>
                   children: [
                     Text(
                       course["title"],
-                      style: const TextStyle(
-                        fontSize: 18,
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         height: 1.3,
                       ),
                       maxLines: 2,
@@ -888,21 +847,20 @@ class _NeetHomePageState extends State<NeetHomePage>
                       children: [
                         CircleAvatar(
                           radius: 12,
-                          backgroundColor: kPrimaryColor.withOpacity(0.1),
+                          backgroundColor: theme.colorScheme.primary
+                              .withOpacity(0.1),
                           child: Icon(
                             Icons.person,
                             size: 14,
-                            color: kPrimaryColor,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             course["educatorName"],
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.hintColor,
                             ),
                           ),
                         ),
@@ -911,10 +869,9 @@ class _NeetHomePageState extends State<NeetHomePage>
                     const SizedBox(height: 12),
                     Text(
                       course["description"],
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.4,
+                        color: theme.hintColor,
                       ),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
@@ -929,18 +886,16 @@ class _NeetHomePageState extends State<NeetHomePage>
                             if (course["oldPrice"] != null)
                               Text(
                                 "₹${course["oldPrice"]}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[500],
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.hintColor,
                                   decoration: TextDecoration.lineThrough,
                                 ),
                               ),
                             Text(
                               "₹${course["price"]}",
-                              style: TextStyle(
-                                fontSize: 20,
+                              style: theme.textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: kPrimaryColor,
+                                color: theme.colorScheme.primary,
                               ),
                             ),
                           ],
@@ -963,25 +918,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                               ),
                             );
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            "Enroll",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          child: const Text("Enroll"),
                         ),
                       ],
                     ),
@@ -995,8 +932,8 @@ class _NeetHomePageState extends State<NeetHomePage>
     );
   }
 
-  // Modern Live Card
   Widget _buildModernLiveCard(
+    ThemeData theme,
     String title,
     String instructorName,
     String qualification,
@@ -1011,11 +948,11 @@ class _NeetHomePageState extends State<NeetHomePage>
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: theme.shadowColor.withOpacity(0.08),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -1024,7 +961,6 @@ class _NeetHomePageState extends State<NeetHomePage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Course Image
             Container(
               height: 160,
               decoration: BoxDecoration(
@@ -1067,11 +1003,10 @@ class _NeetHomePageState extends State<NeetHomePage>
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
+                      child: Text(
                         "LIVE",
-                        style: TextStyle(
+                        style: theme.textTheme.bodySmall?.copyWith(
                           color: Colors.white,
-                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1086,14 +1021,13 @@ class _NeetHomePageState extends State<NeetHomePage>
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor,
+                        color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         "$totalHours hours",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1102,8 +1036,6 @@ class _NeetHomePageState extends State<NeetHomePage>
                 ],
               ),
             ),
-
-            // Course Content
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -1112,10 +1044,8 @@ class _NeetHomePageState extends State<NeetHomePage>
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         height: 1.3,
                       ),
                       maxLines: 2,
@@ -1126,21 +1056,20 @@ class _NeetHomePageState extends State<NeetHomePage>
                       children: [
                         CircleAvatar(
                           radius: 10,
-                          backgroundColor: kPrimaryColor.withOpacity(0.1),
+                          backgroundColor: theme.colorScheme.primary
+                              .withOpacity(0.1),
                           child: Icon(
                             Icons.person,
                             size: 12,
-                            color: kPrimaryColor,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             instructorName,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.hintColor,
                             ),
                           ),
                         ),
@@ -1149,7 +1078,10 @@ class _NeetHomePageState extends State<NeetHomePage>
                     const SizedBox(height: 4),
                     Text(
                       qualification,
-                      style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.hintColor,
+                        fontSize: 11,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Container(
@@ -1158,14 +1090,13 @@ class _NeetHomePageState extends State<NeetHomePage>
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         subject,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: kPrimaryColor,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1176,33 +1107,14 @@ class _NeetHomePageState extends State<NeetHomePage>
                       children: [
                         Text(
                           "₹$fee",
-                          style: TextStyle(
-                            fontSize: 18,
+                          style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: kPrimaryColor,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                         ElevatedButton(
                           onPressed: onTap,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimaryColor,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            "Enroll",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          child: const Text("Enroll"),
                         ),
                       ],
                     ),

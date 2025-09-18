@@ -7,8 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const Color kPrimaryColor = Color(0xFF4A90E2);
-
 class UpdateProfilePage extends StatefulWidget {
   final String token;
   final String userId;
@@ -44,15 +42,17 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   Future<void> _prefillFields() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _oldName = prefs.getString("name") ?? "";
-      _oldEmail = prefs.getString("email") ?? "";
-      _oldMobile = prefs.getString("mobile") ?? "";
+    if (mounted) {
+      setState(() {
+        _oldName = prefs.getString("name") ?? "";
+        _oldEmail = prefs.getString("email") ?? "";
+        _oldMobile = prefs.getString("mobile") ?? "";
 
-      nameController.text = _oldName;
-      emailController.text = _oldEmail;
-      mobileController.text = _oldMobile;
-    });
+        nameController.text = _oldName;
+        emailController.text = _oldEmail;
+        mobileController.text = _oldMobile;
+      });
+    }
   }
 
   void _addListeners() {
@@ -87,28 +87,29 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.arrow_back, color: kPrimaryColor, size: 20),
+            child: Icon(Icons.arrow_back, color: primaryColor, size: 20),
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           "Update Profile",
-          style: TextStyle(
-            color: Colors.black87,
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            fontSize: 18,
           ),
         ),
         centerTitle: true,
@@ -118,12 +119,17 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
           if (state is AuthSuccess) {
             setState(() => _showSuccess = true);
             Future.delayed(const Duration(seconds: 2), () {
-              Navigator.pop(context);
+              if (mounted) {
+                Navigator.pop(context, true); // Return true to indicate success
+              }
             });
           } else if (state is AuthFailure) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.error)));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error),
+                backgroundColor: theme.colorScheme.error,
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -132,7 +138,6 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Hero Section with Profile Info
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -140,8 +145,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.white,
-                            kPrimaryColor.withOpacity(0.05),
+                            theme.cardColor,
+                            primaryColor.withOpacity(0.05),
                           ],
                         ),
                       ),
@@ -151,10 +156,8 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                           children: [
                             Text(
                               "✏️ Edit Profile",
-                              style: TextStyle(
-                                fontSize: 28,
+                              style: theme.textTheme.headlineMedium?.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: Colors.black87,
                                 letterSpacing: -0.5,
                               ),
                             ),
@@ -162,118 +165,9 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                             Text(
                               "Update your personal information and account details",
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: theme.hintColor,
                                 height: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-
-                            // Profile Avatar Card
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(24),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.08),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 5),
-                                  ),
-                                ],
-                              ),
-                              padding: const EdgeInsets.all(24),
-                              child: Column(
-                                children: [
-                                  // Profile Image with Edit Badge
-                                  Stack(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: kPrimaryColor.withOpacity(
-                                              0.2,
-                                            ),
-                                            width: 3,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: kPrimaryColor.withOpacity(
-                                                0.2,
-                                              ),
-                                              blurRadius: 20,
-                                              offset: const Offset(0, 8),
-                                            ),
-                                          ],
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: 50,
-                                          backgroundColor: Colors.white,
-                                          child: Icon(
-                                            Icons.person,
-                                            size: 50,
-                                            color: kPrimaryColor,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: 0,
-                                        right: 0,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                            color: kPrimaryColor,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: 2,
-                                            ),
-                                          ),
-                                          child: const Icon(
-                                            Icons.edit,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-
-                                  // Edit Instructions
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.info_outline,
-                                          color: kPrimaryColor,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            "Fill in the details below to update your profile",
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: kPrimaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
                               ),
                             ),
                           ],
@@ -283,59 +177,60 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
                     // Profile Information Form
                     _buildModernSection(
+                      theme,
                       "Personal Information",
                       "Update your personal details below",
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Form(
                           key: _formKey,
-                          child: Column(
-                            children: [
-                              _buildModernFormCard(
-                                child: Column(
-                                  children: [
-                                    _buildModernField(
-                                      controller: nameController,
-                                      label: "Full Name",
-                                      icon: Icons.person_outline,
-                                      validator: (v) => v == null || v.isEmpty
-                                          ? "Name is required"
-                                          : null,
-                                    ),
-                                    const SizedBox(height: 20),
-                                    _buildModernField(
-                                      controller: emailController,
-                                      label: "Email Address",
-                                      icon: Icons.email_outlined,
-                                      keyboardType: TextInputType.emailAddress,
-                                      validator: (v) {
-                                        final value = (v ?? "").trim();
-                                        final emailReg = RegExp(
-                                          r"^[^\s@]+@[^\s@]+\.[^\s@]+$",
-                                        );
-                                        return emailReg.hasMatch(value)
-                                            ? null
-                                            : "Enter a valid email address";
-                                      },
-                                    ),
-                                    const SizedBox(height: 20),
-                                    _buildModernField(
-                                      controller: mobileController,
-                                      label: "Mobile Number",
-                                      icon: Icons.phone_outlined,
-                                      keyboardType: TextInputType.phone,
-                                      validator: (v) {
-                                        final value = (v ?? "").trim();
-                                        return value.length == 10 &&
-                                                RegExp(r'^\d+$').hasMatch(value)
-                                            ? null
-                                            : "Enter a valid 10-digit mobile number";
-                                      },
-                                    ),
-                                  ],
+                          child: _buildModernFormCard(
+                            theme: theme,
+                            child: Column(
+                              children: [
+                                _buildModernField(
+                                  theme: theme,
+                                  controller: nameController,
+                                  label: "Full Name",
+                                  icon: Icons.person_outline,
+                                  validator: (v) => v == null || v.isEmpty
+                                      ? "Name is required"
+                                      : null,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 20),
+                                _buildModernField(
+                                  theme: theme,
+                                  controller: emailController,
+                                  label: "Email Address",
+                                  icon: Icons.email_outlined,
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: (v) {
+                                    final value = (v ?? "").trim();
+                                    final emailReg = RegExp(
+                                      r"^[^\s@]+@[^\s@]+\.[^\s@]+$",
+                                    );
+                                    return emailReg.hasMatch(value)
+                                        ? null
+                                        : "Enter a valid email address";
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                                _buildModernField(
+                                  theme: theme,
+                                  controller: mobileController,
+                                  label: "Mobile Number",
+                                  icon: Icons.phone_outlined,
+                                  keyboardType: TextInputType.phone,
+                                  validator: (v) {
+                                    final value = (v ?? "").trim();
+                                    return value.length == 10 &&
+                                            RegExp(r'^\d+$').hasMatch(value)
+                                        ? null
+                                        : "Enter a valid 10-digit mobile number";
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -343,6 +238,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
 
                     // Save Button Section
                     _buildModernSection(
+                      theme,
                       "Save Changes",
                       _hasChanges
                           ? "Ready to save your updates"
@@ -385,11 +281,12 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: _hasChanges
-                                      ? kPrimaryColor
-                                      : Colors.grey[300],
+                                      ? primaryColor
+                                      : theme.disabledColor,
                                   foregroundColor: _hasChanges
-                                      ? Colors.white
-                                      : Colors.grey[600],
+                                      ? theme.colorScheme.onPrimary
+                                      : theme.textTheme.bodyLarge?.color
+                                            ?.withOpacity(0.5),
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
                                   ),
@@ -406,7 +303,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                                         height: 20,
                                         width: 20,
                                         child: CircularProgressIndicator(
-                                          color: Colors.white,
+                                          color: theme.colorScheme.onPrimary,
                                           strokeWidth: 2,
                                         ),
                                       )
@@ -421,7 +318,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                                             size: 20,
                                           ),
                                           const SizedBox(width: 8),
-                                          Text(
+                                          const Text(
                                             "Save Changes",
                                             style: TextStyle(
                                               fontSize: 16,
@@ -436,27 +333,24 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 32),
                   ],
                 ),
               ),
-
-              // Success Animation Overlay
               if (_showSuccess)
                 Container(
-                  color: Colors.black54,
+                  color: Colors.black54.withOpacity(0.6),
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                     child: Center(
                       child: Container(
                         padding: const EdgeInsets.all(32),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: theme.cardColor,
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: theme.shadowColor.withOpacity(0.2),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -474,19 +368,14 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
                             const SizedBox(height: 16),
                             Text(
                               "Profile Updated!",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black87,
-                              ),
+                              style: theme.textTheme.headlineSmall,
                             ),
                             const SizedBox(height: 8),
                             Text(
                               "Your profile has been successfully updated.",
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: theme.hintColor,
                               ),
                             ),
                           ],
@@ -502,13 +391,17 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
     );
   }
 
-  Widget _buildModernSection(String title, String subtitle, Widget content) {
+  Widget _buildModernSection(
+    ThemeData theme,
+    String title,
+    String subtitle,
+    Widget content,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -516,39 +409,40 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
                     letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.hintColor,
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
-
-          // Section Content
           content,
         ],
       ),
     );
   }
 
-  Widget _buildModernFormCard({required Widget child}) {
+  Widget _buildModernFormCard({
+    required Widget child,
+    required ThemeData theme,
+  }) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: theme.shadowColor.withOpacity(0.08),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -559,52 +453,34 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   }
 
   Widget _buildModernField({
+    required ThemeData theme,
     required TextEditingController controller,
     required String label,
     required IconData icon,
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
   }) {
+    final primaryColor = theme.colorScheme.primary;
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(
-          color: Colors.grey[600],
-          fontWeight: FontWeight.w500,
-        ),
         prefixIcon: Container(
           margin: const EdgeInsets.all(12),
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: kPrimaryColor.withOpacity(0.1),
+            color: primaryColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: kPrimaryColor, size: 20),
+          child: Icon(icon, color: primaryColor, size: 20),
         ),
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor: theme.scaffoldBackgroundColor,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: kPrimaryColor, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.red, width: 2),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       ),
       validator: validator,

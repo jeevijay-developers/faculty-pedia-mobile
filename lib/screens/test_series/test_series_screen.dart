@@ -1,8 +1,7 @@
 import 'package:facultypedia/components/custom_drawer.dart';
+import 'package:facultypedia/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-const Color kPrimaryColor = Color(0xFF4A90E2);
 
 class TestSeriesScreen extends StatefulWidget {
   final String? preselectedCategory;
@@ -35,7 +34,6 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
       'id': 1,
       'title': 'JEE Main Physics Mock Test Series',
       'category': 'JEE Main',
-
       'instructor': 'Dr. Rajesh Kumar',
       'totalTests': 25,
       'completedTests': 8,
@@ -169,7 +167,6 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
-    // Set preselected category if provided
     if (widget.preselectedCategory != null) {
       String mappedCategory = _mapCategoryToTestSeries(
         widget.preselectedCategory!,
@@ -180,7 +177,6 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
     }
   }
 
-  // Map category from navigation arguments to test series categories
   String _mapCategoryToTestSeries(String category) {
     switch (category) {
       case 'IIT':
@@ -224,26 +220,28 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
 
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       drawer: widget.preselectedCategory != null ? null : const CustomDrawer(),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: kPrimaryColor.withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               widget.preselectedCategory != null
                   ? Icons.arrow_back
                   : Icons.menu,
-              color: kPrimaryColor,
+              color: primaryColor,
               size: 20,
             ),
           ),
@@ -260,9 +258,9 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                   decoration: InputDecoration(
                     hintText: 'Search test series...',
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    hintStyle: TextStyle(color: theme.hintColor),
                   ),
-                  style: const TextStyle(color: Colors.black87, fontSize: 16),
+                  style: theme.textTheme.bodyLarge,
                   onChanged: (value) {
                     setState(() {
                       _searchQuery = value;
@@ -270,12 +268,10 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                   },
                 ),
               )
-            : const Text(
+            : Text(
                 "Test Series",
-                style: TextStyle(
-                  color: Colors.black87,
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: 18,
                 ),
               ),
         centerTitle: true,
@@ -284,12 +280,12 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: kPrimaryColor.withOpacity(0.1),
+                color: primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 _isSearchExpanded ? Icons.close : Icons.search,
-                color: kPrimaryColor,
+                color: primaryColor,
                 size: 20,
               ),
             ),
@@ -313,54 +309,47 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Hero Section
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.white, kPrimaryColor.withOpacity(0.05)],
+                  colors: [theme.cardColor, primaryColor.withOpacity(0.05)],
                 ),
               ),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
                 child: Column(
                   children: [
-                    // Welcome Icon
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: kPrimaryColor.withOpacity(0.1),
+                        color: primaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: kPrimaryColor.withOpacity(0.2),
+                          color: primaryColor.withOpacity(0.2),
                         ),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.clipboardList,
-                        color: kPrimaryColor,
+                        color: primaryColor,
                         size: 40,
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // Welcome Text
-                    const Text(
+                    Text(
                       "Test Your Knowledge",
-                      style: TextStyle(
-                        fontSize: 28,
+                      style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
                         letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       "Practice with comprehensive test series and track your progress",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.hintColor,
                         height: 1.4,
                       ),
                       textAlign: TextAlign.center,
@@ -369,16 +358,15 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                 ),
               ),
             ),
-
-            // Filters Section
             _buildModernSection(
+              theme,
               "Filters",
               "Find the perfect test series for your needs",
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Card(
                   elevation: 8,
-                  shadowColor: Colors.black.withOpacity(0.1),
+                  shadowColor: theme.shadowColor.withOpacity(0.1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -386,24 +374,17 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Colors.white, kPrimaryColor.withOpacity(0.02)],
-                      ),
+                      color: theme.cardColor,
                     ),
                     child: Column(
                       children: [
-                        // Category Filter
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               "Category",
-                              style: TextStyle(
-                                fontSize: 16,
+                              style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black87,
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -411,89 +392,69 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                               spacing: 8,
                               runSpacing: 8,
                               children: _categories.map((category) {
-                                bool isSelected = _selectedCategory == category;
-                                return GestureDetector(
-                                  onTap: () => setState(
-                                    () => _selectedCategory = category,
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? kPrimaryColor
-                                          : Colors.grey[100],
-                                      borderRadius: BorderRadius.circular(25),
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? kPrimaryColor
-                                            : Colors.grey[300]!,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      category,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.grey[700],
-                                      ),
-                                    ),
-                                  ),
+                                return ChoiceChip(
+                                  label: Text(category),
+                                  selected: _selectedCategory == category,
+                                  onSelected: (selected) {
+                                    if (selected) {
+                                      setState(() {
+                                        _selectedCategory = category;
+                                      });
+                                    }
+                                  },
                                 );
                               }).toList(),
                             ),
                           ],
                         ),
-
-                        const SizedBox(height: 24),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-
-            // Test Series Section
             _buildModernSection(
+              theme,
               "Available Test Series",
               "Choose from ${_filteredTests.length} test series",
               Column(
                 children: _filteredTests
-                    .map((test) => _buildTestSeriesCard(test))
+                    .map((test) => _buildTestSeriesCard(test, theme))
                     .toList(),
               ),
             ),
-
             const SizedBox(height: 32),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          _showMyTestsDialog(context);
+          _showMyTestsDialog(context, theme);
         },
-        backgroundColor: kPrimaryColor,
-        icon: const Icon(Icons.assignment, color: Colors.white),
-        label: const Text(
+        backgroundColor: primaryColor,
+        icon: Icon(Icons.assignment, color: theme.colorScheme.onPrimary),
+        label: Text(
           "My Tests",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: theme.colorScheme.onPrimary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
   }
 
-  // Modern Section Builder
-  Widget _buildModernSection(String title, String subtitle, Widget content) {
+  Widget _buildModernSection(
+    ThemeData theme,
+    String title,
+    String subtitle,
+    Widget content,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -501,54 +462,46 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
                     letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.hintColor,
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
-
-          // Section Content
           content,
         ],
       ),
     );
   }
 
-  // Test Series Card Builder
-  Widget _buildTestSeriesCard(Map<String, dynamic> test) {
+  Widget _buildTestSeriesCard(Map<String, dynamic> test, ThemeData theme) {
     double progress = test['completedTests'] / test['totalTests'];
 
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
       child: Card(
         elevation: 8,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: theme.shadowColor.withOpacity(0.1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.white, kPrimaryColor.withOpacity(0.02)],
-            ),
+            color: theme.cardColor,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Row
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -561,10 +514,8 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                             Expanded(
                               child: Text(
                                 test['title'],
-                                style: const TextStyle(
-                                  fontSize: 18,
+                                style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.black87,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -578,15 +529,14 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
+                                  gradient: const LinearGradient(
                                     colors: [Colors.amber, Colors.orange],
                                   ),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   "PREMIUM",
-                                  style: TextStyle(
-                                    fontSize: 10,
+                                  style: theme.textTheme.bodySmall?.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
                                   ),
@@ -597,10 +547,8 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                         const SizedBox(height: 4),
                         Text(
                           "by ${test['instructor']}",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.hintColor,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -609,14 +557,12 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // Price and Rating
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         "₹${test['price']}",
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                           color: Colors.green,
                         ),
@@ -629,10 +575,8 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                           const SizedBox(width: 4),
                           Text(
                             "${test['rating']}",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey[700],
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.hintColor,
                             ),
                           ),
                         ],
@@ -641,10 +585,7 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                   ),
                 ],
               ),
-
               const SizedBox(height: 16),
-
-              // Progress Bar (if enrolled)
               if (test['isEnrolled']) ...[
                 Row(
                   children: [
@@ -657,16 +598,14 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                             children: [
                               Text(
                                 "Progress",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.hintColor,
                                 ),
                               ),
                               Text(
                                 "${test['completedTests']}/${test['totalTests']} tests",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.hintColor,
                                 ),
                               ),
                             ],
@@ -674,9 +613,9 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                           const SizedBox(height: 8),
                           LinearProgressIndicator(
                             value: progress,
-                            backgroundColor: Colors.grey[200],
+                            backgroundColor: theme.dividerColor,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              kPrimaryColor,
+                              theme.colorScheme.primary,
                             ),
                             minHeight: 6,
                           ),
@@ -687,52 +626,53 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                 ),
                 const SizedBox(height: 16),
               ],
-
-              // Category badges
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: [_buildBadge(test['category'], kPrimaryColor)],
+                children: [
+                  _buildBadge(
+                    theme,
+                    test['category'],
+                    theme.colorScheme.primary,
+                  ),
+                ],
               ),
-
               const SizedBox(height: 12),
-
-              // Test Details
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
                   _buildDetailChip(
+                    theme,
                     Icons.quiz,
                     "${test['questions']} questions",
                   ),
-                  _buildDetailChip(Icons.timer, "${test['duration']} min"),
                   _buildDetailChip(
+                    theme,
+                    Icons.timer,
+                    "${test['duration']} min",
+                  ),
+                  _buildDetailChip(
+                    theme,
                     Icons.people,
                     "${test['students']} students",
                   ),
                   _buildDetailChip(
+                    theme,
                     Icons.assignment,
                     "${test['totalTests']} tests",
                   ),
                 ],
               ),
-
               const SizedBox(height: 16),
-
-              // Description
               Text(
                 test['description'],
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[700],
+                style: theme.textTheme.bodyMedium?.copyWith(
                   height: 1.4,
+                  color: theme.hintColor,
                 ),
               ),
-
               const SizedBox(height: 16),
-
-              // Features
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
@@ -749,40 +689,20 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                     ),
                     child: Text(
                       feature,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                      style: theme.textTheme.bodySmall?.copyWith(
                         color: Colors.green[700],
                       ),
                     ),
                   );
                 }).toList(),
               ),
-
               const SizedBox(height: 20),
-
-              // Action Buttons
               if (test['isEnrolled']) ...[
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => _startTest(test),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimaryColor,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: const Text(
-                      "Continue Tests",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    onPressed: () => _startTest(test, theme),
+                    child: const Text("Continue Tests"),
                   ),
                 ),
               ] else ...[
@@ -791,45 +711,16 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () => _enrollTest(test),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kPrimaryColor,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Text(
-                          "Enroll Now",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        onPressed: () => _enrollTest(test, theme),
+                        child: const Text("Enroll Now"),
                       ),
                     ),
                     const SizedBox(height: 8),
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                        onPressed: () => _previewTest(test),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: kPrimaryColor),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: Text(
-                          "Preview",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: kPrimaryColor,
-                          ),
-                        ),
+                        onPressed: () => _previewTest(test, theme),
+                        child: const Text("Preview"),
                       ),
                     ),
                   ],
@@ -842,8 +733,7 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
     );
   }
 
-  // Badge Builder
-  Widget _buildBadge(String text, Color color) {
+  Widget _buildBadge(ThemeData theme, String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -853,8 +743,7 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
       ),
       child: Text(
         text,
-        style: TextStyle(
-          fontSize: 12,
+        style: theme.textTheme.bodySmall?.copyWith(
           fontWeight: FontWeight.w600,
           color: color.withOpacity(0.8),
         ),
@@ -862,48 +751,37 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
     );
   }
 
-  // Detail Chip Builder
-  Widget _buildDetailChip(IconData icon, String text) {
+  Widget _buildDetailChip(ThemeData theme, IconData icon, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: theme.dividerColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: Colors.grey[600]),
+          Icon(icon, size: 16, color: theme.hintColor),
           const SizedBox(width: 4),
           Text(
             text,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w500,
-            ),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
           ),
         ],
       ),
     );
   }
 
-  
-  
-
-  // Start Test Function
-  void _startTest(Map<String, dynamic> test) {
+  void _startTest(Map<String, dynamic> test, ThemeData theme) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text("Start Test"),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: Text(
-            "Continue with '${test['title']}'? You can resume from where you left off.",
-            style: const TextStyle(fontSize: 14),
-          ),
+        title: Text("Start Test", style: theme.textTheme.headlineSmall),
+        content: Text(
+          "Continue with '${test['title']}'? You can resume from where you left off.",
+          style: theme.textTheme.bodyLarge,
         ),
         actions: [
           TextButton(
@@ -913,26 +791,27 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              // TODO: Navigate to test screen
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(const SnackBar(content: Text("Starting test...")));
             },
-            style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
-            child: const Text("Start", style: TextStyle(color: Colors.white)),
+            child: const Text("Start"),
           ),
         ],
       ),
     );
   }
 
-  // Enroll Test Function
-  void _enrollTest(Map<String, dynamic> test) {
+  void _enrollTest(Map<String, dynamic> test, ThemeData theme) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text("Enroll in Test Series"),
+        title: Text(
+          "Enroll in Test Series",
+          style: theme.textTheme.headlineSmall,
+        ),
         content: SizedBox(
           width: double.maxFinite,
           child: SingleChildScrollView(
@@ -942,21 +821,31 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
               children: [
                 Text(
                   "Test Series: ${test['title']}",
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 8),
-                Text("Price: ₹${test['price']}"),
-                Text("Total Tests: ${test['totalTests']}"),
+                Text(
+                  "Price: ₹${test['price']}",
+                  style: theme.textTheme.bodyLarge,
+                ),
+                Text(
+                  "Total Tests: ${test['totalTests']}",
+                  style: theme.textTheme.bodyLarge,
+                ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   "Features included:",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 ...test['features'].map<Widget>(
                   (feature) => Padding(
                     padding: const EdgeInsets.only(bottom: 4),
-                    child: Text("• $feature"),
+                    child: Text("• $feature", style: theme.textTheme.bodyLarge),
                   ),
                 ),
               ],
@@ -971,29 +860,30 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              // TODO: Implement payment gateway
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Redirecting to payment...")),
+              // Navigate to payment screen
+              AppRouter.navigateToPayment(
+                context,
+                itemTitle: test['title'],
+                itemDescription:
+                    'Test Series - ${test['totalTests']} tests included with detailed analysis',
+                amount: test['price'].toDouble(),
+                imageUrl: test['image'],
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
-            child: const Text(
-              "Proceed to Pay",
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text("Proceed to Pay"),
           ),
         ],
       ),
     );
   }
 
-  // Preview Test Function
-  void _previewTest(Map<String, dynamic> test) {
+  void _previewTest(Map<String, dynamic> test, ThemeData theme) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text("Test Preview"),
+        title: Text("Test Preview", style: theme.textTheme.headlineSmall),
         content: SizedBox(
           width: double.maxFinite,
           child: SingleChildScrollView(
@@ -1003,24 +893,41 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
               children: [
                 Text(
                   "Test Series: ${test['title']}",
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 12),
-                Text("Instructor: ${test['instructor']}"),
+                Text(
+                  "Instructor: ${test['instructor']}",
+                  style: theme.textTheme.bodyLarge,
+                ),
                 const SizedBox(height: 4),
-                Text("Category: ${test['category']}"),
-                
-                
+                Text(
+                  "Category: ${test['category']}",
+                  style: theme.textTheme.bodyLarge,
+                ),
                 const SizedBox(height: 4),
-                Text("Duration: ${test['duration']} minutes"),
+                Text(
+                  "Duration: ${test['duration']} minutes",
+                  style: theme.textTheme.bodyLarge,
+                ),
                 const SizedBox(height: 4),
-                Text("Questions: ${test['questions']} per test"),
+                Text(
+                  "Questions: ${test['questions']} per test",
+                  style: theme.textTheme.bodyLarge,
+                ),
                 const SizedBox(height: 4),
-                Text("Total Tests: ${test['totalTests']}"),
+                Text(
+                  "Total Tests: ${test['totalTests']}",
+                  style: theme.textTheme.bodyLarge,
+                ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   "Sample Topics:",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 ...test['topics']
@@ -1028,7 +935,10 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                     .map<Widget>(
                       (topic) => Padding(
                         padding: const EdgeInsets.only(bottom: 4),
-                        child: Text("• $topic"),
+                        child: Text(
+                          "• $topic",
+                          style: theme.textTheme.bodyLarge,
+                        ),
                       ),
                     ),
               ],
@@ -1043,21 +953,16 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              _enrollTest(test);
+              _enrollTest(test, theme);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
-            child: const Text(
-              "Enroll Now",
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text("Enroll Now"),
           ),
         ],
       ),
     );
   }
 
-  // My Tests Dialog
-  void _showMyTestsDialog(BuildContext context) {
+  void _showMyTestsDialog(BuildContext context, ThemeData theme) {
     final enrolledTests = _testSeries
         .where((test) => test['isEnrolled'])
         .toList();
@@ -1065,12 +970,16 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text("My Test Series"),
+        title: Text("My Test Series", style: theme.textTheme.headlineSmall),
         content: SizedBox(
           width: double.maxFinite,
           child: enrolledTests.isEmpty
-              ? const Text("You haven't enrolled in any test series yet.")
+              ? Text(
+                  "You haven't enrolled in any test series yet.",
+                  style: theme.textTheme.bodyLarge,
+                )
               : ListView.builder(
                   shrinkWrap: true,
                   itemCount: enrolledTests.length,
@@ -1081,25 +990,27 @@ class _TestSeriesScreenState extends State<TestSeriesScreen>
                     return ListTile(
                       title: Text(
                         test['title'],
-                        style: const TextStyle(fontSize: 14),
+                        style: theme.textTheme.bodyLarge,
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             "${test['completedTests']}/${test['totalTests']} tests completed",
+                            style: theme.textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 4),
                           LinearProgressIndicator(
                             value: progress,
                             minHeight: 4,
+                            backgroundColor: theme.dividerColor,
                           ),
                         ],
                       ),
                       trailing: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          _startTest(test);
+                          _startTest(test, theme);
                         },
                         child: const Text("Continue"),
                       ),

@@ -8,6 +8,7 @@ class CourseOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -15,14 +16,14 @@ class CourseOverview extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: theme.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(16),
           ),
           child: GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 2,
-            childAspectRatio: 3.0, // ✅ More space to avoid overflow
+            childAspectRatio: 2.5, // Adjusted for better layout
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
             children: const [
@@ -86,30 +87,26 @@ class CourseOverview extends StatelessWidget {
         // ===== Description =====
         SectionTitle(
           icon: Icons.description_rounded,
-          color: Color(0xFF4A90E2),
+          color: theme.colorScheme.primary,
           title: "Course Description",
         ),
         const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: theme.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: theme.dividerColor),
           ),
           child: Text(
             description,
-            style: const TextStyle(
-              color: Color(0xFF1A1A1A),
-              fontSize: 15,
-              height: 1.6,
-            ),
+            style: theme.textTheme.bodyLarge?.copyWith(height: 1.6),
           ),
         ),
         const SizedBox(height: 24),
 
         // ===== Timeline =====
-        SectionTitle(
+        const SectionTitle(
           icon: Icons.schedule_rounded,
           color: Colors.indigo,
           title: "Course Timeline",
@@ -118,9 +115,9 @@ class CourseOverview extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
+            color: theme.scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: theme.dividerColor),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -172,6 +169,7 @@ class SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       children: [
         Container(
@@ -185,10 +183,8 @@ class SectionTitle extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1A1A1A),
           ),
         ),
       ],
@@ -212,10 +208,11 @@ class _ModernOverviewStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -225,8 +222,7 @@ class _ModernOverviewStat extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(6),
@@ -236,29 +232,28 @@ class _ModernOverviewStat extends StatelessWidget {
             ),
             child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 6),
-          Flexible(
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1A1A1A),
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Flexible(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  label,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.hintColor,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],
@@ -282,12 +277,12 @@ class _ModernTimelineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
@@ -297,21 +292,15 @@ class _ModernTimelineItem extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 13,
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -323,6 +312,7 @@ class _ModernTimelineItem extends StatelessWidget {
 }
 
 Widget _modernVideoCard(BuildContext context, String title, String videoUrl) {
+  final theme = Theme.of(context);
   final videoId = YoutubePlayer.convertUrlToId(videoUrl);
 
   return GestureDetector(
@@ -337,11 +327,11 @@ Widget _modernVideoCard(BuildContext context, String title, String videoUrl) {
     child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: theme.shadowColor.withOpacity(0.06),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -352,10 +342,8 @@ Widget _modernVideoCard(BuildContext context, String title, String videoUrl) {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              fontSize: 14,
-              color: Color(0xFF1A1A1A),
             ),
           ),
           const SizedBox(height: 12),
@@ -390,13 +378,13 @@ Widget _modernVideoCard(BuildContext context, String title, String videoUrl) {
             Container(
               height: 100,
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: theme.dividerColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   "Invalid Video",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: theme.hintColor),
                 ),
               ),
             ),

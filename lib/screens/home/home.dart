@@ -5,8 +5,6 @@ import 'package:facultypedia/screens/exams/neet/neet_home.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-const Color kPrimaryColor = Color(0xFF4A90E2);
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -43,10 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
             scaffoldKey.currentState?.openDrawer();
           },
         ),
-        title: Container(
-          height: 40,
-          child: Image.asset("assets/images/fp.png"),
-        ),
+        title: SizedBox(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
         actions: [
           IconButton(
@@ -103,6 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontSize: 16,
                         height: 1.4,
+                        color: theme.textTheme.bodyLarge?.color?.withOpacity(
+                          0.7,
+                        ),
                       ),
                     ),
                   ],
@@ -123,11 +121,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder: (context) => const IITHomePage(),
                       ),
                     ),
-                    backgroundImage: 'assets/images/iit-bg.png',
                     icon: "assets/images/iit-logo.png",
                     title: "IIT JEE",
                     subtitle: 'Indian Institute of Technology',
-                    color: theme.colorScheme.secondary,
+                    color: Colors.orange, // Specific color for this card
                   ),
                   const SizedBox(height: 16),
                   _buildExamCard(
@@ -138,11 +135,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder: (context) => const NeetHomePage(),
                       ),
                     ),
-                    backgroundImage: 'assets/images/neet-bg.png',
                     icon: "assets/images/neet-logo.png",
                     title: "NEET",
                     subtitle: 'National Eligibility cum Entrance Test',
-                    color: theme.colorScheme.tertiary,
+                    color: Colors.green, // Specific color for this card
                   ),
                   const SizedBox(height: 16),
                   _buildExamCard(
@@ -151,11 +147,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       context,
                       MaterialPageRoute(builder: (context) => const CBSEHome()),
                     ),
-                    backgroundImage: 'assets/images/cbse-bg.png',
                     icon: "assets/images/cbse-logo.png",
                     title: "CBSE",
                     subtitle: 'Central Board of Secondary Education',
-                    color: theme.colorScheme.primary,
+                    color: Colors.blue, // Specific color for this card
                   ),
                 ],
               ),
@@ -186,6 +181,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontSize: 16,
                         height: 1.4,
+                        color: theme.textTheme.bodyLarge?.color?.withOpacity(
+                          0.7,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -242,10 +240,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         Expanded(
                           child: Text(
                             "Become an Educator",
-                            style: TextStyle(
+                            style: theme.textTheme.headlineSmall?.copyWith(
                               color: theme.colorScheme.onPrimary,
                               fontWeight: FontWeight.w700,
-                              fontSize: 22,
                               letterSpacing: -0.5,
                             ),
                           ),
@@ -255,9 +252,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     const SizedBox(height: 16),
                     Text(
                       "Share your expertise, inspire learners, and earn for your impact. Join our growing network of passionate educators!",
-                      style: TextStyle(
+                      style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onPrimary.withOpacity(0.9),
-                        fontSize: 16,
                         height: 1.5,
                       ),
                     ),
@@ -298,7 +294,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildExamCard(
     BuildContext context, {
     required VoidCallback onTap,
-    required String backgroundImage,
     required String icon,
     required String title,
     required String subtitle,
@@ -328,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [color.withOpacity(0.1), color.withOpacity(0.05)],
+                    colors: [color.withOpacity(0.15), color.withOpacity(0.05)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -376,6 +371,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontSize: 14,
                               height: 1.3,
+                              color: theme.textTheme.bodyMedium?.color
+                                  ?.withOpacity(0.7),
                             ),
                           ),
                         ],
@@ -405,42 +402,46 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildFeatureGrid() {
     final theme = Theme.of(context);
+    // Using specific colors for features for better visual distinction
+    final featureColors = [
+      Colors.blue,
+      Colors.orange,
+      Colors.purple,
+      Colors.teal,
+      Colors.red,
+      Colors.indigo,
+    ];
+
     final features = [
       {
         'icon': Icons.video_library_outlined,
         'title': 'Online Classes',
         'subtitle': 'Interactive classes anytime, anywhere',
-        'color': theme.colorScheme.primary,
       },
       {
         'icon': Icons.person_outline,
         'title': '1-on-1 Sessions',
         'subtitle': 'Personalized learning experience',
-        'color': theme.colorScheme.secondary,
       },
       {
         'icon': Icons.groups_outlined,
         'title': 'Webinars',
         'subtitle': 'Expert discussions and sessions',
-        'color': theme.colorScheme.tertiary,
       },
       {
         'icon': Icons.library_books_outlined,
         'title': 'Study Material',
         'subtitle': 'High-quality notes and resources',
-        'color': theme.colorScheme.primary,
       },
       {
         'icon': Icons.quiz_outlined,
         'title': 'Online Tests',
         'subtitle': 'Real-time tests and analytics',
-        'color': theme.colorScheme.secondary,
       },
       {
         'icon': Icons.analytics_outlined,
         'title': 'Progress Tracking',
         'subtitle': 'Monitor your learning journey',
-        'color': theme.colorScheme.tertiary,
       },
     ];
 
@@ -449,13 +450,14 @@ class _MyHomePageState extends State<MyHomePage> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 1.2,
+        childAspectRatio: 1.1,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
       itemCount: features.length,
       itemBuilder: (context, index) {
         final feature = features[index];
+        final color = featureColors[index % featureColors.length];
         return Container(
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
@@ -469,12 +471,12 @@ class _MyHomePageState extends State<MyHomePage> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: (feature['color'] as Color).withOpacity(0.1),
+                  color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   feature['icon'] as IconData,
-                  color: feature['color'] as Color,
+                  color: color,
                   size: 24,
                 ),
               ),
@@ -482,8 +484,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Text(
                 feature['title'] as String,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontSize: 14,
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -492,8 +493,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 feature['subtitle'] as String,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  fontSize: 12,
                   height: 1.3,
+                  color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
                 ),
               ),
             ],
