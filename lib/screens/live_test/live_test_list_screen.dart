@@ -1,13 +1,14 @@
+import 'package:facultypedia/models/live_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'bloc/live_test_bloc.dart';
 import 'bloc/live_test_event.dart';
 import 'bloc/live_test_state.dart';
-import 'repository/live_test_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
-
 import 'live_test_detail_screen.dart';
+import 'repository/live_test_repository.dart';
 
 class LiveTestListScreen extends StatefulWidget {
   const LiveTestListScreen({super.key});
@@ -25,15 +26,23 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
     final token = prefs.getString("token") ?? '';
     _bloc = LiveTestBloc(repository: LiveTestRepository(token: token));
     _bloc!.add(FetchLiveTests());
-    setState(() {
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _initBloc();
+  }
+
+  @override
+  void dispose() {
+    _bloc?.close();
+    super.dispose();
   }
 
   @override
@@ -59,10 +68,7 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Container(
-          height: 40,
-          child: Image.asset("assets/images/fp.png"),
-        ),
+        title: SizedBox(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
       ),
       body: _loading || _bloc == null
@@ -104,7 +110,6 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                             Text(
                               'Live Tests',
                               style: theme.textTheme.headlineMedium?.copyWith(
-                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -112,9 +117,7 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                             Text(
                               'Take live tests and track your progress in real-time',
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                fontSize: 16,
-                              ),
+                              style: theme.textTheme.bodyLarge,
                             ),
                           ],
                         ),
@@ -133,6 +136,12 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                           );
                         } else if (state is LiveTestLoaded) {
                           if (state.tests.isEmpty) {
+                            // DARK THEME FIX: Use theme-aware text colors instead of dividerColor
+                            final subduedColor = theme
+                                .textTheme
+                                .bodyMedium
+                                ?.color
+                                ?.withOpacity(0.6);
                             return Padding(
                               padding: const EdgeInsets.all(50),
                               child: Column(
@@ -140,26 +149,22 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                                   Icon(
                                     Icons.quiz_outlined,
                                     size: 80,
-                                    color: theme.dividerColor,
+                                    color: subduedColor,
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
                                     'No Live Tests Available',
                                     style: theme.textTheme.titleMedium
                                         ?.copyWith(
-                                          fontSize: 20,
                                           fontWeight: FontWeight.w600,
-                                          color: theme.dividerColor,
+                                          color: subduedColor,
                                         ),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'Check back later for new live tests',
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      fontSize: 16,
-                                      color: theme.dividerColor.withOpacity(
-                                        0.9,
-                                      ),
+                                      color: subduedColor,
                                     ),
                                   ),
                                 ],
@@ -180,6 +185,8 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                             ),
                           );
                         } else if (state is LiveTestError) {
+                          // DARK THEME FIX: Use the theme's error color for all elements
+                          final errorColor = theme.colorScheme.error;
                           return Padding(
                             padding: const EdgeInsets.all(50),
                             child: Column(
@@ -187,17 +194,14 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                                 Icon(
                                   Icons.error_outline,
                                   size: 80,
-                                  color: theme.colorScheme.error.withOpacity(
-                                    0.9,
-                                  ),
+                                  color: errorColor,
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
                                   'Oops! Something went wrong',
                                   style: theme.textTheme.titleMedium?.copyWith(
-                                    fontSize: 20,
                                     fontWeight: FontWeight.w600,
-                                    color: theme.dividerColor,
+                                    color: errorColor,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
@@ -205,8 +209,7 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                                   state.message,
                                   textAlign: TextAlign.center,
                                   style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontSize: 16,
-                                    color: theme.dividerColor.withOpacity(0.9),
+                                    color: errorColor.withOpacity(0.8),
                                   ),
                                 ),
                                 const SizedBox(height: 24),
@@ -217,16 +220,8 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                                   icon: const Icon(Icons.refresh),
                                   label: const Text('Try Again'),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: theme.colorScheme.primary,
-                                    foregroundColor:
-                                        theme.colorScheme.onPrimary,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24,
-                                      vertical: 12,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
+                                    backgroundColor: theme.colorScheme.error,
+                                    foregroundColor: theme.colorScheme.onError,
                                   ),
                                 ),
                               ],
@@ -243,13 +238,13 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
     );
   }
 
-  Widget _buildTestCard(BuildContext context, test) {
+  Widget _buildTestCard(BuildContext context, LiveTest test) {
     final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: Card(
         elevation: 8,
-        shadowColor: theme.shadowColor.withOpacity(0.2),
+        shadowColor: theme.shadowColor.withOpacity(0.1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: InkWell(
           onTap: () {
@@ -314,32 +309,24 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                           children: [
                             Text(
                               test.title,
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontSize: 20,
+                              style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: theme.textTheme.bodyLarge?.color,
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Container(
+                            Chip(
+                              label: Text(test.subject),
+                              backgroundColor: theme.colorScheme.primary
+                                  .withOpacity(0.1),
+                              labelStyle: TextStyle(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                                 vertical: 2,
                               ),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withOpacity(
-                                  0.1,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                test.subject,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  fontSize: 12,
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                              visualDensity: VisualDensity.compact,
                             ),
                           ],
                         ),
@@ -349,101 +336,60 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
                 ),
                 // Content Section
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  child: Row(
                     children: [
-                      // Stats Row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildStatItem(
-                              context,
-                              Icons.schedule,
-                              'Start Time',
-                              DateFormat(
-                                'MMM dd, hh:mm a',
-                              ).format(test.startDate.toLocal()),
-                              theme.colorScheme.primary,
-                            ),
-                          ),
-                          Container(
-                            height: 30,
-                            width: 1,
-                            color: theme.dividerColor.withOpacity(0.2),
-                          ),
-                          Expanded(
-                            child: _buildStatItem(
-                              context,
-                              Icons.timer,
-                              'Duration',
-                              'Live Test',
-                              theme.colorScheme.primary,
-                            ),
-                          ),
-                        ],
+                      Expanded(
+                        child: _buildStatItem(
+                          context,
+                          Icons.schedule,
+                          'Start Time',
+                          DateFormat(
+                            'MMM dd, hh:mm a',
+                          ).format(test.startDate.toLocal()),
+                          theme.colorScheme.primary,
+                        ),
+                      ),
+                      Container(
+                        height: 30,
+                        width: 1,
+                        color: theme.dividerColor.withOpacity(0.2),
+                      ),
+                      Expanded(
+                        child: _buildStatItem(
+                          context,
+                          Icons.timer,
+                          'Duration',
+                          'Live Test',
+                          theme.colorScheme.primary,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 // Action Section
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                theme.colorScheme.primary,
-                                theme.colorScheme.primary.withOpacity(0.8),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
-                              BoxShadow(
-                                color: theme.colorScheme.primary.withOpacity(
-                                  0.3,
-                                ),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Join Live Test',
-                              style: TextStyle(
-                                color: theme.colorScheme.onPrimary,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
                       ),
-                      const SizedBox(width: 12),
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: theme.dividerColor.withOpacity(0.04),
-                          borderRadius: BorderRadius.circular(25),
-                          border: Border.all(
-                            color: theme.dividerColor.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.notifications_outlined,
-                          color: theme.dividerColor.withOpacity(0.7),
-                          size: 20,
-                        ),
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    onPressed: () {
+                      /* onTap is handled by InkWell */
+                    },
+                    child: const Text(
+                      'Join Live Test',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -459,21 +405,23 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
     IconData icon,
     String label,
     String value,
-    Color color,
+    Color valueColor,
   ) {
     final theme = Theme.of(context);
+    // DARK THEME FIX: Use a readable, theme-aware color for the label
+    final labelColor = theme.textTheme.bodyMedium?.color?.withOpacity(0.7);
+
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 16, color: color),
+            Icon(icon, size: 16, color: labelColor),
             const SizedBox(width: 4),
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
-                fontSize: 12,
-                color: theme.dividerColor,
+                color: labelColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -483,8 +431,7 @@ class _LiveTestListScreenState extends State<LiveTestListScreen> {
         Text(
           value,
           style: theme.textTheme.bodyMedium?.copyWith(
-            fontSize: 14,
-            color: color,
+            color: valueColor,
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,

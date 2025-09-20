@@ -101,12 +101,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
 
         // Update local values only for changed keys
-        if (fields.containsKey("name"))
+        if (fields.containsKey("name")) {
           await prefs.setString("name", fields["name"]!);
-        if (fields.containsKey("email"))
+        }
+        if (fields.containsKey("email")) {
           await prefs.setString("email", fields["email"]!);
-        if (fields.containsKey("mobileNumber"))
+        }
+        if (fields.containsKey("mobileNumber")) {
           await prefs.setString("mobile", fields["mobileNumber"]!);
+        }
 
         emit(AuthSuccess(data));
       } catch (e) {

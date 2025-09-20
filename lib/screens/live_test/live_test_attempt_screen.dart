@@ -11,10 +11,10 @@ class LiveTestAttemptScreen extends StatefulWidget {
   final int duration; // in minutes
 
   const LiveTestAttemptScreen({
-    Key? key,
+    super.key,
     required this.testTitle,
     this.duration = 60,
-  }) : super(key: key);
+  });
 
   @override
   State<LiveTestAttemptScreen> createState() => _LiveTestAttemptScreenState();
@@ -28,8 +28,8 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
   late Timer _timer;
   int remainingSeconds = 0;
   bool isLoading = true;
-  PageController _pageController = PageController();
-  ScrollController _questionScrollController = ScrollController();
+  final PageController _pageController = PageController();
+  final ScrollController _questionScrollController = ScrollController();
 
   @override
   void initState() {
@@ -295,7 +295,7 @@ class _LiveTestAttemptScreenState extends State<LiveTestAttemptScreen> {
       body: Column(
         children: [
           // Progress Bar
-          Container(
+          SizedBox(
             height: 4,
             child: LinearProgressIndicator(
               value: (currentQuestionIndex + 1) / questions.length,

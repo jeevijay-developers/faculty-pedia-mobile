@@ -136,7 +136,7 @@ class _BlogScreenState extends State<BlogScreen> with TickerProviderStateMixin {
                         },
                       ),
                     )
-                  : Container(
+                  : SizedBox(
                       height: 40,
                       child: Image.asset("assets/images/fp.png"),
                     ),

@@ -385,6 +385,8 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                 _buildModernSection(
                   "Subject Categories",
                   "Filter educators by their expertise",
+
+                  // ... inside the _buildModernSection for "Subject Categories"
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     controller: _chipsScrollController,
@@ -392,11 +394,47 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         children: categories.map((category) {
+                          // Determine if this chip is the currently selected one.
+                          final isSelected = selectedCategory == category;
+
+                          // --- FIX STARTS HERE ---
+                          // By explicitly setting the colors for both selected and unselected states,
+                          // we guarantee readability in both light and dark themes.
                           return Padding(
                             padding: const EdgeInsets.only(right: 12.0),
                             child: FilterChip(
-                              label: Text(category),
-                              selected: selectedCategory == category,
+                              label: Text(
+                                category,
+                                style: TextStyle(
+                                  // Use a color that contrasts with the chip's background.
+                                  color: isSelected
+                                      ? theme
+                                            .colorScheme
+                                            .onPrimary // Text color for selected chip
+                                      : theme
+                                            .colorScheme
+                                            .onSurfaceVariant, // Text color for unselected chip
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              selected: isSelected,
+                              // Set the background color for the selected state.
+                              selectedColor: theme.colorScheme.primary,
+                              // Set a subtle background for the unselected state.
+                              backgroundColor: theme.colorScheme.primary
+                                  .withOpacity(0.08),
+                              // Ensure the checkmark icon is visible on the selected chip.
+                              checkmarkColor: theme.colorScheme.onPrimary,
+                              // Use a subtle border for unselected chips.
+                              shape: StadiumBorder(
+                                side: BorderSide(
+                                  color: isSelected
+                                      ? Colors.transparent
+                                      : theme.colorScheme.primary.withOpacity(
+                                          0.3,
+                                        ),
+                                ),
+                              ),
                               onSelected: (selected) {
                                 if (selected) {
                                   setState(() {
@@ -406,10 +444,13 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                               },
                             ),
                           );
+                          // --- FIX ENDS HERE ---
                         }).toList(),
                       ),
                     ),
                   ),
+
+                  // ... rest of the code
                 ),
 
                 // Educators Grid Section
@@ -439,13 +480,15 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                 Icon(
                                   Icons.error_outline,
                                   size: 48,
-                                  color: Colors.red[400],
+                                  // DARK THEME FIX: Use theme error color
+                                  color: theme.colorScheme.error,
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
                                   "Error loading educators",
                                   style: theme.textTheme.titleMedium?.copyWith(
-                                    color: Colors.red[600],
+                                    // DARK THEME FIX: Use theme error color
+                                    color: theme.colorScheme.error,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -634,6 +677,36 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
     int reviews,
     VoidCallback onTap,
   ) {
+    // DARK THEME FIX: Check brightness to apply conditional styling
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    // DARK THEME FIX: Define adaptive colors for the "experience" tag
+    final experienceBgColor = isDarkMode
+        ? Colors.green.shade900.withOpacity(0.6)
+        : Colors.green.shade50;
+    final experienceTextColor = isDarkMode
+        ? Colors.green.shade200
+        : Colors.green.shade700;
+    final experienceBorderColor = isDarkMode
+        ? Colors.green.shade800
+        : Colors.green.shade200;
+
+    // DARK THEME FIX: Define an adaptive gradient for the card header
+    final cardHeaderGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: isDarkMode
+          ? [
+              theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              theme.colorScheme.surface.withOpacity(0.5),
+            ]
+          : [
+              theme.colorScheme.primary.withOpacity(0.1),
+              theme.colorScheme.primary.withOpacity(0.2),
+              theme.colorScheme.primary.withOpacity(0.05),
+            ],
+    );
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -664,15 +737,8 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                     maxHeight: 160,
                   ),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        theme.colorScheme.primary.withOpacity(0.1),
-                        theme.colorScheme.primary.withOpacity(0.2),
-                        theme.colorScheme.primary.withOpacity(0.05),
-                      ],
-                    ),
+                    // DARK THEME FIX: Apply the adaptive gradient
+                    gradient: cardHeaderGradient,
                   ),
                   child: Stack(
                     children: [
@@ -688,7 +754,9 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white,
+                                  // DARK THEME FIX: Use a theme color instead of Colors.white
+                                  // This creates a "punched out" look that works on any background
+                                  color: theme.scaffoldBackgroundColor,
                                   width: 2,
                                 ),
                                 boxShadow: [
@@ -788,6 +856,7 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                               children: [
                                 Icon(
                                   Icons.star,
+                                  // This is an acceptable hardcoded color, as star ratings are universally yellow/amber.
                                   color: Colors.amber.shade600,
                                   size: 14,
                                 ),
@@ -841,22 +910,21 @@ class _EducatorsPageContentState extends State<_EducatorsPageContent>
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.green.shade50.withOpacity(
-                                        0.5,
-                                      ),
+                                      // DARK THEME FIX: Apply adaptive colors
+                                      color: experienceBgColor,
                                       borderRadius: BorderRadius.circular(6),
                                       border: Border.all(
-                                        color: Colors.green.shade200,
+                                        color: experienceBorderColor,
                                         width: 0.5,
                                       ),
                                     ),
                                     child: Text(
                                       experience,
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.green.shade700,
-                                          ),
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        // DARK THEME FIX: Apply adaptive color
+                                        color: experienceTextColor,
+                                      ),
                                       textAlign: TextAlign.center,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,

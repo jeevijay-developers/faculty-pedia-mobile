@@ -155,7 +155,7 @@ class _CoursesPageState extends State<CoursesPage>
                   },
                 ),
               )
-            : Container(height: 40, child: Image.asset("assets/images/fp.png")),
+            : SizedBox(height: 40, child: Image.asset("assets/images/fp.png")),
         centerTitle: true,
         actions: [
           IconButton(
@@ -280,7 +280,7 @@ class _CoursesPageState extends State<CoursesPage>
                   // Courses Categories
                   ..._filteredCategories.map((category) {
                     return _buildCategorySection(context, category);
-                  }).toList(),
+                  }),
 
                   const SizedBox(height: 20),
                 ],

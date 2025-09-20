@@ -316,7 +316,7 @@ class _NeetHomePageState extends State<NeetHomePage>
                       category,
                       theme,
                     );
-                  }).toList(),
+                  }),
 
                   // Live Courses Section
                   _buildModernSection(

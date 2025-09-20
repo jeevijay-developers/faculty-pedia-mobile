@@ -50,9 +50,7 @@ class AppTheme {
       brightness: Brightness.dark,
     ).copyWith(
       surface: const Color(0xFF1A1A2E),
-      background: const Color(0xFF161625),
       onSurface: Colors.white,
-      onBackground: Colors.white,
       onPrimary: Colors.white,
     ),
     primaryColor: primaryColor,

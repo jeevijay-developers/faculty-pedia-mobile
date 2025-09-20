@@ -345,7 +345,7 @@ class LiveTestResultScreen extends StatelessWidget {
                               isCorrect,
                               isAttempted,
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),

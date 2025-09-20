@@ -316,7 +316,7 @@ class _IITHomePageState extends State<IITHomePage>
                       category,
                       theme,
                     );
-                  }).toList(),
+                  }),
 
                   // Live Courses Section
                   _buildModernSection(

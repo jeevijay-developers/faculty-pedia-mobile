@@ -532,7 +532,7 @@ class _FollowedEducatorsScreenState extends State<FollowedEducatorsScreen> {
                           _buildStatChip(
                             theme,
                             Icons.people,
-                            '${_formatFollowerCount(educator.totalFollowers!)}',
+                            _formatFollowerCount(educator.totalFollowers!),
                             Colors.purple,
                           ),
                           const SizedBox(width: 12),
